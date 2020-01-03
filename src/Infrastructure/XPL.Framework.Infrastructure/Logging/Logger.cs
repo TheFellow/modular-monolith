@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using System;
 
-namespace XPL.Framework.Infrastructure
+namespace XPL.Framework.Infrastructure.Logging
 {
     public class Logger
     {
