@@ -8,4 +8,8 @@
     <PackageReference Include="Lamar" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\XPL.Framework\XPL.Framework.csproj" />
+  </ItemGroup>
+
 </Project>

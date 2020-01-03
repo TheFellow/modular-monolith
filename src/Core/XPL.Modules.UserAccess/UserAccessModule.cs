@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using XPL.Framework.Modules;
 
 namespace XPL.Modules.UserAccess
 {
-    public class UserAccessModule
+    public class UserAccessModule : Module
     {
-        
+        public UserAccessModule(IMediator mediator) : base(mediator)
+        {
+        }
     }
 }
