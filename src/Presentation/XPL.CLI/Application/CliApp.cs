@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using XPL.Framework.Application;
 using XPL.Framework.Logging;
+using XPL.Modules.UserAccess;
 
 namespace XPL.CLI.Application
 {
@@ -13,5 +14,7 @@ namespace XPL.CLI.Application
         }
 
         public override string ApplicationName => nameof(CliApp);
+
+        public UserAccessModule UserAccessModule => _container.GetInstance<UserAccessModule>();
     }
 }

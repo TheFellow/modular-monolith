@@ -21,9 +21,8 @@ namespace XPL.CLI
                 .AddModuleRegistry<UserAccessServiceRegistry>()
                 .Build<CliApp>();
 
-            var ua = app.GetInstance<UserAccessModule>();
+            var uam = app.UserAccessModule;
 
-            
         }
 
         private static IConfiguration GetConfig() =>
@@ -34,7 +33,7 @@ namespace XPL.CLI
         private static Framework.Logging.ILogger SetupLogger(IConfiguration config) =>
             new Framework.Infrastructure.Logging.Logger(
                 new LoggerConfiguration()
-                    .MinimumLevel.Debug()
+                    .MinimumLevel.Information()
                     .WriteTo.Console()
                     .CreateLogger());
     }

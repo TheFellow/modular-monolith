@@ -15,8 +15,8 @@ namespace XPL.Framework.Application
     {
         private ILogger? _logger;
         private IConfiguration? _config;
-        private ServiceRegistry _appRegistry = new ServiceRegistry();
-        private IList<Assembly> _assemblies = new List<Assembly>();
+        private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
+        private readonly IList<Assembly> _assemblies = new List<Assembly>();
 
         private ApplicationBuilder() { }
 
@@ -42,28 +42,37 @@ namespace XPL.Framework.Application
             return this;
         }
 
-        App INeedModules.Build<TApp>()
+        TApp INeedModules.Build<TApp>()
         {
             if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configueration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
 
-            _appRegistry.For<ILogger>().Use(_logger);
-            _appRegistry.For<IConfiguration>().Use(_config);
-
-            _appRegistry.For<IMediator>().Use<Mediator>().Scoped();
-            _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
-
-            ScanModules();
+            AddConfig(_config);
+            AddLogging(_logger);
+            AddMediator();
+            AddModule();
+            AddStartupClasses();
 
             var container = new Container(_appRegistry);
 
             _logger.Debug(container.WhatDidIScan());
             _logger.Debug(container.WhatDoIHave());
 
+            RunOnStartup(container);
+            RunOnInit(container);
+
             return container.GetInstance<TApp>();
         }
 
-        private void ScanModules()
+        private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
+        private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
+        private void AddMediator()
+        {
+            _appRegistry.For<IMediator>().Use<Mediator>().Scoped();
+            _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
+        }
+        private void AddModule() => _appRegistry.For<Modules.Module>().Use<Modules.Module>().Scoped();
+        private void AddStartupClasses()
         {
             foreach(var assembly in _assemblies)
             {
@@ -71,9 +80,42 @@ namespace XPL.Framework.Application
                 {
                     scan.Assembly(assembly);
 
+                    scan.AddAllTypesOf<IModule>();
                     scan.AddAllTypesOf<IRunOnStartup>();
                     scan.AddAllTypesOf<IRunOnInit>();
                 });
+            }
+        }
+        private void RunOnStartup(IContainer container)
+        {
+            var onStartups = container.GetAllInstances<IRunOnStartup>();
+            foreach (var onStartup in onStartups)
+            {
+                try
+                {
+                    onStartup.Execute();
+                }
+                catch (Exception ex)
+                {
+                    _logger?.Fatal(ex, "An error occurred OnStartup");
+                    throw;
+                }
+            }
+        }
+        private void RunOnInit(IContainer container)
+        {
+            var onInits = container.GetAllInstances<IRunOnInit>();
+            foreach (var onInit in onInits)
+            {
+                try
+                {
+                    onInit.Execute();
+                }
+                catch (Exception ex)
+                {
+                    _logger?.Fatal(ex, "An error occurred OnInit");
+                    throw;
+                }
             }
         }
     }

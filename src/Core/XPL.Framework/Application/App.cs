@@ -8,7 +8,7 @@ namespace XPL.Framework.Application
     {
         protected readonly IConfiguration _config;
         protected readonly ILogger _logger;
-        private readonly IContainer _container;
+        protected readonly IContainer _container;
 
         public abstract string ApplicationName { get; }
 
