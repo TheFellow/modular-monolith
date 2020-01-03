@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Serilog;
 using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application;
+using XPL.Framework.Infrastructure.Configuration;
+using XPL.Framework.Infrastructure.Logging;
 using XPL.Modules.UserAccess.Startup;
 using XPL.Modules.UserAccess.Users.CreateUser;
 
@@ -11,7 +12,7 @@ namespace XPL.CLI
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             IConfiguration config = GetConfig();
             Framework.Logging.ILogger logger = SetupLogger(config);
@@ -39,16 +40,9 @@ namespace XPL.CLI
                 Console.WriteLine($"Could not create user: {bob.Error}");
         }
 
-        private static IConfiguration GetConfig() =>
-            new ConfigurationBuilder()
-                .AddJsonFile(Environment.CurrentDirectory + "appSetting.json", optional: true)
-                .Build();
+        private static IConfiguration GetConfig() => ConfigurationFactory.OptionalAppSettingsJson;
 
-        private static Framework.Logging.ILogger SetupLogger(IConfiguration config) =>
-            new Framework.Infrastructure.Logging.Logger(
-                new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .WriteTo.Console()
-                    .CreateLogger());
+        private static Framework.Logging.ILogger SetupLogger(IConfiguration _) => LoggerFactory.ConsoleInfoLogger;
+            
     }
 }
