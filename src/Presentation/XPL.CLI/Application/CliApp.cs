@@ -1,21 +1,17 @@
-﻿using Serilog;
+﻿using Lamar;
+using Microsoft.Extensions.Configuration;
 using XPL.Framework.Application;
+using XPL.Framework.Logging;
 
 namespace XPL.CLI.Application
 {
     public class CliApp : App
     {
-        public override string ApplicationName => nameof(CliApp);
-
-        public override Framework.Logging.ILogger Logger { get; }
-
-        public CliApp()
+        public CliApp(IConfiguration config, ILogger logger, IContainer container)
+            : base(config, logger, container)
         {
-            var logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
-
-            Logger = new Framework.Infrastructure.Logging.Logger(logger);
         }
+
+        public override string ApplicationName => nameof(CliApp);
     }
 }

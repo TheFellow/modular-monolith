@@ -4,7 +4,7 @@ using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Framework.Modules
 {
-    public abstract class Module
+    public abstract class Module : IModule
     {
         private readonly IMediator _mediator;
 
