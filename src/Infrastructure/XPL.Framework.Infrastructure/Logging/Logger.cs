@@ -3,7 +3,7 @@ using System;
 
 namespace XPL.Framework.Infrastructure.Logging
 {
-    public class Logger
+    public class Logger : XPL.Framework.Logging.ILogger
     {
         private readonly ILogger _logger;
 

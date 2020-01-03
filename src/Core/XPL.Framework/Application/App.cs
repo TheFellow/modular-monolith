@@ -16,7 +16,10 @@ namespace XPL.Framework.Application
 
         private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
 
-        public void AddModule<TRegistry>() where TRegistry : ServiceRegistry, new() => _appRegistry.IncludeRegistry<TRegistry>();
+        public void AddModule<TRegistry>() where TRegistry : ServiceRegistry, new()
+        {
+            _appRegistry.IncludeRegistry<TRegistry>();
+        }
 
         public void Start()
         {

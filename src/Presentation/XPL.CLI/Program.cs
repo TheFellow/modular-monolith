@@ -1,4 +1,4 @@
-﻿using System;
+﻿using XPL.CLI.Application;
 
 namespace XPL.CLI
 {
@@ -6,7 +6,8 @@ namespace XPL.CLI
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var app = new CliApp();
+            app.Start();
         }
     }
 }
