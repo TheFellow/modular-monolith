@@ -1,16 +1,17 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
+using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application;
-using XPL.Modules.UserAccess;
 using XPL.Modules.UserAccess.Startup;
+using XPL.Modules.UserAccess.Users.CreateUser;
 
 namespace XPL.CLI
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             IConfiguration config = GetConfig();
             Framework.Logging.ILogger logger = SetupLogger(config);
@@ -23,6 +24,19 @@ namespace XPL.CLI
 
             var uam = app.UserAccessModule;
 
+            var bob = await uam.ExecuteCommandAsync(new CreateUserCommand("Bob", "Bob@email.com"));
+            var alice = await uam.ExecuteCommandAsync(new CreateUserCommand("Alice", "alice@email.com"));
+
+            DisplayResult(bob);
+            DisplayResult(alice);
+        }
+
+        private static void DisplayResult(CreateUserResponse bob)
+        {
+            if (bob.Success)
+                Console.WriteLine($"Created user with Id {bob.Id}");
+            else
+                Console.WriteLine($"Could not create user: {bob.Error}");
         }
 
         private static IConfiguration GetConfig() =>
@@ -33,7 +47,7 @@ namespace XPL.CLI
         private static Framework.Logging.ILogger SetupLogger(IConfiguration config) =>
             new Framework.Infrastructure.Logging.Logger(
                 new LoggerConfiguration()
-                    .MinimumLevel.Information()
+                    .MinimumLevel.Debug()
                     .WriteTo.Console()
                     .CreateLogger());
     }

@@ -7,6 +7,7 @@ using System.Reflection;
 using XPL.Framework.Application.Builder;
 using XPL.Framework.Logging;
 using XPL.Framework.Modules;
+using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application
@@ -44,14 +45,10 @@ namespace XPL.Framework.Application
 
         TApp INeedModules.Build<TApp>()
         {
-            if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configueration");
+            if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configuration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
-
-            AddConfig(_config);
-            AddLogging(_logger);
-            AddMediator();
-            AddModule();
-            AddStartupClasses();
+            
+            BootstrapAppContainer(_config, _logger);
 
             var container = new Container(_appRegistry);
 
@@ -64,14 +61,41 @@ namespace XPL.Framework.Application
             return container.GetInstance<TApp>();
         }
 
+        private void BootstrapAppContainer(IConfiguration config, ILogger logger)
+        {
+            AddConfig(config);
+            AddLogging(logger);
+            AddMediator();
+            AddModule();
+            AddCommandQueryHandlers();
+            AddStartupClasses();
+        }
+
         private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
         private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
         private void AddMediator()
         {
-            _appRegistry.For<IMediator>().Use<Mediator>().Scoped();
+            _appRegistry.For<IMediator>().Use<Mediator>().Transient();
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
-        private void AddModule() => _appRegistry.For<Modules.Module>().Use<Modules.Module>().Scoped();
+        private void AddModule() => _appRegistry.For<Modules.Module>().Use<Modules.Module>().Transient();
+        private void AddCommandQueryHandlers()
+        {
+            foreach(var assembly in _assemblies)
+            {
+                _appRegistry.Scan(scan =>
+                {
+                    scan.Assembly(assembly);
+
+                    scan.AddAllTypesOf<ICommand>();
+                    scan.ConnectImplementationsToTypesClosing(typeof(ICommand<>));
+                    scan.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<>));
+                    scan.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
+                    scan.ConnectImplementationsToTypesClosing(typeof(IQuery<>));
+                    scan.ConnectImplementationsToTypesClosing(typeof(IQueryHandler<,>));
+                });
+            }
+        }
         private void AddStartupClasses()
         {
             foreach(var assembly in _assemblies)
