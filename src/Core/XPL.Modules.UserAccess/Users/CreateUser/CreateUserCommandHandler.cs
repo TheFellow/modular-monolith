@@ -10,9 +10,9 @@ namespace XPL.Modules.UserAccess.Users.CreateUser
         {
             // Dummy response until we have a domain model
             if (request.UserName == "Alice")
-                return Task.FromResult(CreateUserResponse.Ok(10));
+                return Task.FromResult(CreateUserResponse.Ok(request.CorrelationId, 10));
 
-            return Task.FromResult(CreateUserResponse.Fail($"User {request.UserName} already exists"));
+            return Task.FromResult(CreateUserResponse.Fail(request.CorrelationId, $"User {request.UserName} already exists"));
         }
     }
 }

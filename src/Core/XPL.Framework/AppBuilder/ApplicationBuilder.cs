@@ -4,24 +4,24 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using XPL.Framework.Application.Builder;
-using XPL.Framework.Logging;
-using XPL.Framework.Modules;
+using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
+using XPL.Framework.Ports;
 
-namespace XPL.Framework.Application
+namespace XPL.Framework.AppBuilder
 {
     public class ApplicationBuilder : INeedConfig, INeedLogging, INeedModules
     {
         private ILogger? _logger;
         private IConfiguration? _config;
+        private readonly string _appName;
         private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
         private readonly IList<Assembly> _assemblies = new List<Assembly>();
 
-        private ApplicationBuilder() { }
+        private ApplicationBuilder(string appName) => _appName = appName;
 
-        public static INeedConfig Create() => new ApplicationBuilder();
+        public static INeedConfig Create(string appName) => new ApplicationBuilder(appName);
 
         INeedLogging INeedConfig.WithConfig(IConfiguration config)
         {
@@ -43,11 +43,11 @@ namespace XPL.Framework.Application
             return this;
         }
 
-        TApp INeedModules.Build<TApp>()
+        App INeedModules.Build()
         {
             if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configuration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
-            
+
             BootstrapAppContainer(_config, _logger);
 
             var container = new Container(_appRegistry);
@@ -58,7 +58,7 @@ namespace XPL.Framework.Application
             RunOnStartup(container);
             RunOnInit(container);
 
-            return container.GetInstance<TApp>();
+            return new App(_appName, container.GetInstance<ICommandQueryBus>());
         }
 
         private void BootstrapAppContainer(IConfiguration config, ILogger logger)
@@ -66,11 +66,12 @@ namespace XPL.Framework.Application
             AddConfig(config);
             AddLogging(logger);
             AddMediator();
-            AddModule();
+            AddCommandQueryBus();
             AddCommandQueryHandlers();
             AddStartupClasses();
         }
 
+        private void AddCommandQueryBus() => _appRegistry.For<ICommandQueryBus>().Use<CommandQueryBus>();
         private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
         private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
         private void AddMediator()
@@ -78,10 +79,9 @@ namespace XPL.Framework.Application
             _appRegistry.For<IMediator>().Use<Mediator>().Transient();
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
-        private void AddModule() => _appRegistry.For<Modules.Module>().Use<Modules.Module>().Transient();
         private void AddCommandQueryHandlers()
         {
-            foreach(var assembly in _assemblies)
+            foreach (var assembly in _assemblies)
             {
                 _appRegistry.Scan(scan =>
                 {
@@ -98,13 +98,13 @@ namespace XPL.Framework.Application
         }
         private void AddStartupClasses()
         {
-            foreach(var assembly in _assemblies)
+            foreach (var assembly in _assemblies)
             {
                 _appRegistry.Scan(scan =>
                 {
                     scan.Assembly(assembly);
 
-                    scan.AddAllTypesOf<IModule>();
+                    scan.AddAllTypesOf<ICommandQueryBus>();
                     scan.AddAllTypesOf<IRunOnStartup>();
                     scan.AddAllTypesOf<IRunOnInit>();
                 });

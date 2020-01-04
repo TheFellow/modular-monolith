@@ -1,13 +1,13 @@
-﻿using Serilog;
-using System;
+﻿using System;
+using XPL.Framework.Ports;
 
 namespace XPL.Framework.Infrastructure.Logging
 {
-    public class Logger : XPL.Framework.Logging.ILogger
+    public class SerilogLoggingAdapter : ILogger
     {
-        private readonly ILogger _logger;
+        private readonly Serilog.ILogger _logger;
 
-        public Logger(ILogger logger) => _logger = logger;
+        public SerilogLoggingAdapter(Serilog.ILogger logger) => _logger = logger;
 
         public void Debug(string messageTemplate) => _logger.Debug(messageTemplate);
         public void Debug(string messageTemplate, params object[] propertyValues) => _logger.Debug(messageTemplate, propertyValues);

@@ -1,6 +1,6 @@
-﻿using XPL.Framework.Logging;
+﻿using XPL.Framework.Ports;
 
-namespace XPL.Framework.Application.Builder
+namespace XPL.Framework.AppBuilder
 {
     public interface INeedLogging
     {

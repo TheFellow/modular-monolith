@@ -4,13 +4,13 @@ namespace XPL.Framework.Infrastructure.Logging
 {
     public static class LoggerFactory
     {
-        public static Framework.Logging.ILogger ConsoleDebugLogger => new Logger(
+        public static Ports.ILogger ConsoleDebugLogger => new SerilogLoggingAdapter(
             new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateLogger());
 
-        public static Framework.Logging.ILogger ConsoleInfoLogger => new Logger(
+        public static Ports.ILogger ConsoleInfoLogger => new SerilogLoggingAdapter(
             new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()

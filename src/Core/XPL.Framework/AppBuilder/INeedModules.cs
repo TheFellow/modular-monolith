@@ -1,10 +1,10 @@
 ﻿using Lamar;
 
-namespace XPL.Framework.Application.Builder
+namespace XPL.Framework.AppBuilder
 {
     public interface INeedModules
     {
         INeedModules AddModuleRegistry<TRegistry>() where TRegistry : ServiceRegistry, new();
-        TApp Build<TApp>() where TApp : App;
+        App Build();
     }
 }
