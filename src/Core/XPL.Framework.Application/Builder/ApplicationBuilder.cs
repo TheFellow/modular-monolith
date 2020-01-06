@@ -4,17 +4,17 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
 using XPL.Framework.Ports;
 
-namespace XPL.Framework.AppBuilder
+namespace XPL.Framework.Application.Builder
 {
-    public class ApplicationBuilder : INeedConfig, INeedLogging, INeedModules
+    public class ApplicationBuilder : INeedConfig, INeedLogging, INeedModules, INeedCommandQueryBus
     {
         private ILogger? _logger;
         private IConfiguration? _config;
+        private Type? _busType;
         private readonly string _appName;
         private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
         private readonly IList<Assembly> _assemblies = new List<Assembly>();
@@ -29,9 +29,15 @@ namespace XPL.Framework.AppBuilder
             return this;
         }
 
-        INeedModules INeedLogging.WithLogger(ILogger logger)
+        INeedCommandQueryBus INeedLogging.WithLogger(ILogger logger)
         {
             _logger = logger;
+            return this;
+        }
+
+        INeedModules INeedCommandQueryBus.WithBus<TBus>()
+        {
+            _busType = typeof(TBus);
             return this;
         }
 
@@ -47,6 +53,7 @@ namespace XPL.Framework.AppBuilder
         {
             if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configuration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
+            if (_busType is null) throw new InvalidOperationException("Cannot build application without initializing a Command/Query bus");
 
             BootstrapAppContainer(_config, _logger);
 
@@ -71,7 +78,7 @@ namespace XPL.Framework.AppBuilder
             AddStartupClasses();
         }
 
-        private void AddCommandQueryBus() => _appRegistry.For<ICommandQueryBus>().Use<CommandQueryBus>();
+        private void AddCommandQueryBus() => _appRegistry.For<ICommandQueryBus>().Use(ctx => (ICommandQueryBus)ctx.GetInstance(_busType));
         private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
         private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
         private void AddMediator()

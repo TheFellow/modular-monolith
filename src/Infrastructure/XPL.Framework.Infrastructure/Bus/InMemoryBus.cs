@@ -5,11 +5,11 @@ using XPL.Framework.Ports;
 
 namespace XPL.Framework.Infrastructure.Bus
 {
-    public sealed class CommandQueryBus : ICommandQueryBus
+    public sealed class InMemoryBus : ICommandQueryBus
     {
         private readonly IMediator _mediator;
 
-        public CommandQueryBus(IMediator mediator) => _mediator = mediator;
+        public InMemoryBus(IMediator mediator) => _mediator = mediator;
 
         public Task ExecuteCommandAsync(ICommand command) => _mediator.Send(command);
 

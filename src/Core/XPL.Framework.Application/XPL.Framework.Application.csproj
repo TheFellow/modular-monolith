@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj" />
+    <ProjectReference Include="..\XPL.Framework\XPL.Framework.csproj" />
+  </ItemGroup>
+
+</Project>

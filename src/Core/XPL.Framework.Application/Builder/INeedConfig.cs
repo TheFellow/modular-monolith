@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace XPL.Framework.AppBuilder
+namespace XPL.Framework.Application.Builder
 {
     public interface INeedConfig
     {

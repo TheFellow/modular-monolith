@@ -2,7 +2,7 @@
 using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Ports;
 
-namespace XPL.Framework
+namespace XPL.Framework.Application
 {
     public sealed class App : ICommandQueryBus
     {

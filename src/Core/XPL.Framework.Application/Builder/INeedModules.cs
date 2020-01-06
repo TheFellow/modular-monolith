@@ -1,6 +1,6 @@
 ﻿using Lamar;
 
-namespace XPL.Framework.AppBuilder
+namespace XPL.Framework.Application.Builder
 {
     public interface INeedModules
     {

@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserAccess", "UserAccess", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{D80E0EE0-2DAE-4A4A-A7B5-FC35414B5D8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Framework.Application", "Core\XPL.Framework.Application\XPL.Framework.Application.csproj", "{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{D33F7A21-43A7-4E41-BD25-D24D2FFE1237} = {D80E0EE0-2DAE-4A4A-A7B5-FC35414B5D8C}
 		{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894} = {FF2F3B02-9B21-471D-88B5-889CD0D353F2}
 		{FF2F3B02-9B21-471D-88B5-889CD0D353F2} = {DCDABE1A-A0D7-4337-903F-0C875E5AE812}
+		{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED51870B-F52D-45C2-B30F-013A195BC2A7}

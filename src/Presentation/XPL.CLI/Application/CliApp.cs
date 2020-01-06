@@ -1,5 +1,5 @@
-﻿using XPL.Framework;
-using XPL.Framework.AppBuilder;
+﻿using XPL.Framework.Application;
+using XPL.Framework.Application.Builder;
 using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Configuration;
 using XPL.Framework.Infrastructure.Logging;
@@ -13,6 +13,7 @@ namespace XPL.CLI.Application
             ApplicationBuilder.Create(nameof(CliApp))
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
                 .WithLogger(LoggerFactory.ConsoleInfoLogger)
+                .WithBus<InMemoryBus>()
                 .AddModuleRegistry<UserAccessServiceRegistry>()
                 .Build();
     }
