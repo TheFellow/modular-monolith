@@ -7,11 +7,12 @@ using System.Reflection;
 using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Modules.Contracts;
 using XPL.Framework.Application.Ports;
+using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application.Builder
 {
-    public class ApplicationBuilder : INeedConfig, INeedLogging, INeedModules, INeedCommandQueryBus
+    public class ApplicationBuilder : INeedConfig, INeedLogging, INeedModules, INeedBus
     {
         private ILogger? _logger;
         private IConfiguration? _config;
@@ -32,13 +33,13 @@ namespace XPL.Framework.Application.Builder
             return this;
         }
 
-        INeedCommandQueryBus INeedLogging.WithLogger(ILogger logger)
+        INeedBus INeedLogging.WithLogger(ILogger logger)
         {
             _logger = logger;
             return this;
         }
 
-        INeedModules INeedCommandQueryBus.WithBus<TBus>()
+        INeedModules INeedBus.WithBus<TBus>()
         {
             _busType = typeof(TBus);
             return this;
@@ -68,7 +69,7 @@ namespace XPL.Framework.Application.Builder
             RunOnStartup(container);
             RunOnInit(container);
 
-            return new App(_appInfo, container.GetInstance<ICommandQueryBus>(), _logger);
+            return new App(_appInfo, container.GetInstance<IBus>(), _logger);
         }
 
         private void BootstrapAppContainer(IConfiguration config, ILogger logger)
@@ -90,7 +91,7 @@ namespace XPL.Framework.Application.Builder
             _appRegistry.For<IMediator>().Use<Mediator>().Transient();
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
-        private void AddCommandQueryBus() => _appRegistry.For<ICommandQueryBus>().Use(ctx => (ICommandQueryBus)ctx.GetInstance(_busType));
+        private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use(ctx => (IBus)ctx.GetInstance(_busType));
         private void AddCommandQueryHandlers()
         {
             foreach (var assembly in _assemblies)

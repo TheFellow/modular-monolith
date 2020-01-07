@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Modules.Contracts;
-using XPL.Framework.Application.Ports;
+using XPL.Framework.Application.Ports.Bus;
 
 namespace XPL.Framework.Infrastructure.Bus
 {
-    public sealed class InMemoryBus : ICommandQueryBus
+    public sealed class InMemoryBus : IBus
     {
         private readonly IMediator _mediator;
 
