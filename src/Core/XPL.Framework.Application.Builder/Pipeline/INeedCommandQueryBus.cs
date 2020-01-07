@@ -1,6 +1,6 @@
 ﻿using XPL.Framework.Application.Ports;
 
-namespace XPL.Framework.Application.Builder
+namespace XPL.Framework.Application.Builder.Pipeline
 {
     public interface INeedCommandQueryBus
     {
