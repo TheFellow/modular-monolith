@@ -5,6 +5,6 @@ namespace XPL.Framework.Application.Builder.Pipeline
     public interface INeedModules
     {
         INeedModules AddModuleRegistry<TRegistry>() where TRegistry : ServiceRegistry, new();
-        App Build();
+        IRunnable Build();
     }
 }

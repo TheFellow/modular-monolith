@@ -53,26 +53,24 @@ namespace XPL.Framework.Application.Builder
             return this;
         }
 
-        App INeedModules.Build()
+        IRunnable INeedModules.Build()
         {
             if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configuration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
             if (_busType is null) throw new InvalidOperationException("Cannot build application without initializing a Command/Query bus");
 
-            BootstrapAppContainer(_config, _logger);
+            BootstrapApp(_config, _logger);
 
             var container = new Container(_appRegistry);
 
             _logger.Debug(container.WhatDidIScan());
             _logger.Debug(container.WhatDoIHave());
 
-            RunOnStartup(container);
-            RunOnInit(container);
-
-            return new App(_appInfo, container.GetInstance<IBus>(), _logger);
+            var app = new App(_appInfo, container.GetInstance<IBus>(), _logger);
+            return new Runner(app, _logger, container);
         }
 
-        private void BootstrapAppContainer(IConfiguration config, ILogger logger)
+        private void BootstrapApp(IConfiguration config, ILogger logger)
         {
             AddConfig(config);
             AddLogging(logger);
@@ -124,35 +122,60 @@ namespace XPL.Framework.Application.Builder
 
         #endregion
 
-        private void RunOnStartup(IContainer container)
+        private class Runner : IRunnable
         {
-            var onStartups = container.GetAllInstances<IRunOnStartup>();
-            foreach (var onStartup in onStartups)
+            private readonly App _app;
+            private readonly IContainer _container;
+
+            public ILogger Logger { get; }
+
+            public Runner(App app, ILogger logger, IContainer container)
             {
-                try
+                _app = app;
+                Logger = logger;
+                _container = container;
+            }
+
+            public App Run()
+            {
+                Logger.Info("Starting {@Application}", _app.AppInfo);
+
+                RunOnStartup();
+                RunOnInit();
+
+                return _app;
+            }
+
+            private void RunOnStartup()
+            {
+                var onStartups = _container.GetAllInstances<IRunOnStartup>();
+                foreach (var onStartup in onStartups)
                 {
-                    onStartup.Execute();
-                }
-                catch (Exception ex)
-                {
-                    _logger?.Fatal(ex, "An error occurred OnStartup");
-                    throw;
+                    try
+                    {
+                        onStartup.Execute();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger?.Fatal(ex, "An error occurred OnStartup for {OnStartup}", onStartup.GetType().FullName);
+                        throw;
+                    }
                 }
             }
-        }
-        private void RunOnInit(IContainer container)
-        {
-            var onInits = container.GetAllInstances<IRunOnInit>();
-            foreach (var onInit in onInits)
+            private void RunOnInit()
             {
-                try
+                var onInits = _container.GetAllInstances<IRunOnInit>();
+                foreach (var onInit in onInits)
                 {
-                    onInit.Execute();
-                }
-                catch (Exception ex)
-                {
-                    _logger?.Fatal(ex, "An error occurred OnInit");
-                    throw;
+                    try
+                    {
+                        onInit.Execute();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger?.Fatal(ex, "An error occurred OnInit for {OnInit}", onInit.GetType().FullName);
+                        throw;
+                    }
                 }
             }
         }

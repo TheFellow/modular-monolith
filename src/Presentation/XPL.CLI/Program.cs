@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
+using XPL.Framework.Application;
 using XPL.Modules.UserAccess.Application.Users.CreateUser;
 
 namespace XPL.CLI
@@ -9,9 +10,23 @@ namespace XPL.CLI
     {
         static async Task Main()
         {
-            var app = CliApp.Build();
+            var runner = CliApp
+                .Build();
 
-            app.Logger.Info($"Application {app.AppInfo.Name} [{app.AppInfo.Type}] starting...");
+            try
+            {
+                var app = runner.Run();
+                await Run(app);
+            }
+            catch (Exception ex)
+            {
+                runner.Logger.Fatal(ex, "A fatal error occurred starting the application.");
+            }
+        }
+
+        private static async Task Run(App app)
+        {
+            app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
             var bob = await app.ExecuteCommandAsync(new CreateUserCommand("Bob", "Bob@email.com"));
             var alice = await app.ExecuteCommandAsync(new CreateUserCommand("Alice", "alice@email.com"));

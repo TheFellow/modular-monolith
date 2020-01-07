@@ -1,5 +1,6 @@
 ﻿using XPL.Framework.Application;
 using XPL.Framework.Application.Builder;
+using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Configuration;
 using XPL.Framework.Infrastructure.Logging;
@@ -9,7 +10,7 @@ namespace XPL.CLI.Application
 {
     public sealed class CliApp
     {
-        public static App Build() =>
+        public static IRunnable Build() =>
             ApplicationBuilder.Create(AppInfo)
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
                 .WithLogger(LoggerFactory.ConsoleInfoLogger)
