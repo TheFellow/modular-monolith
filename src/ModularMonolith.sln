@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.CLI", "Presentation\XPL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{62C2DEA4-124C-49E6-B6AF-3566A7E72240}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess", "Core\XPL.Modules.UserAccess\XPL.Modules.UserAccess.csproj", "{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Application", "Core\XPL.Modules.UserAccess.Application\XPL.Modules.UserAccess.Application.csproj", "{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserAccess", "UserAccess", "{FF2F3B02-9B21-471D-88B5-889CD0D353F2}"
 EndProject

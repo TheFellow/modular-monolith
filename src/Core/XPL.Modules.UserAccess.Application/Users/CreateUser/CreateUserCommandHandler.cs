@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using XPL.Framework.Application.Modules.Contracts;
 
-namespace XPL.Modules.UserAccess.Users.CreateUser
+namespace XPL.Modules.UserAccess.Application.Users.CreateUser
 {
     public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, CreateUserResponse>
     {

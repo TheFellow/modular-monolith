@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
-using XPL.Modules.UserAccess.Users.CreateUser;
+using XPL.Modules.UserAccess.Application.Users.CreateUser;
 
 namespace XPL.CLI
 {
@@ -10,6 +10,8 @@ namespace XPL.CLI
         static async Task Main()
         {
             var app = CliApp.Build();
+
+            app.Logger.Info($"Application {app.ApplicationName} starting...");
 
             var bob = await app.ExecuteCommandAsync(new CreateUserCommand("Bob", "Bob@email.com"));
             var alice = await app.ExecuteCommandAsync(new CreateUserCommand("Alice", "alice@email.com"));

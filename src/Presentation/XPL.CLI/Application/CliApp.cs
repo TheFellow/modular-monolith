@@ -3,7 +3,7 @@ using XPL.Framework.Application.Builder;
 using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Configuration;
 using XPL.Framework.Infrastructure.Logging;
-using XPL.Modules.UserAccess.Startup;
+using XPL.Modules.UserAccess.Application.Startup;
 
 namespace XPL.CLI.Application
 {

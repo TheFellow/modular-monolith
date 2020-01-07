@@ -65,7 +65,7 @@ namespace XPL.Framework.Application.Builder
             RunOnStartup(container);
             RunOnInit(container);
 
-            return new App(_appName, container.GetInstance<ICommandQueryBus>());
+            return new App(_appName, container.GetInstance<ICommandQueryBus>(), _logger);
         }
 
         private void BootstrapAppContainer(IConfiguration config, ILogger logger)

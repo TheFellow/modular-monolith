@@ -4,16 +4,18 @@ using XPL.Framework.Application.Ports;
 
 namespace XPL.Framework.Application
 {
-    public sealed class App : ICommandQueryBus
+    public sealed partial class App : ICommandQueryBus
     {
         private readonly ICommandQueryBus _bus;
 
         public string ApplicationName { get; }
+        public ILogger Logger { get; }
 
-        public App(string appName, ICommandQueryBus bus)
+        public App(string appName, ICommandQueryBus bus, ILogger logger)
         {
             ApplicationName = appName;
             _bus = bus;
+            Logger = logger;
         }
 
         public Task ExecuteCommandAsync(ICommand command) => _bus.ExecuteCommandAsync(command);

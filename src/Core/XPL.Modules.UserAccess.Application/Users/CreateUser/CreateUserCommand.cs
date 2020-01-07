@@ -1,7 +1,7 @@
 ﻿using System;
 using XPL.Framework.Application.Modules.Contracts;
 
-namespace XPL.Modules.UserAccess.Users.CreateUser
+namespace XPL.Modules.UserAccess.Application.Users.CreateUser
 {
     public class CreateUserCommand : ICommand<CreateUserResponse>
     {
