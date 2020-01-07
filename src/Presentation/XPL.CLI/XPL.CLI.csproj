@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\core\XPL.Framework.Application.Builder\XPL.Framework.Application.Builder.csproj" />
     <ProjectReference Include="..\..\Core\XPL.Framework.Application\XPL.Framework.Application.csproj" />
-    <ProjectReference Include="..\..\core\XPL.Framework\XPL.Framework.csproj" />
     <ProjectReference Include="..\..\Core\XPL.Modules.UserAccess\XPL.Modules.UserAccess.csproj" />
     <ProjectReference Include="..\..\Infrastructure\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj" />
   </ItemGroup>

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework", "core\XPL.Framework\XPL.Framework.csproj", "{2F20D140-347F-47B3-A005-6D264E97D2C6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{AF015AE4-743C-4441-8720-1F5D428C92EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{DCDABE1A-A0D7-4337-903F-0C875E5AE812}"
@@ -21,9 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserAccess", "UserAccess", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{D80E0EE0-2DAE-4A4A-A7B5-FC35414B5D8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Framework.Application", "Core\XPL.Framework.Application\XPL.Framework.Application.csproj", "{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application", "Core\XPL.Framework.Application\XPL.Framework.Application.csproj", "{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Framework.Application.Builder", "core\XPL.Framework.Application.Builder\XPL.Framework.Application.Builder.csproj", "{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application.Builder", "core\XPL.Framework.Application.Builder\XPL.Framework.Application.Builder.csproj", "{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2F20D140-347F-47B3-A005-6D264E97D2C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F20D140-347F-47B3-A005-6D264E97D2C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F20D140-347F-47B3-A005-6D264E97D2C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F20D140-347F-47B3-A005-6D264E97D2C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4CE9211C-C85D-479E-A374-1E96C7E4E706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4CE9211C-C85D-479E-A374-1E96C7E4E706}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CE9211C-C85D-479E-A374-1E96C7E4E706}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,7 +54,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{2F20D140-347F-47B3-A005-6D264E97D2C6} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
 		{4CE9211C-C85D-479E-A374-1E96C7E4E706} = {62C2DEA4-124C-49E6-B6AF-3566A7E72240}
 		{D33F7A21-43A7-4E41-BD25-D24D2FFE1237} = {D80E0EE0-2DAE-4A4A-A7B5-FC35414B5D8C}
 		{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894} = {FF2F3B02-9B21-471D-88B5-889CD0D353F2}

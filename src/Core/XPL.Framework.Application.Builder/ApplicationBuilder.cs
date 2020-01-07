@@ -4,8 +4,8 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using XPL.Framework.Application.Modules.Contracts;
 using XPL.Framework.Application.Ports;
-using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application.Builder

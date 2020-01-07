@@ -1,5 +1,5 @@
 ﻿using System;
-using XPL.Framework.Modules.Contracts;
+using XPL.Framework.Application.Modules.Contracts;
 
 namespace XPL.Modules.UserAccess.Users.CreateUser
 {

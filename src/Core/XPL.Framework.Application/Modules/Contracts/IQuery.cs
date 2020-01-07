@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace XPL.Framework.Modules.Contracts
+namespace XPL.Framework.Application.Modules.Contracts
 {
     public interface IQuery<TResult> : IRequest<TResult> { }
 }
