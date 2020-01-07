@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\XPL.Framework.Application\XPL.Framework.Application.csproj" />
     <ProjectReference Include="..\XPL.Framework\XPL.Framework.csproj" />
   </ItemGroup>
 

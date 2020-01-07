@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPL.Framework.Ports
+namespace XPL.Framework.Application.Ports
 {
     public interface ILogger
     {

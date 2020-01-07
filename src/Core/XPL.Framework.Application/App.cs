@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using XPL.Framework.Application.Ports;
 using XPL.Framework.Modules.Contracts;
-using XPL.Framework.Ports;
 
 namespace XPL.Framework.Application
 {

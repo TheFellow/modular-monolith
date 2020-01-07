@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using XPL.Framework.Application.Ports;
 using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
-using XPL.Framework.Ports;
 
 namespace XPL.Framework.Application.Builder
 {
@@ -78,7 +78,8 @@ namespace XPL.Framework.Application.Builder
             AddStartupClasses();
         }
 
-        private void AddCommandQueryBus() => _appRegistry.For<ICommandQueryBus>().Use(ctx => (ICommandQueryBus)ctx.GetInstance(_busType));
+        #region Bootstrap Application
+
         private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
         private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
         private void AddMediator()
@@ -86,6 +87,7 @@ namespace XPL.Framework.Application.Builder
             _appRegistry.For<IMediator>().Use<Mediator>().Transient();
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
+        private void AddCommandQueryBus() => _appRegistry.For<ICommandQueryBus>().Use(ctx => (ICommandQueryBus)ctx.GetInstance(_busType));
         private void AddCommandQueryHandlers()
         {
             foreach (var assembly in _assemblies)
@@ -111,12 +113,14 @@ namespace XPL.Framework.Application.Builder
                 {
                     scan.Assembly(assembly);
 
-                    scan.AddAllTypesOf<ICommandQueryBus>();
                     scan.AddAllTypesOf<IRunOnStartup>();
                     scan.AddAllTypesOf<IRunOnInit>();
                 });
             }
         }
+
+        #endregion
+
         private void RunOnStartup(IContainer container)
         {
             var onStartups = container.GetAllInstances<IRunOnStartup>();
