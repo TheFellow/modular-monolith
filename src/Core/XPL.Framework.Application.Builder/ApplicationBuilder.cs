@@ -100,10 +100,9 @@ namespace XPL.Framework.Application.Builder
                 {
                     scan.Assembly(assembly);
 
-                    scan.AddAllTypesOf<ICommand>();
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommand<>));
-                    scan.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<>));
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
+
                     scan.ConnectImplementationsToTypesClosing(typeof(IQuery<>));
                     scan.ConnectImplementationsToTypesClosing(typeof(IQueryHandler<,>));
                 });

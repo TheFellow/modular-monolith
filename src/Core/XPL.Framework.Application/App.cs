@@ -19,7 +19,6 @@ namespace XPL.Framework.Application
             Logger = logger;
         }
 
-        public Task ExecuteCommandAsync(ICommand command) => _bus.ExecuteCommandAsync(command);
         public Task<TResult> ExecuteCommandAsync<TResult>(ICommand<TResult> command) => _bus.ExecuteCommandAsync(command);
         public Task ExecuteQueryAsync<TResult>(IQuery<TResult> query) => _bus.ExecuteQueryAsync(query);
     }
