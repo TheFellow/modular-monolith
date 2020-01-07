@@ -10,11 +10,13 @@ namespace XPL.CLI.Application
     public sealed class CliApp
     {
         public static App Build() =>
-            ApplicationBuilder.Create(nameof(CliApp))
+            ApplicationBuilder.Create(AppInfo)
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
                 .WithLogger(LoggerFactory.ConsoleInfoLogger)
                 .WithBus<InMemoryBus>()
                 .AddModuleRegistry<UserAccessServiceRegistry>()
                 .Build();
+
+        private static AppInfo AppInfo => new AppInfo(nameof(CliApp)) { Type = "Command Line" };
     }
 }

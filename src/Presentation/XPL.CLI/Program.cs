@@ -11,7 +11,7 @@ namespace XPL.CLI
         {
             var app = CliApp.Build();
 
-            app.Logger.Info($"Application {app.ApplicationName} starting...");
+            app.Logger.Info($"Application {app.AppInfo.Name} [{app.AppInfo.Type}] starting...");
 
             var bob = await app.ExecuteCommandAsync(new CreateUserCommand("Bob", "Bob@email.com"));
             var alice = await app.ExecuteCommandAsync(new CreateUserCommand("Alice", "alice@email.com"));

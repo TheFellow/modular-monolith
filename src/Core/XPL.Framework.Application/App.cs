@@ -8,12 +8,12 @@ namespace XPL.Framework.Application
     {
         private readonly ICommandQueryBus _bus;
 
-        public string ApplicationName { get; }
+        public AppInfo AppInfo { get; }
         public ILogger Logger { get; }
 
-        public App(string appName, ICommandQueryBus bus, ILogger logger)
+        public App(AppInfo appInfo, ICommandQueryBus bus, ILogger logger)
         {
-            ApplicationName = appName;
+            AppInfo = appInfo;
             _bus = bus;
             Logger = logger;
         }

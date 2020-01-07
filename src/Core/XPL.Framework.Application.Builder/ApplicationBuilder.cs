@@ -16,13 +16,15 @@ namespace XPL.Framework.Application.Builder
         private ILogger? _logger;
         private IConfiguration? _config;
         private Type? _busType;
-        private readonly string _appName;
+        private readonly AppInfo _appInfo;
         private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
         private readonly IList<Assembly> _assemblies = new List<Assembly>();
 
-        private ApplicationBuilder(string appName) => _appName = appName;
+        private ApplicationBuilder(string appName) : this(new AppInfo(appName)) { }
+        private ApplicationBuilder(AppInfo appInfo) => _appInfo = appInfo;
 
         public static INeedConfig Create(string appName) => new ApplicationBuilder(appName);
+        public static INeedConfig Create(AppInfo appInfo) => new ApplicationBuilder(appInfo);
 
         INeedLogging INeedConfig.WithConfig(IConfiguration config)
         {
@@ -66,7 +68,7 @@ namespace XPL.Framework.Application.Builder
             RunOnStartup(container);
             RunOnInit(container);
 
-            return new App(_appName, container.GetInstance<ICommandQueryBus>(), _logger);
+            return new App(_appInfo, container.GetInstance<ICommandQueryBus>(), _logger);
         }
 
         private void BootstrapAppContainer(IConfiguration config, ILogger logger)
