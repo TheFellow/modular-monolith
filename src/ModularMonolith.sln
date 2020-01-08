@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Infrastructur
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.CLI", "Presentation\XPL.CLI\XPL.CLI.csproj", "{D33F7A21-43A7-4E41-BD25-D24D2FFE1237}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{62C2DEA4-124C-49E6-B6AF-3566A7E72240}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Application", "Core\XPL.Modules.UserAccess.Application\XPL.Modules.UserAccess.Application.csproj", "{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserAccess", "UserAccess", "{FF2F3B02-9B21-471D-88B5-889CD0D353F2}"
@@ -29,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functional", "Functional", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functional", "Libs\Functional\Functional.csproj", "{C60F056D-A213-4D68-99DD-1AC45B57B7B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Framework.Modules", "XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Modules", "XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,7 +68,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4CE9211C-C85D-479E-A374-1E96C7E4E706} = {62C2DEA4-124C-49E6-B6AF-3566A7E72240}
+		{4CE9211C-C85D-479E-A374-1E96C7E4E706} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
 		{D33F7A21-43A7-4E41-BD25-D24D2FFE1237} = {D80E0EE0-2DAE-4A4A-A7B5-FC35414B5D8C}
 		{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894} = {FF2F3B02-9B21-471D-88B5-889CD0D353F2}
 		{FF2F3B02-9B21-471D-88B5-889CD0D353F2} = {DCDABE1A-A0D7-4337-903F-0C875E5AE812}
