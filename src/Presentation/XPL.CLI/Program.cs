@@ -38,7 +38,7 @@ namespace XPL.CLI
             DisplayResult(alice);
         }
 
-        private static void DisplayResult(Either<ICommandError, CreateUserResponse> bob)
+        private static void DisplayResult(Either<CommandError, CreateUserResponse> bob)
         {
             string result = bob
                 .Map(user => $"User created with Id {user.Id}")

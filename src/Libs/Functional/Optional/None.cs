@@ -16,6 +16,8 @@ namespace Functional.Option
         public override bool Equals(object? obj) => !(obj is null) && (obj is None<T> || obj is None);
         public override int GetHashCode() => 0;
 
+        public static implicit operator None<T>(None _) => new None<T>();
+
         public static bool operator ==([AllowNull] None<T> a, [AllowNull] None<T> b) => a is null && b is null || (a?.Equals(b) ?? false);
         public static bool operator !=([AllowNull] None<T> a, [AllowNull] None<T> b) => !(a == b);
         public static bool operator ==([AllowNull] None<T> a, [AllowNull] None b) => a is null && b is null || (a?.Equals(b) ?? false);

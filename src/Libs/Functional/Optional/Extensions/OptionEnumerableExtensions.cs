@@ -21,6 +21,17 @@ namespace Functional.Option
                 .Select(s => s.Content);
 
         /// <summary>
+        /// Returns a sequence of Content from a sequence of <see cref="Option{T}"/>s
+        /// </summary>
+        /// <typeparam name="T">The underlying type</typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<Option<T>> sequence) =>
+            sequence
+            .OfType<Some<T>>()
+            .Select(s => s.Content);
+
+        /// <summary>
         /// Returns the first element of the sequence as a <see cref="Some{T}"/> else <see cref="None{T}"/>
         /// </summary>
         /// <typeparam name="T">The underlying type</typeparam>
