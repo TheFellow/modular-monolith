@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Application.Modules.Contracts;
+using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.Users.CreateUser
 {

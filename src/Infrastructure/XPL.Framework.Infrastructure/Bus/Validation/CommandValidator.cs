@@ -2,7 +2,7 @@
 using Lamar;
 using System;
 using System.Collections.Generic;
-using XPL.Framework.Application.Modules.Contracts;
+using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Framework.Infrastructure.Bus.Validation
 {

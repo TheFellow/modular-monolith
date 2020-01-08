@@ -1,4 +1,4 @@
-﻿namespace XPL.Framework.Application.Modules.Contracts
+﻿namespace XPL.Framework.Modules.Contracts
 {
     public class CommandError
     {

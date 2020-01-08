@@ -1,6 +1,6 @@
 ﻿using Functional.Option;
 using System.Text.RegularExpressions;
-using XPL.Framework.Application.Modules.Contracts;
+using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.Users.CreateUser.Rules
 {

@@ -1,6 +1,6 @@
 ﻿using Functional.Option;
 
-namespace XPL.Framework.Application.Modules.Contracts
+namespace XPL.Framework.Modules.Contracts
 {
     public interface ICommandValidator
     {

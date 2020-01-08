@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application;
-using XPL.Framework.Application.Modules.Contracts;
+using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.Users.CreateUser;
 
 namespace XPL.CLI

@@ -1,7 +1,7 @@
 ﻿using Functional.Either;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Application.Modules.Contracts;
+using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Framework.Application.Ports.Bus
 {

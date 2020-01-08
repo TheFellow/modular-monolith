@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using XPL.Framework.Application.Builder.Pipeline;
-using XPL.Framework.Application.Modules.Contracts;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus.Validation;
+using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application.Builder

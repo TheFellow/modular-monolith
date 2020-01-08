@@ -1,5 +1,5 @@
 ﻿using Functional.Option;
-using XPL.Framework.Application.Modules.Contracts;
+using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.Users.CreateUser.Rules
 {
