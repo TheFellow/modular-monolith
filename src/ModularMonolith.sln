@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functional", "Functional", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functional", "Libs\Functional\Functional.csproj", "{C60F056D-A213-4D68-99DD-1AC45B57B7B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Framework.Modules", "XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{C60F056D-A213-4D68-99DD-1AC45B57B7B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C60F056D-A213-4D68-99DD-1AC45B57B7B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C60F056D-A213-4D68-99DD-1AC45B57B7B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED71B621-822E-4F06-A372-AD59C7BB3213}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED71B621-822E-4F06-A372-AD59C7BB3213}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED71B621-822E-4F06-A372-AD59C7BB3213}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED71B621-822E-4F06-A372-AD59C7BB3213}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
 		{1BE87C26-24CF-42AB-9B45-C205FBE20C52} = {A6806EE0-1FDC-4A49-8B06-213650A72F78}
 		{C60F056D-A213-4D68-99DD-1AC45B57B7B1} = {1BE87C26-24CF-42AB-9B45-C205FBE20C52}
+		{ED71B621-822E-4F06-A372-AD59C7BB3213} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED51870B-F52D-45C2-B30F-013A195BC2A7}
