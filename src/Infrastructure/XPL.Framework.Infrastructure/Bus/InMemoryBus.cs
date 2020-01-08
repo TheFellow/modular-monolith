@@ -5,16 +5,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Modules.Contracts;
 using XPL.Framework.Application.Ports.Bus;
-using XPL.Framework.Infrastructure.Bus.Validation;
 
 namespace XPL.Framework.Infrastructure.Bus
 {
     public sealed class InMemoryBus : IBus
     {
         private readonly IMediator _mediator;
-        private readonly CommandValidator _validator;
+        private readonly ICommandValidator _validator;
         
-        public InMemoryBus(IMediator mediator, CommandValidator validator)
+        public InMemoryBus(IMediator mediator, ICommandValidator validator)
         {
             _mediator = mediator;
             _validator = validator;

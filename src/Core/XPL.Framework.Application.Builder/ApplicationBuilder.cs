@@ -8,6 +8,7 @@ using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Modules.Contracts;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
+using XPL.Framework.Infrastructure.Bus.Validation;
 using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application.Builder
@@ -76,7 +77,7 @@ namespace XPL.Framework.Application.Builder
             AddLogging(logger);
             AddMediator();
             AddCommandQueryBus();
-            AddCommandQueryHandlers();
+            AddModuleContracts();
             AddStartupClasses();
         }
 
@@ -90,8 +91,10 @@ namespace XPL.Framework.Application.Builder
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
         private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use(ctx => (IBus)ctx.GetInstance(_busType));
-        private void AddCommandQueryHandlers()
+        private void AddModuleContracts()
         {
+            _appRegistry.For<ICommandValidator>().Use<CommandValidator>().Transient();
+
             foreach (var assembly in _assemblies)
             {
                 _appRegistry.Scan(scan =>

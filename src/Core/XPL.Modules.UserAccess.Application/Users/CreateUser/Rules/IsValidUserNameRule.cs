@@ -13,7 +13,7 @@ namespace XPL.Modules.UserAccess.Application.Users.CreateUser.Rules
                 return new CommandError("The username cannot be empty");
 
             if (userName.Contains(' '))
-                return new CommandError("The username cannot contain spaces");
+                return new CommandError($"The username \"{command.UserName}\" contains spaces");
 
             return None.Value;
         }

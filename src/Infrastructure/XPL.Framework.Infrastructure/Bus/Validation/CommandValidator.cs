@@ -6,7 +6,7 @@ using XPL.Framework.Application.Modules.Contracts;
 
 namespace XPL.Framework.Infrastructure.Bus.Validation
 {
-    public sealed class CommandValidator
+    public sealed class CommandValidator : ICommandValidator
     {
         private readonly IContainer _container;
 
