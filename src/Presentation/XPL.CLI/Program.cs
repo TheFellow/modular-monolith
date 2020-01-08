@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Functional.Either;
+using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application;
+using XPL.Modules.UserAccess.Application.Users;
 using XPL.Modules.UserAccess.Application.Users.CreateUser;
 
 namespace XPL.CLI
@@ -35,12 +37,13 @@ namespace XPL.CLI
             DisplayResult(alice);
         }
 
-        private static void DisplayResult(CreateUserResponse bob)
+        private static void DisplayResult(Either<UserError, CreateUserResponse> bob)
         {
-            if (bob.Success)
-                Console.WriteLine($"Created user with Id {bob.Id}");
-            else
-                Console.WriteLine($"Could not create user: {bob.Error}");
-        }   
+            string result = bob
+                .Map(user => $"User created with Id {user.Id}")
+                .Reduce(err => $"Error: {err}");
+
+            Console.WriteLine(result);
+        }
     }
 }
