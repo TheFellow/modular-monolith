@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application;
+using XPL.Framework.Application.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.Users;
 using XPL.Modules.UserAccess.Application.Users.CreateUser;
 
@@ -37,7 +38,7 @@ namespace XPL.CLI
             DisplayResult(alice);
         }
 
-        private static void DisplayResult(Either<UserError, CreateUserResponse> bob)
+        private static void DisplayResult(Either<ICommandError, CreateUserResponse> bob)
         {
             string result = bob
                 .Map(user => $"User created with Id {user.Id}")

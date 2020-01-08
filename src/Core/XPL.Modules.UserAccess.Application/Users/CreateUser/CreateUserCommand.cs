@@ -4,7 +4,7 @@ using XPL.Framework.Application.Modules.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.Users.CreateUser
 {
-    public class CreateUserCommand : ICommand<Either<UserError, CreateUserResponse>>
+    public class CreateUserCommand : ICommand<CreateUserResponse>
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();
         public string UserName { get; }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Functional.Either;
+using System.Threading.Tasks;
 using XPL.Framework.Application.Modules.Contracts;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
@@ -19,7 +20,7 @@ namespace XPL.Framework.Application
             Logger = logger;
         }
 
-        public Task<TResult> ExecuteCommandAsync<TResult>(ICommand<TResult> command) => _bus.ExecuteCommandAsync(command);
+        public Task<Either<ICommandError, TResult>> ExecuteCommandAsync<TResult>(ICommand<TResult> command) => _bus.ExecuteCommandAsync(command);
         public Task ExecuteQueryAsync<TResult>(IQuery<TResult> query) => _bus.ExecuteQueryAsync(query);
     }
 }
