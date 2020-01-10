@@ -53,9 +53,9 @@ namespace XPL.CLI
             }
         }
 
-        private static void DisplayResult(Either<CommandError, CreateUserResponse> bob)
+        private static void DisplayResult(Either<CommandError, CreateUserResponse> response)
         {
-            var (success, message) = bob
+            var (success, message) = response
                 .Map(user => (success: true, message: $"User {user.UserName} created with Id {user.Id}"))
                 .Reduce(err => (success: false, message: $"Error: {err}"));
 

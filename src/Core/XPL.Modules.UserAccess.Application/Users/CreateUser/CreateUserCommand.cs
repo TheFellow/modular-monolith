@@ -1,5 +1,4 @@
-﻿using Functional.Either;
-using System;
+﻿using System;
 using XPL.Framework.Modules.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.Users.CreateUser
