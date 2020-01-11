@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libs\Functional\Functional.csproj" />
     <ProjectReference Include="..\..\Libs\ValueTypes\ValueTypes.csproj" />
   </ItemGroup>
 
