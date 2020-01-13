@@ -1,4 +1,4 @@
-﻿using System;
+﻿using XPL.Framework.Domain;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 {
@@ -8,7 +8,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
         public UserRegistrationError(string error)
         {
             if (string.IsNullOrWhiteSpace(error))
-                throw new ArgumentException("No error message was provided.", nameof(error));
+                throw new DomainException("No error message was provided.");
             Error = error;
         }
 

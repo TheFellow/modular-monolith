@@ -42,6 +42,22 @@ namespace Functional.Either
                 : (TLeft)(Left<TLeft, TRight>)either;
 
         /// <summary>
+        /// Applies a function to the <typeparamref name="TLeft"/> type if the <see cref="Either{TLeft, TRight}"/> is a <see cref="Left{TLeft, TRight}"/>
+        /// </summary>
+        public static Either<TNewLeft, TRight> MapLeft<TLeft, TNewLeft, TRight>(this Either<TLeft, TRight> either, Func<TLeft, TNewLeft> map) =>
+            either is Left<TLeft, TRight> left
+                ? (Either<TNewLeft, TRight>)map(left.Content)
+                : (TRight)(Right<TLeft, TRight>)either;
+
+        /// <summary>
+        /// Applies a function to the <typeparamref name="TLeft"/> type if the <see cref="Either{TLeft, TRight}"/> is a <see cref="Left{TLeft, TRight}"/>
+        /// </summary>
+        public static Either<TNewLeft, TRight> MapLeft<TLeft, TNewLeft, TRight>(this Either<TLeft, TRight> either, Func<TLeft, Either<TNewLeft, TRight>> map) =>
+            either is Left<TLeft, TRight> left
+                ? (Either<TNewLeft, TRight>)map(left)
+                : (TRight)(Right<TLeft, TRight>)either;
+
+        /// <summary>
         /// Calls an <see cref="Action{T}"/> when the <see cref="Either{TLeft, TRight}"/> is a <see cref="Right{TLeft, TRight}"/> and
         /// returns the original <see cref="Either{TLeft, TRight}"/>
         /// </summary>

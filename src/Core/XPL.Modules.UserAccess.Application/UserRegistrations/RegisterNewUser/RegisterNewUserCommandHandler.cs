@@ -3,15 +3,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Modules.Contracts;
-using static XPL.Modules.UserAccess.Domain.UserRegistrations.UserRegistration;
+using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations
+namespace XPL.Modules.UserAccess.Application.UserRegistrations.RegisterNewUser
 {
     public class RegisterNewUserCommandHandler : ICommandHandler<RegisterNewUserCommand, RegisterNewUserResponse>
     {
-        private readonly Func<UserRegistrationBuilder> _builderFactory;
+        private readonly Func<IUserRegistrationBuilder> _builderFactory;
 
-        public RegisterNewUserCommandHandler(Func<UserRegistrationBuilder> builderFactory) => _builderFactory = builderFactory;
+        public RegisterNewUserCommandHandler(Func<IUserRegistrationBuilder> builderFactory) => _builderFactory = builderFactory;
 
         public async Task<Either<CommandError, RegisterNewUserResponse>> Handle(RegisterNewUserCommand request, CancellationToken cancellationToken)
         {
@@ -23,7 +23,9 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations
                 .WithLastName(request.LastName)
                 .Build();
 
-            return new RegisterNewUserResponse(); //
+            return result
+                .Map(r => new RegisterNewUserResponse(r))
+                .MapLeft(e => new CommandError(e.Error));
         }
     }
 }

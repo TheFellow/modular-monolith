@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ValueTypes;
+using XPL.Framework.Domain;
 
 namespace XPL.Modules.UserAccess.Domain.Kernel
 {
@@ -10,7 +10,7 @@ namespace XPL.Modules.UserAccess.Domain.Kernel
         public FirstName(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("First name cannot be empty.");
+                throw new DomainException("First name cannot be empty.");
             Value = value;
         }
 

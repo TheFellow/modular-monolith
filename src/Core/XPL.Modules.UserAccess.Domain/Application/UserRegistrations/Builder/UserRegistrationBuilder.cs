@@ -1,6 +1,8 @@
 ﻿using Functional.Either;
 using Functional.Option;
 using System;
+using XPL.Framework.Kernel.Email;
+using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
 
@@ -8,7 +10,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 {
     public partial class UserRegistration
     {
-        public class UserRegistrationBuilder
+        public class UserRegistrationBuilder : IUserRegistrationBuilder
         {
             private readonly LoginValidator _loginValidator;
             private string? _login;
@@ -22,37 +24,37 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                 _loginValidator = loginValidator;
             }
 
-            public UserRegistrationBuilder WithLogin(string login)
+            IUserRegistrationBuilder IUserRegistrationBuilder.WithLogin(string login)
             {
                 _login = login;
                 return this;
             }
 
-            public UserRegistrationBuilder WithPassword(string password)
+            IUserRegistrationBuilder IUserRegistrationBuilder.WithPassword(string password)
             {
                 _password = password;
                 return this;
             }
 
-            public UserRegistrationBuilder WithEmail(string email)
+            IUserRegistrationBuilder IUserRegistrationBuilder.WithEmail(string email)
             {
                 _email = email;
                 return this;
             }
 
-            public UserRegistrationBuilder WithFirstName(string firstName)
+            IUserRegistrationBuilder IUserRegistrationBuilder.WithFirstName(string firstName)
             {
                 _firstName = firstName;
                 return this;
             }
 
-            public UserRegistrationBuilder WithLastName(string lastName)
+            IUserRegistrationBuilder IUserRegistrationBuilder.WithLastName(string lastName)
             {
                 _lastName = lastName;
                 return this;
             }
 
-            public Either<UserRegistrationError, UserRegistration> Build()
+            Either<UserRegistrationError, UserRegistration> IUserRegistrationBuilder.Build()
             {
                 if (_login is null || _password is null || _email is null || _firstName is null || _lastName is null)
                     throw new InvalidOperationException("Specify all builder elements before attempting to build.");
@@ -65,10 +67,10 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                 {
                     return new UserRegistration()
                     {
-                        Id = RegistrationId.New,
+                        RegistrationId = RegistrationId.New,
                         _login = login,
                         _password = new Password(_password),
-                        _email = new Email(_email),
+                        _email = new EmailAddress(_email),
                         _firstName = new FirstName(_firstName),
                         _lastName = new LastName(_lastName)
                     };

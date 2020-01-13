@@ -1,6 +1,6 @@
 ﻿using XPL.Framework.Modules.Contracts;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations
+namespace XPL.Modules.UserAccess.Application.UserRegistrations.RegisterNewUser
 {
     public class RegisterNewUserCommand : ICommand<RegisterNewUserResponse>
     {

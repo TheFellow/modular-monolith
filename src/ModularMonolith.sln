@@ -29,11 +29,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functional", "Libs\Function
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Modules", "XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Modules.UserAccess.Domain", "Core\XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj", "{F1B616CB-59B8-4E78-866E-5E19FD4725AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Domain", "Core\XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj", "{F1B616CB-59B8-4E78-866E-5E19FD4725AD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueTypes", "Libs\ValueTypes\ValueTypes.csproj", "{EBEF41E4-638A-4063-A2CD-EDEC24A4D028}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ValueTypes", "ValueTypes", "{9C93B6B6-4400-493D-83C1-833A2B75DAD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Infrastructure", "Core\XPL.Modules.UserAccess.Infrastructure\XPL.Modules.UserAccess.Infrastructure.csproj", "{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Kernel", "Core\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj", "{604CEE1B-B7BF-45F3-8796-203E1D174B44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPL.Framework.Domain", "Core\XPL.Framework.Domain\XPL.Framework.Domain.csproj", "{019D17C6-5FBB-4FEB-8DD8-283563275B57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +83,18 @@ Global
 		{EBEF41E4-638A-4063-A2CD-EDEC24A4D028}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBEF41E4-638A-4063-A2CD-EDEC24A4D028}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBEF41E4-638A-4063-A2CD-EDEC24A4D028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{019D17C6-5FBB-4FEB-8DD8-283563275B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{019D17C6-5FBB-4FEB-8DD8-283563275B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{019D17C6-5FBB-4FEB-8DD8-283563275B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{019D17C6-5FBB-4FEB-8DD8-283563275B57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +112,9 @@ Global
 		{F1B616CB-59B8-4E78-866E-5E19FD4725AD} = {FF2F3B02-9B21-471D-88B5-889CD0D353F2}
 		{EBEF41E4-638A-4063-A2CD-EDEC24A4D028} = {9C93B6B6-4400-493D-83C1-833A2B75DAD1}
 		{9C93B6B6-4400-493D-83C1-833A2B75DAD1} = {A6806EE0-1FDC-4A49-8B06-213650A72F78}
+		{6FABE17B-E763-4E53-B1C8-31CB0F604AAE} = {FF2F3B02-9B21-471D-88B5-889CD0D353F2}
+		{604CEE1B-B7BF-45F3-8796-203E1D174B44} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
+		{019D17C6-5FBB-4FEB-8DD8-283563275B57} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED51870B-F52D-45C2-B30F-013A195BC2A7}

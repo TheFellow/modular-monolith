@@ -7,6 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libs\Functional\Functional.csproj" />
     <ProjectReference Include="..\..\Libs\ValueTypes\ValueTypes.csproj" />
+    <ProjectReference Include="..\XPL.Framework.Domain\XPL.Framework.Domain.csproj" />
+    <ProjectReference Include="..\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj" />
   </ItemGroup>
 
 </Project>
