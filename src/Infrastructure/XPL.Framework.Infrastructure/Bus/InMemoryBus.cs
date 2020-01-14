@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
-using XPL.Framework.Domain;
 using XPL.Framework.Modules.Contracts;
+using XPL.Framework.Modules.Domain;
 
 namespace XPL.Framework.Infrastructure.Bus
 {

@@ -6,7 +6,6 @@ using XPL.CLI.Application;
 using XPL.Framework.Application;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.RegisterNewUser;
-using XPL.Modules.UserAccess.Application.Users.CreateUser;
 
 namespace XPL.CLI
 {
@@ -36,7 +35,6 @@ namespace XPL.CLI
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
-            await TestCreateUserCommands(app);
             await TestRegisterNewUserCommands(app);
         }
 
@@ -46,39 +44,18 @@ namespace XPL.CLI
 
             var commands = new List<RegisterNewUserCommand>()
             {
-                new RegisterNewUserCommand("alice", "password", "alice@email.com", "Alice", "Brown"),
+                new RegisterNewUserCommand("alice", "pword", "alice@email.com", "Alice", "Brown"),
                 new RegisterNewUserCommand("", "password", "alice@email.com", "Alice", "Brown"),
                 new RegisterNewUserCommand("bob", "password", "bobbert@email.com", "Bob", "Carson"),
+                new RegisterNewUserCommand("bob", "pass123", "bobbert@email.com", "Bob", "Carson"),
+                new RegisterNewUserCommand("bob", "password123", "bobbert@email.com", "Bob", "Carson"),
             };
 
             foreach (var cmd in commands)
             {
                 WriteInfo($"Attempting to create login {cmd.Login} for {cmd.FirstName} {cmd.LastName} ({cmd.Email})");
                 var result = await app.ExecuteCommandAsync(cmd);
-                DisplayResult<RegisterNewUserResponse>(result, r => $"Registered login {cmd.Login}.");
-            }
-        }
-
-        private static async Task TestCreateUserCommands(App app)
-        {
-            WriteInfo(Environment.NewLine + nameof(TestCreateUserCommands));
-
-
-            var commands = new List<CreateUserCommand>()
-            {
-                new CreateUserCommand("Alice 123", "alice@email.com"),
-                new CreateUserCommand("Alice_123", "alice@email.com"),
-                new CreateUserCommand("", "alice@email.com"),
-                new CreateUserCommand("Bob", "bobert@email.com"),
-                new CreateUserCommand("Bob 88", "bobert@emailcom"),
-                new CreateUserCommand("Bob", "bobert.at.email.com"),
-            };
-
-            foreach (var cmd in commands)
-            {
-                WriteInfo($"Attempting to create user {cmd.UserName} with email address {cmd.EmailAddress}");
-                var result = await app.ExecuteCommandAsync(cmd);
-                DisplayResult<CreateUserResponse>(result, r => $"User {r.UserName} created with Id {r.Id}");
+                DisplayResult<RegisterNewUserResponse>(result, r => $"Created registration for login {cmd.Login}. Registration Expires {r.ExpiryDate.ToString("MM/dd/yyyy")}.");
             }
         }
 

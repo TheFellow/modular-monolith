@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ValueTypes;
-using XPL.Framework.Domain;
+using XPL.Framework.Modules.Domain;
 
 namespace XPL.Modules.UserAccess.Domain.Kernel
 {

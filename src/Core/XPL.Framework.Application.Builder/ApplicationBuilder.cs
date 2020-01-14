@@ -8,6 +8,7 @@ using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus.Validation;
+using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Modules.Contracts;
 using XPL.Framework.Modules.Startup;
 
@@ -75,6 +76,7 @@ namespace XPL.Framework.Application.Builder
         {
             AddConfig(config);
             AddLogging(logger);
+            AddSystemClock();
             AddMediator();
             AddCommandQueryBus();
             AddModuleContracts();
@@ -83,8 +85,9 @@ namespace XPL.Framework.Application.Builder
 
         #region Bootstrap Application
 
-        private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
         private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
+        private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
+        private void AddSystemClock() => _appRegistry.For<ISystemClock>().Use<SystemClock>();
         private void AddMediator()
         {
             _appRegistry.For<IMediator>().Use<Mediator>().Transient();

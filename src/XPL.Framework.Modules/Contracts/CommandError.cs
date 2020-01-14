@@ -1,9 +1,9 @@
 ﻿using System;
-using XPL.Framework.Domain;
+using XPL.Framework.Modules.Domain;
 
 namespace XPL.Framework.Modules.Contracts
 {
-    public class CommandError
+    public class CommandError : ICorrelate
     {
         public string Error { get; protected set; }
 

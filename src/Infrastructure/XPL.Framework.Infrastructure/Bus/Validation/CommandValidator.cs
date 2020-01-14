@@ -23,13 +23,16 @@ namespace XPL.Framework.Infrastructure.Bus.Validation
             {
                 Option<CommandError> option = ((dynamic)rule).Validate((dynamic)command);
                 if (option is Some<CommandError> error)
+                {
+                    error.Content.CorrelationId = command.CorrelationId;
                     errors.Add(error.Content);
+                }
             }
 
             if (errors.Count == 0)
                 return None.Value;
 
-            return new CommandErrorList(errors);
+            return new CommandErrorList(errors) { CorrelationId = command.CorrelationId };
         }
     }
 }
