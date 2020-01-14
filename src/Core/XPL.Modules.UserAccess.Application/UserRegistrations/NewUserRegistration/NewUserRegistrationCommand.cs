@@ -1,9 +1,9 @@
 ﻿using System;
 using XPL.Framework.Modules.Contracts;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations.RegisterNewUser
+namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration
 {
-    public class RegisterNewUserCommand : ICommand<RegisterNewUserResponse>
+    public class NewUserRegistrationCommand : ICommand<NewUserRegistrationResponse>
     {
         public string Login { get; }
         public string Password { get; }
@@ -13,7 +13,7 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.RegisterNewUser
 
         public Guid CorrelationId { get; } = Guid.NewGuid();
 
-        public RegisterNewUserCommand(string login, string password, string email, string firstName, string lastName)
+        public NewUserRegistrationCommand(string login, string password, string email, string firstName, string lastName)
         {
             Login = login;
             Password = password;

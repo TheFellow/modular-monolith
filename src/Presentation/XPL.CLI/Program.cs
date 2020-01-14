@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application;
 using XPL.Framework.Modules.Contracts;
-using XPL.Modules.UserAccess.Application.UserRegistrations.RegisterNewUser;
+using XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration;
 
 namespace XPL.CLI
 {
@@ -42,20 +42,20 @@ namespace XPL.CLI
         {
             WriteInfo(Environment.NewLine + nameof(TestRegisterNewUserCommands));
 
-            var commands = new List<RegisterNewUserCommand>()
+            var commands = new List<NewUserRegistrationCommand>()
             {
-                new RegisterNewUserCommand("alice", "pword", "alice@email.com", "Alice", "Brown"),
-                new RegisterNewUserCommand("", "password", "alice@email.com", "Alice", "Brown"),
-                new RegisterNewUserCommand("bob", "password", "bobbert@email.com", "Bob", "Carson"),
-                new RegisterNewUserCommand("bob", "pass123", "bobbert@email.com", "Bob", "Carson"),
-                new RegisterNewUserCommand("bob", "password123", "bobbert@email.com", "Bob", "Carson"),
+                new NewUserRegistrationCommand("alice", "pword", "alice@email.com", "Alice", "Brown"),
+                new NewUserRegistrationCommand("", "password", "alice@email.com", "Alice", "Brown"),
+                new NewUserRegistrationCommand("bob", "password", "bobbert@email.com", "Bob", "Carson"),
+                new NewUserRegistrationCommand("bob", "pass123", "bobbert@email.com", "Bob", "Carson"),
+                new NewUserRegistrationCommand("bob", "password123", "bobbert@email.com", "Bob", "Carson"),
             };
 
             foreach (var cmd in commands)
             {
                 WriteInfo($"Attempting to create login {cmd.Login} for {cmd.FirstName} {cmd.LastName} ({cmd.Email})");
                 var result = await app.ExecuteCommandAsync(cmd);
-                DisplayResult<RegisterNewUserResponse>(result, r => $"Created registration for login {cmd.Login}. Registration Expires {r.ExpiryDate.ToString("MM/dd/yyyy")}.");
+                DisplayResult<NewUserRegistrationResponse>(result, r => $"Created registration for login {cmd.Login}. Registration Expires {r.ExpiryDate.ToString("MM/dd/yyyy")}.");
             }
         }
 
