@@ -10,6 +10,7 @@ using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus.Validation;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Modules.Contracts;
+using XPL.Framework.Modules.Domain;
 using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application.Builder
@@ -107,6 +108,8 @@ namespace XPL.Framework.Application.Builder
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommand<>));
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommandRule<>));
+
+                    scan.ConnectImplementationsToTypesClosing(typeof(IDomainEventHandler<>));
 
                     scan.ConnectImplementationsToTypesClosing(typeof(IQuery<>));
                     scan.ConnectImplementationsToTypesClosing(typeof(IQueryHandler<,>));

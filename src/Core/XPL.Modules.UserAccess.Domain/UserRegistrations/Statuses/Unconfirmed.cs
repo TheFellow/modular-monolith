@@ -17,13 +17,15 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses
 
         public override Status Confirm(Action action)
         {
-            if (_systemClock.Now.Date > _expiryDate)
+            if (!CanConfirm())
                 throw new DomainException("Cannot confirm registration after expiration date.");
 
             action();
             return new Confirmed();
         }
-
         public override Status Expire() => new Expired();
+
+        private bool CanConfirm() => _systemClock.Now.Date <= _expiryDate;
+
     }
 }

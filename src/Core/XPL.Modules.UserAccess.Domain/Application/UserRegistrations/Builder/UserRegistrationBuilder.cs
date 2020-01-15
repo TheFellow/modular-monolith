@@ -6,7 +6,6 @@ using XPL.Framework.Kernel.Email;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
-using XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 {
@@ -70,20 +69,17 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 
                 DateTime expiryDate = _systemClock.Now.AddDays(7).Date;
 
-                return new UserRegistration()
-                {
-                    RegistrationId = RegistrationId.New,
-                    _login = login,
-                    _password = new Password(_password),
-                    _email = new EmailAddress(_email),
-                    _firstName = new FirstName(_firstName),
-                    _lastName = new LastName(_lastName),
-                    _confirmationCode = "abc123", // TODO: Generate a random confirmation code
-                    ExpiryDate = expiryDate,
-                    _status = new Unconfirmed(_systemClock, expiryDate),
-
-                    _systemClock = _systemClock
-                };
+                return new UserRegistration(
+                    _systemClock,
+                    RegistrationId.New,
+                    new EmailAddress(_email),
+                    login,
+                    new Password(_password),
+                    new FirstName(_firstName),
+                    new LastName(_lastName),
+                    "abc123", // TODO: Generate a random confirmation code
+                    expiryDate
+                );
             }
         }
     }
