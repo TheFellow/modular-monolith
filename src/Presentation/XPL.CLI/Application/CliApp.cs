@@ -14,6 +14,7 @@ namespace XPL.CLI.Application
             ApplicationBuilder.Create(AppInfo)
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
                 .WithLogger(LoggerFactory.ConsoleInfoLogger)
+                .WithConnectionString(new CliAppConnectionString())
                 .WithBus<InMemoryBus>()
                 .AddModuleRegistry<UserAccessServiceRegistry>()
                 .Build();

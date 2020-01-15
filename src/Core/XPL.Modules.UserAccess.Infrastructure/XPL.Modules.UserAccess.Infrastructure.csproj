@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj" />
     <ProjectReference Include="..\XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj" />
   </ItemGroup>
 

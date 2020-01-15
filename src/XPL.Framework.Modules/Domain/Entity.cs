@@ -4,12 +4,15 @@ namespace XPL.Framework.Modules.Domain
 {
     public abstract class Entity : IEntity
     {
-        private List<IDomainEvent>? _events;
-        private List<IDomainEvent> DomainEvents => _events ??= new List<IDomainEvent>();
+        private List<IDomainEvent> _domainEvents = null!;
 
-        protected void AddDomainEvent(IDomainEvent @event) => DomainEvents.Add(@event);
+        protected void AddDomainEvent(IDomainEvent @event)
+        {
+            _domainEvents ??= new List<IDomainEvent>();
+            _domainEvents.Add(@event);
+        }
 
-        void IEntity.ClearEvents() => DomainEvents.Clear();
-        IEnumerable<IDomainEvent> IEntity.GetDomainEvents() => DomainEvents.ToArray();
+        void IEntity.ClearEvents() => _domainEvents.Clear();
+        IEnumerable<IDomainEvent> IEntity.GetDomainEvents() => _domainEvents.AsReadOnly();
     }
 }

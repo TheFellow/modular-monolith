@@ -5,7 +5,7 @@ using XPL.Modules.UserAccess.Domain.Kernel;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Events
 {
-    public class UserRegistrationConfirmed : IDomainEvent
+    public sealed class UserRegistrationConfirmed : IDomainEvent
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();
         public RegistrationId RegistrationId { get; }

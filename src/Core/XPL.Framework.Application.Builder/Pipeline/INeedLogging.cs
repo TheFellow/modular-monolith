@@ -4,6 +4,6 @@ namespace XPL.Framework.Application.Builder.Pipeline
 {
     public interface INeedLogging
     {
-        public INeedBus WithLogger(ILogger logger);
+        public INeedConnectionString WithLogger(ILogger logger);
     }
 }
