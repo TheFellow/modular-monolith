@@ -33,6 +33,6 @@ namespace XPL.CLI.Application
 
 
         
-        public UserAccessUoW GetUserAccessUoW() => _container.GetInstance<UserAccessUoW>();
+        public UserAccessUoW GetUserAccessUoW() => _container.GetNestedContainer().GetInstance<UserAccessUoW>();
     }
 }

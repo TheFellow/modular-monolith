@@ -41,10 +41,15 @@ namespace XPL.CLI
                 var result = await userAccess.ExecuteCommandAsync(cmd);
                 DisplayResult(result);
 
+                await userAccess.CommitAsync();
+            }
+
+            using (var userAccess = app.GetUserAccessUoW())
+            {
                 WriteInfo("Create Registration for Bob.");
 
-                cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "bob@email.com", "Bob", "Crown");
-                result = await userAccess.ExecuteCommandAsync(cmd);
+                var cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "bob@email.com", "Bob", "Crown");
+                var result = await userAccess.ExecuteCommandAsync(cmd);
 
                 DisplayResult(result);
 

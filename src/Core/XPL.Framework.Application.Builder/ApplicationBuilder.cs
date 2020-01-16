@@ -80,7 +80,6 @@ namespace XPL.Framework.Application.Builder
             _logger.Debug(container.WhatDidIScan());
             _logger.Debug(container.WhatDoIHave());
 
-
             var app = container.GetInstance<TApp>();
             return new Runner<TApp>(app, _logger, container);
         }
