@@ -1,9 +1,7 @@
 ﻿using Functional.Either;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
-using XPL.Framework.Application;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration;
 
@@ -16,7 +14,7 @@ namespace XPL.CLI
             var runner = CliApp
                 .Build();
 
-            App app;
+            CliApp app;
 
             try
             {
@@ -31,39 +29,34 @@ namespace XPL.CLI
             await Run(app);
         }
 
-        private static async Task Run(App app)
+        private static async Task Run(CliApp app)
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
-            await TestRegisterNewUserCommands(app);
-        }
-
-        private static async Task TestRegisterNewUserCommands(App app)
-        {
-            WriteInfo(Environment.NewLine + nameof(TestRegisterNewUserCommands));
-
-            var commands = new List<NewUserRegistrationCommand>()
+            using (var userAccess = app.GetUserAccessUoW())
             {
-                new NewUserRegistrationCommand("alice", "pword", "alice@email.com", "Alice", "Brown"),
-                new NewUserRegistrationCommand("", "password", "alice@email.com", "Alice", "Brown"),
-                new NewUserRegistrationCommand("bob", "password", "bobbert@email.com", "Bob", "Carson"),
-                new NewUserRegistrationCommand("bob", "pass123", "bobbert@email.com", "Bob", "Carson"),
-                new NewUserRegistrationCommand("bob", "password123", "bobbert@email.com", "Bob", "Carson"),
-            };
+                WriteInfo("Create Registration for Alice.");
 
-            foreach (var cmd in commands)
-            {
-                WriteInfo($"Attempting to create login {cmd.Login} for {cmd.FirstName} {cmd.LastName} ({cmd.Email})");
-                var result = await app.ExecuteCommandAsync(cmd);
-                DisplayResult<NewUserRegistrationResponse>(result, r => $"Created registration for login {cmd.Login}. Registration Expires {r.ExpiryDate.ToString("MM/dd/yyyy")}.");
+                var cmd = new NewUserRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
+                var result = await userAccess.ExecuteCommandAsync(cmd);
+                DisplayResult(result);
+
+                WriteInfo("Create Registration for Bob.");
+
+                cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "bob@email.com", "Bob", "Crown");
+                result = await userAccess.ExecuteCommandAsync(cmd);
+
+                DisplayResult(result);
+
+                await userAccess.CommitAsync();
             }
         }
 
-        private static void DisplayResult<T>(Either<CommandError, T> response, Func<T, string> func)
+        private static void DisplayResult(Either<CommandError, NewUserRegistrationResponse> result)
         {
-            var (success, message) = response
-                .Map(user => (success: true, message: func(user)))
-                .Reduce(err => (success: false, message: $"Error: {err}"));
+            (bool success, string message) = result
+                .Map(resp => (true, $"Registered login \"{resp.Login}\" id {resp.RegistrationId}"))
+                .Reduce(err => (false, err.Error));
 
             if (success)
                 WriteSuccess(message);

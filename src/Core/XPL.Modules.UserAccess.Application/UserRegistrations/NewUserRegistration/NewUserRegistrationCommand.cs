@@ -21,6 +21,5 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
             FirstName = firstName;
             LastName = lastName;
         }
-
     }
 }

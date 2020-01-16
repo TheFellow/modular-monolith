@@ -24,15 +24,13 @@ namespace XPL.Framework.Application.Builder
         private IConfiguration? _config;
         private Type? _busType;
         private ConnectionString? _connectionString;
-        private readonly AppInfo _appInfo;
         private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
         private readonly IList<Assembly> _assemblies = new List<Assembly>();
 
-        private ApplicationBuilder(string appName) : this(new AppInfo(appName)) { }
-        private ApplicationBuilder(AppInfo appInfo) => _appInfo = appInfo;
+        private ApplicationBuilder() { }
 
-        public static INeedConfig Create(string appName) => new ApplicationBuilder(appName);
-        public static INeedConfig Create(AppInfo appInfo) => new ApplicationBuilder(appInfo);
+        #region Builder Methods
+        public static INeedConfig Create() => new ApplicationBuilder();
 
         INeedLogging INeedConfig.WithConfig(IConfiguration config)
         {
@@ -49,6 +47,7 @@ namespace XPL.Framework.Application.Builder
         INeedBus INeedConnectionString.WithConnectionString(ConnectionString connectionString)
         {
             _connectionString = connectionString;
+            _appRegistry.For<ConnectionString>().Use(_connectionString);
             return this;
         }
 
@@ -64,9 +63,10 @@ namespace XPL.Framework.Application.Builder
             _assemblies.Add(typeof(TRegistry).Assembly);
 
             return this;
-        }
+        } 
+        #endregion
 
-        IRunnable INeedModules.Build()
+        IRunnable<TApp> INeedModules.Build<TApp>()
         {
             if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configuration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
@@ -80,8 +80,9 @@ namespace XPL.Framework.Application.Builder
             _logger.Debug(container.WhatDidIScan());
             _logger.Debug(container.WhatDoIHave());
 
-            var app = new App(_appInfo, container.GetInstance<IBus>(), _logger);
-            return new Runner(app, _logger, container);
+
+            var app = container.GetInstance<TApp>();
+            return new Runner<TApp>(app, _logger, container);
         }
 
         private void BootstrapApp(IConfiguration config, ILogger logger)
@@ -97,12 +98,12 @@ namespace XPL.Framework.Application.Builder
 
         #region Bootstrap Application
 
-        private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config);
-        private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger);
+        private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config).Singleton();
+        private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger).Singleton();
         private void AddSystemClock() => _appRegistry.For<ISystemClock>().Use<SystemClock>();
         private void AddMediator()
         {
-            _appRegistry.For<IMediator>().Use<Mediator>().Transient();
+            _appRegistry.For<IMediator>().Use<Mediator>();
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
         private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use(ctx => (IBus)ctx.GetInstance(_busType));
@@ -146,23 +147,23 @@ namespace XPL.Framework.Application.Builder
 
         #endregion
 
-        private class Runner : IRunnable
+        private class Runner<TApp> : IRunnable<TApp>
         {
-            private readonly App _app;
+            private readonly TApp _app;
             private readonly IContainer _container;
 
             public ILogger Logger { get; }
 
-            public Runner(App app, ILogger logger, IContainer container)
+            public Runner(TApp app, ILogger logger, IContainer container)
             {
                 _app = app;
                 Logger = logger;
                 _container = container;
             }
 
-            public App Run()
+            public TApp Run()
             {
-                Logger.Info("Starting {@Application}", _app.AppInfo);
+                Logger.Info("Starting Application");
 
                 RunOnStartup();
                 RunOnInit();

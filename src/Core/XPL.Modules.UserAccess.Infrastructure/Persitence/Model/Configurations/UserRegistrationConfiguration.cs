@@ -5,16 +5,15 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model.Configurations
 {
     public class UserRegistrationConfiguration : IEntityTypeConfiguration<UserRegistrationSql>
     {
-        private const string _schema = "UserAccess";
         private const string _sequence = "SeqPrimaryKeys";
 
         public void Configure(EntityTypeBuilder<UserRegistrationSql> builder)
         {
-            builder.ToTable(_schema)
+            builder.ToTable("UserRegistration")
                 .HasKey(u => u.Id);
 
             builder.Property(u => u.Id)
-                .UseHiLo(_sequence, _schema);
+                .UseHiLo(_sequence);
 
             builder.Property(u => u.RegistrationId)
                 .HasColumnName("RegistrationId")

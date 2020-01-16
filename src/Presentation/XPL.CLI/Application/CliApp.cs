@@ -1,24 +1,38 @@
-﻿using XPL.Framework.Application;
+﻿using Lamar;
+using XPL.Framework.Application;
 using XPL.Framework.Application.Builder;
 using XPL.Framework.Application.Builder.Pipeline;
+using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Configuration;
 using XPL.Framework.Infrastructure.Logging;
 using XPL.Modules.UserAccess.Application.Startup;
+using XPL.Modules.UserAccess.Infrastructure.Persitence;
 
 namespace XPL.CLI.Application
 {
-    public sealed class CliApp
+    public sealed class CliApp : App
     {
-        public static IRunnable Build() =>
-            ApplicationBuilder.Create(AppInfo)
+        private static readonly AppInfo _appInfo = new AppInfo(nameof(CliApp)) { Type = "Command Line" };
+        private readonly IContainer _container;
+
+        public CliApp(ILogger logger, IContainer container)
+            : base(_appInfo, logger)
+        {
+            _container = container;
+        }
+
+        public static IRunnable<CliApp> Build() =>
+            ApplicationBuilder.Create()
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
-                .WithLogger(LoggerFactory.ConsoleInfoLogger)
+                .WithLogger(LoggerFactory.ConsoleDebugLogger)
                 .WithConnectionString(new CliAppConnectionString())
                 .WithBus<InMemoryBus>()
                 .AddModuleRegistry<UserAccessServiceRegistry>()
-                .Build();
+                .Build<CliApp>();
 
-        private static AppInfo AppInfo => new AppInfo(nameof(CliApp)) { Type = "Command Line" };
+
+        
+        public UserAccessUoW GetUserAccessUoW() => _container.GetInstance<UserAccessUoW>();
     }
 }

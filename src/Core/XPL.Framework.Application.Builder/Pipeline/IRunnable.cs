@@ -2,9 +2,9 @@
 
 namespace XPL.Framework.Application.Builder.Pipeline
 {
-    public interface IRunnable
+    public interface IRunnable<TApp>
     {
-        App Run();
+        TApp Run();
         ILogger Logger { get; }
     }
 }

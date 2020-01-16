@@ -5,11 +5,13 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
 {
     public class NewUserRegistrationResponse
     {
+        public string Login { get; }
         public Guid RegistrationId { get; }
         public DateTime ExpiryDate { get; }
 
-        public NewUserRegistrationResponse(UserRegistration registration)
+        public NewUserRegistrationResponse(UserRegistration registration, string login)
         {
+            Login = login;
             RegistrationId = registration.RegistrationId.Id;
             ExpiryDate = registration.ExpiryDate;
         }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
+using XPL.Modules.UserAccess.Domain.UserRegistrations;
 
 namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration
 {
@@ -23,8 +24,11 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
                 .WithLastName(request.LastName)
                 .Build();
 
+            if (result is Right<UserRegistrationError, UserRegistration> reg)
+                reg.Content.Confirm("abc123");
+
             return result
-                .Map(r => new NewUserRegistrationResponse(r))
+                .Map(r => new NewUserRegistrationResponse(r, request.Login))
                 .MapLeft(e => new CommandError(e.Error));
         }
     }
