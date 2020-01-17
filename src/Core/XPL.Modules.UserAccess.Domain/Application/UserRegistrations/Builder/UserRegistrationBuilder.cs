@@ -3,6 +3,7 @@ using Functional.Option;
 using System;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Kernel.Email;
+using XPL.Framework.Kernel.Passwords;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;

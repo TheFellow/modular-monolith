@@ -1,10 +1,11 @@
 ﻿using System;
+using XPL.Framework.Infrastructure.Persistence;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model
 {
-    public class UserRegistrationSql
+    public class SqlUserRegistration : ISqlId
     {
-        public UserRegistrationSql(
+        public SqlUserRegistration(
             int id,
             Guid registrationId,
             string login,
@@ -13,6 +14,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model
             string passwordSalt,
             string firstName,
             string lastName,
+            string status,
             string updatedBy,
             DateTime updatedOn)
         {
@@ -24,6 +26,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model
             PasswordSalt = passwordSalt;
             FirstName = firstName;
             LastName = lastName;
+            Status = status;
             UpdatedBy = updatedBy;
             UpdatedOn = updatedOn;
         }
@@ -36,6 +39,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model
         public string PasswordSalt { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Status { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
     }

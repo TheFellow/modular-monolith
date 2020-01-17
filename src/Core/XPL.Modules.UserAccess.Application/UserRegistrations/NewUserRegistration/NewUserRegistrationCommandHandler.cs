@@ -10,9 +10,16 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
 {
     public class NewUserRegistrationCommandHandler : ICommandHandler<NewUserRegistrationCommand, NewUserRegistrationResponse>
     {
+        private readonly IUserRegistrationRepository _repository;
         private readonly Func<IUserRegistrationBuilder> _builderFactory;
 
-        public NewUserRegistrationCommandHandler(Func<IUserRegistrationBuilder> builderFactory) => _builderFactory = builderFactory;
+        public NewUserRegistrationCommandHandler(
+            IUserRegistrationRepository repository,
+            Func<IUserRegistrationBuilder> builderFactory)
+        {
+            _repository = repository;
+            _builderFactory = builderFactory;
+        }
 
         public async Task<Either<CommandError, NewUserRegistrationResponse>> Handle(NewUserRegistrationCommand request, CancellationToken cancellationToken)
         {
@@ -24,8 +31,8 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
                 .WithLastName(request.LastName)
                 .Build();
 
-            if (result is Right<UserRegistrationError, UserRegistration> reg)
-                reg.Content.Confirm("abc123");
+            if (result is Right<UserRegistrationError, UserRegistration> userRegistration)
+                await _repository.AddAsync(userRegistration.Content);
 
             return result
                 .Map(r => new NewUserRegistrationResponse(r, request.Login))

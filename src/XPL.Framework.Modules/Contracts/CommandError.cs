@@ -1,5 +1,5 @@
 ﻿using System;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Kernel;
 
 namespace XPL.Framework.Modules.Contracts
 {

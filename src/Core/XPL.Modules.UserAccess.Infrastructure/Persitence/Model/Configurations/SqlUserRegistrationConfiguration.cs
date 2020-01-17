@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model.Configurations
 {
-    public class UserRegistrationConfiguration : IEntityTypeConfiguration<UserRegistrationSql>
+    public class SqlUserRegistrationConfiguration : IEntityTypeConfiguration<SqlUserRegistration>
     {
         private const string _sequence = "SeqPrimaryKeys";
 
-        public void Configure(EntityTypeBuilder<UserRegistrationSql> builder)
+        public void Configure(EntityTypeBuilder<SqlUserRegistration> builder)
         {
             builder.ToTable("UserRegistration")
                 .HasKey(u => u.Id);
@@ -32,13 +32,12 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model.Configurations
 
             builder.Property(u => u.PasswordHash)
                 .HasColumnName("PasswordHash")
-                .HasMaxLength(64)
+                .HasMaxLength(256)
                 .IsRequired();
 
             builder.Property(u => u.PasswordSalt)
                 .HasColumnName("PasswordSalt")
-                .HasColumnType("varchar(12)")
-                .HasMaxLength(12)
+                .HasMaxLength(64)
                 .IsRequired();
 
             builder.Property(u => u.FirstName)

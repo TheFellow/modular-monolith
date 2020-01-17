@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPL.Framework.Modules.Domain
+namespace XPL.Framework.Kernel
 {
     /// <summary>
     /// A <see cref="DomainException"/> is the only type of <see cref="Exception"/> caught by the Bus.

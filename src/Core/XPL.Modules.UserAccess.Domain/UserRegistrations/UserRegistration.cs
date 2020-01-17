@@ -1,6 +1,8 @@
 ﻿using System;
+using XPL.Framework.Kernel;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Kernel.Email;
+using XPL.Framework.Kernel.Passwords;
 using XPL.Framework.Modules.Domain;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Events;
@@ -10,15 +12,14 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 {
     public partial class UserRegistration : Entity
     {
-        private readonly EmailAddress _email;
-        private readonly Login _login;
-        private readonly Password _password;
-        private readonly FirstName _firstName;
-        private readonly LastName _lastName;
-
-        private readonly ISystemClock _systemClock;
-        private readonly string _confirmationCode;
+        private EmailAddress _email;
+        private Login _login;
+        private Password _password;
+        private FirstName _firstName;
+        private LastName _lastName;
+        private string _confirmationCode;
         private Status _status;
+        private ISystemClock _systemClock;
 
         public RegistrationId RegistrationId { get; private set; }
         public DateTime ExpiryDate { get; private set; }
@@ -65,5 +66,10 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
             _status = new Unconfirmed(_systemClock, ExpiryDate);
         }
 
+        #region Private Empty Ctor
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        private UserRegistration() { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable. 
+        #endregion
     }
 }

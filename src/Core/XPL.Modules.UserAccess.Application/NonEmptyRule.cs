@@ -1,8 +1,8 @@
 ﻿using Functional.Option;
 using System;
 using System.Linq.Expressions;
+using XPL.Framework.Kernel;
 using XPL.Framework.Modules.Contracts;
-using XPL.Framework.Modules.Domain;
 
 namespace XPL.Modules.UserAccess.Application
 {

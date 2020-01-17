@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
+using XPL.Framework.Kernel;
 using XPL.Framework.Modules.Contracts;
-using XPL.Framework.Modules.Domain;
 
 namespace XPL.Framework.Infrastructure.Bus
 {
@@ -26,6 +26,9 @@ namespace XPL.Framework.Infrastructure.Bus
 
         public async Task<Either<CommandError, TResult>> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
         {
+            // TODO: Revisit this. I think the Bus might be too early to catch 
+            // a DomainException. We may need it to bubble out to the UoW so that we can
+            // ensure we don't leave the domain model in an inconsistent state.
             try
             {
                 var errors = _validator.Validate(command);

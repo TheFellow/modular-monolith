@@ -1,6 +1,6 @@
 ﻿using System;
+using XPL.Framework.Kernel;
 using XPL.Framework.Kernel.DateTimes;
-using XPL.Framework.Modules.Domain;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses
 {

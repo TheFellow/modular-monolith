@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using XPL.Framework.Modules.Domain;
 
-namespace XPL.Modules.UserAccess.Domain.Kernel
+namespace XPL.Framework.Kernel.Passwords
 {
     public class PasswordComplexityRules
     {

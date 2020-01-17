@@ -8,7 +8,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence
     {
         private const string _schema = "UserAccess";
 
-        public DbSet<UserRegistrationSql> UserRegistrations { get; set; } = null!;
+        public DbSet<SqlUserRegistration> UserRegistrations { get; set; } = null!;
 
         public UserAccessDbContext(DbContextOptions<UserAccessDbContext> options)
             : base(options)
@@ -20,7 +20,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence
         {
             modelBuilder.HasDefaultSchema(_schema);
 
-            modelBuilder.ApplyConfiguration(new UserRegistrationConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlUserRegistrationConfiguration());
         }
     }
 }
