@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Modules.Contracts;
+using XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration;
 using XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration;
 
 namespace XPL.CLI
@@ -33,34 +34,33 @@ namespace XPL.CLI
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
+            //using (var userAccess = app.GetUserAccessUoW())
+            //{
+            //    WriteInfo("Create Registration for Alice.");
+
+            //    var cmd = new NewUserRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
+            //    var result = await userAccess.ExecuteCommandAsync(cmd);
+            //    DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
+
+            //    await userAccess.CommitAsync();
+            //}
+
             using (var userAccess = app.GetUserAccessUoW())
             {
-                WriteInfo("Create Registration for Alice.");
+                WriteInfo("Confirm registration for Alice.");
 
-                var cmd = new NewUserRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
+                var cmd = new ConfirmRegistrationCommand(new Guid("5F0D2543-D87F-49F9-B47F-6B7D9C41F1B1"), "abc123");
                 var result = await userAccess.ExecuteCommandAsync(cmd);
-                DisplayResult(result);
-
-                await userAccess.CommitAsync();
-            }
-
-            using (var userAccess = app.GetUserAccessUoW())
-            {
-                WriteInfo("Create Registration for Bob.");
-
-                var cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "bob@email.com", "Bob", "Crown");
-                var result = await userAccess.ExecuteCommandAsync(cmd);
-
-                DisplayResult(result);
+                DisplayResult(result, r => r.Message);
 
                 await userAccess.CommitAsync();
             }
         }
 
-        private static void DisplayResult(Either<CommandError, NewUserRegistrationResponse> result)
+        private static void DisplayResult<T>(Either<CommandError, T> result, Func<T, string> display)
         {
             (bool success, string message) = result
-                .Map(resp => (true, $"Registered login \"{resp.Login}\" id {resp.RegistrationId}"))
+                .Map(resp => (true, display(resp)))
                 .Reduce(err => (false, err.Error));
 
             if (success)

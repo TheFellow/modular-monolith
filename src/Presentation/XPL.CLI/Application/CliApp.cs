@@ -7,7 +7,7 @@ using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Configuration;
 using XPL.Framework.Infrastructure.Logging;
 using XPL.Modules.UserAccess.Application.Startup;
-using XPL.Modules.UserAccess.Infrastructure.Persitence;
+using XPL.Modules.UserAccess.Infrastructure.Data;
 
 namespace XPL.CLI.Application
 {

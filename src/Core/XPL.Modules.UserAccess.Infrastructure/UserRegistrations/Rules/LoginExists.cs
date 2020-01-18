@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
-using XPL.Modules.UserAccess.Infrastructure.Persitence;
+using XPL.Modules.UserAccess.Infrastructure.Data;
 
 namespace XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules
 {

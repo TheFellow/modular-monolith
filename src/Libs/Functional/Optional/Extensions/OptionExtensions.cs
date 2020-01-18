@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Functional.Either;
+using System;
 
 namespace Functional.Option
 {
@@ -65,5 +66,10 @@ namespace Functional.Option
                 action(some.Content);
             return option;
         }
+
+        public static Either<TLeft, T> Else<TLeft, T>(this Option<T> option, TLeft whenNone) =>
+            option is Some<T> some
+                ? some.Content
+                : (Either<TLeft, T>)whenNone;
     }
 }

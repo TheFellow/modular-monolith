@@ -4,7 +4,7 @@ using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
-using XPL.Modules.UserAccess.Infrastructure.Persitence;
+using XPL.Modules.UserAccess.Infrastructure.Data;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
 using static XPL.Modules.UserAccess.Domain.UserRegistrations.UserRegistration;
@@ -25,7 +25,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
                 })
                 .Scoped();
 
-            For<IUserRegistrationRepository>().Use<UserRegistrationRepository>().Scoped();
+            For<IRepository<UserRegistration>>().Use<UserRegistrationRepository>().Scoped();
         }
     }
 }

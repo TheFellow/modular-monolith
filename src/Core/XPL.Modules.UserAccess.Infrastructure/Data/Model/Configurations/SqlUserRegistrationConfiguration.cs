@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model.Configurations
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
 {
     public class SqlUserRegistrationConfiguration : IEntityTypeConfiguration<SqlUserRegistration>
     {
@@ -32,12 +32,12 @@ namespace XPL.Modules.UserAccess.Infrastructure.Persitence.Model.Configurations
 
             builder.Property(u => u.PasswordHash)
                 .HasColumnName("PasswordHash")
-                .HasMaxLength(256)
+                .HasMaxLength(512)
                 .IsRequired();
 
             builder.Property(u => u.PasswordSalt)
                 .HasColumnName("PasswordSalt")
-                .HasMaxLength(64)
+                .HasMaxLength(128)
                 .IsRequired();
 
             builder.Property(u => u.FirstName)

@@ -1,21 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Functional.Option;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
-using XPL.Modules.UserAccess.Infrastructure.Persitence;
+using XPL.Modules.UserAccess.Infrastructure.Data;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters;
 
 namespace XPL.Modules.UserAccess.Infrastructure.UserRegistrations
 {
-    public class UserRegistrationRepository : IUserRegistrationRepository
+    public class UserRegistrationRepository : MappingRepository<UserAccessUoW, UserRegistration, SqlUserRegistration>
     {
-        private readonly UserAccessDbContext _dbContext;
-        
+        public UserRegistrationRepository(UserAccessUoW uow, Func<UserRegistrationConverter> converterFactory) : base(uow)
+        {
+            DbSet = uow.SqlUserRegistrations;
+            Converter = converterFactory();
+        }
 
-        public UserRegistrationRepository(UserAccessDbContext dbContext) => _dbContext = dbContext;
+        protected override IModelConverter<UserRegistration, SqlUserRegistration> Converter { get; }
 
-        public Task<UserRegistration> FindAsync(int id) => throw new NotImplementedException();
-        public Task AddAsync(UserRegistration userRegistration) => throw new NotImplementedException();
+        protected override DbSet<SqlUserRegistration> DbSet { get; }
+
+        public Option<UserRegistration> TryFind(Guid registrationId) => DbSet
+            .Where(s => s.RegistrationId == registrationId)
+            .Select(s => s.Id)
+            .FirstOrNone()
+            .Map(id => TryFind(id));
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
@@ -10,11 +11,11 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
 {
     public class NewUserRegistrationCommandHandler : ICommandHandler<NewUserRegistrationCommand, NewUserRegistrationResponse>
     {
-        private readonly IUserRegistrationRepository _repository;
+        private readonly IRepository<UserRegistration> _repository;
         private readonly Func<IUserRegistrationBuilder> _builderFactory;
 
         public NewUserRegistrationCommandHandler(
-            IUserRegistrationRepository repository,
+            IRepository<UserRegistration> repository,
             Func<IUserRegistrationBuilder> builderFactory)
         {
             _repository = repository;
@@ -23,7 +24,7 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
 
         public async Task<Either<CommandError, NewUserRegistrationResponse>> Handle(NewUserRegistrationCommand request, CancellationToken cancellationToken)
         {
-            var result = _builderFactory()
+            Either<UserRegistrationError, UserRegistration> result = _builderFactory()
                 .WithLogin(request.Login)
                 .WithPassword(request.Password)
                 .WithEmail(request.Email)
@@ -31,8 +32,8 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
                 .WithLastName(request.LastName)
                 .Build();
 
-            if (result is Right<UserRegistrationError, UserRegistration> userRegistration)
-                await _repository.AddAsync(userRegistration.Content);
+            if (result is Right<UserRegistrationError, UserRegistration> registration)
+                _repository.Add(registration.Content);
 
             return result
                 .Map(r => new NewUserRegistrationResponse(r, request.Login))

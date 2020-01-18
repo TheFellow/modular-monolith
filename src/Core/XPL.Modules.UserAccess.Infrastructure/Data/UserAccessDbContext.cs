@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using XPL.Modules.UserAccess.Infrastructure.Persitence.Model;
-using XPL.Modules.UserAccess.Infrastructure.Persitence.Model.Configurations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Persitence
+namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
     public class UserAccessDbContext : DbContext
     {

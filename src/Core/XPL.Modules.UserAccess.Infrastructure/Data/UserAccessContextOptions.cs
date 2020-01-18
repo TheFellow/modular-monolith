@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XPL.Framework.Infrastructure.Persistence;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Persitence
+namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
     public static class UserAccessContextOptions
     {

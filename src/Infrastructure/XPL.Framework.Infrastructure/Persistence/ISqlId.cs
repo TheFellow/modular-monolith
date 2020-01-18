@@ -2,6 +2,6 @@
 {
     public interface ISqlId
     {
-        public int Id { get; }
+        public long Id { get; }
     }
 }

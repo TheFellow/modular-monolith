@@ -2,11 +2,11 @@
 using Functional.Option;
 using System;
 using XPL.Framework.Kernel.DateTimes;
-using XPL.Framework.Kernel.Email;
 using XPL.Framework.Kernel.Passwords;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
+using XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 {
@@ -70,17 +70,13 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 
                 DateTime expiryDate = _systemClock.Now.AddDays(7).Date;
 
-                return new UserRegistration(
-                    _systemClock,
-                    RegistrationId.New,
-                    new EmailAddress(_email),
-                    login,
-                    new Password(_password),
-                    new FirstName(_firstName),
-                    new LastName(_lastName),
-                    "abc123", // TODO: Generate a random confirmation code
-                    expiryDate
-                );
+                var password = new Password(_password);
+                string confirmationCode = "abc123"; // TODO: Generate confirmation code
+
+                var memento = new Memento(_email, _login, confirmationCode, password.HashedPassword, password.Salt,
+                    _firstName, _lastName, nameof(Unconfirmed), _systemClock, RegistrationId.New.Id, expiryDate);
+
+                return new UserRegistration(memento);
             }
         }
     }

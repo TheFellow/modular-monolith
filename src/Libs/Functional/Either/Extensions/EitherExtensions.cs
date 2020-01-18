@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Functional.Option;
+using System;
 
 namespace Functional.Either
 {
@@ -56,6 +57,13 @@ namespace Functional.Either
             either is Left<TLeft, TRight> left
                 ? (Either<TNewLeft, TRight>)map(left)
                 : (TRight)(Right<TLeft, TRight>)either;
+
+        /// <summary>
+        /// Applies one of two functions to the <see cref="Either{TLeft, TRight}"/>. <paramref name="rightMap"/> when
+        /// <see cref="Right{TLeft, TRight}"/> and <paramref name="leftMap"/> when <see cref="Left{TLeft, TRight}"/>
+        /// </summary>
+        public static Either<TNewLeft, TNewRight> Maps<TLeft, TRight, TNewLeft, TNewRight>(this Either<TLeft, TRight> either, Func<TRight, TNewRight> rightMap, Func<TLeft, TNewLeft> leftMap) =>
+            either.Map(rightMap).MapLeft(leftMap);
 
         /// <summary>
         /// Calls an <see cref="Action{T}"/> when the <see cref="Either{TLeft, TRight}"/> is a <see cref="Right{TLeft, TRight}"/> and
