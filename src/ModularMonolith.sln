@@ -39,6 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Infr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Kernel", "Core\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj", "{604CEE1B-B7BF-45F3-8796-203E1D174B44}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{56575A1B-DFED-4726-A638-7461510B379A}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CodeCampsDb", "database\CodeCampsDb\CodeCampsDb.sqlproj", "{89B22D37-57AD-462D-8818-1590DE11B6F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,12 @@ Global
 		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{604CEE1B-B7BF-45F3-8796-203E1D174B44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B22D37-57AD-462D-8818-1590DE11B6F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B22D37-57AD-462D-8818-1590DE11B6F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B22D37-57AD-462D-8818-1590DE11B6F1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{89B22D37-57AD-462D-8818-1590DE11B6F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B22D37-57AD-462D-8818-1590DE11B6F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B22D37-57AD-462D-8818-1590DE11B6F1}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +118,7 @@ Global
 		{9C93B6B6-4400-493D-83C1-833A2B75DAD1} = {A6806EE0-1FDC-4A49-8B06-213650A72F78}
 		{6FABE17B-E763-4E53-B1C8-31CB0F604AAE} = {FF2F3B02-9B21-471D-88B5-889CD0D353F2}
 		{604CEE1B-B7BF-45F3-8796-203E1D174B44} = {AF015AE4-743C-4441-8720-1F5D428C92EC}
+		{89B22D37-57AD-462D-8818-1590DE11B6F1} = {56575A1B-DFED-4726-A638-7461510B379A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED51870B-F52D-45C2-B30F-013A195BC2A7}
