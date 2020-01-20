@@ -44,16 +44,15 @@ namespace XPL.CLI
             //    await userAccess.CommitAsync();
             //}
 
-            using (var userAccess = app.GetUserAccessUoW())
-            {
-                WriteInfo("Confirm registration for Alice.");
 
-                var cmd = new ConfirmRegistrationCommand(new Guid("5F0D2543-D87F-49F9-B47F-6B7D9C41F1B1"), "abc123");
-                var result = await userAccess.ExecuteCommandAsync(cmd);
-                DisplayResult(result, r => r.Message);
+            WriteInfo("Confirm registration for Alice.");
 
-                await userAccess.CommitAsync();
-            }
+            var cmd = new ConfirmRegistrationCommand(new Guid("5F0D2543-D87F-49F9-B47F-6B7D9C41F1B1"), "abc123");
+            var result = await app.ExecuteCommandAsync(cmd);
+            DisplayResult(result, r => r.Message);
+
+
+
         }
 
         private static void DisplayResult<T>(Either<CommandError, T> result, Func<T, string> display)

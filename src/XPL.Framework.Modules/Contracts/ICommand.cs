@@ -1,9 +1,8 @@
-﻿using Functional.Either;
-using MediatR;
+﻿using MediatR;
 
 namespace XPL.Framework.Modules.Contracts
 {
-    public interface ICommand<TResult> : IRequest<Either<CommandError, TResult>>, ICorrelate
+    public interface ICommand<TResult> : IRequest<TResult>, ICorrelate
     {
         
     }

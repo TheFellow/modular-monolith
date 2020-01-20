@@ -10,7 +10,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
 
         public static DbContextOptions<UserAccessDbContext> GetOptions(ConnectionString connectionString) =>
             new DbContextOptionsBuilder<UserAccessDbContext>()
-                .UseLoggerFactory(_myLoggerFactory)
+                //.UseLoggerFactory(_myLoggerFactory)
                 .UseSqlServer(connectionString.Value)
                 .EnableSensitiveDataLogging()
                 .Options;

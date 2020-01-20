@@ -1,5 +1,4 @@
-﻿using Functional.Either;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Modules.Contracts;
@@ -21,9 +20,9 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
             _builderFactory = builderFactory;
         }
 
-        public async Task<Either<CommandError, NewUserRegistrationResponse>> Handle(NewUserRegistrationCommand request, CancellationToken cancellationToken)
+        public async Task<NewUserRegistrationResponse> Handle(NewUserRegistrationCommand request, CancellationToken cancellationToken)
         {
-            Either<UserRegistrationError, UserRegistration> result = _builderFactory()
+            UserRegistration result = _builderFactory()
                 .WithLogin(request.Login)
                 .WithPassword(request.Password)
                 .WithEmail(request.Email)
@@ -31,12 +30,9 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
                 .WithLastName(request.LastName)
                 .Build();
 
-            if (result is Right<UserRegistrationError, UserRegistration> registration)
-                _repository.Add(registration.Content);
+            _repository.Add(result);
 
-            return result
-                .Map(r => new NewUserRegistrationResponse(r, request.Login))
-                .MapLeft(e => new CommandError(e.Error));
+            return new NewUserRegistrationResponse(result, request.Login);
         }
     }
 }

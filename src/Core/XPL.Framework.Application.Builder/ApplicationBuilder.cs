@@ -8,7 +8,6 @@ using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus;
-using XPL.Framework.Infrastructure.Bus.Validation;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Kernel.DateTimes;
@@ -19,11 +18,10 @@ using XPL.Framework.Modules.Startup;
 
 namespace XPL.Framework.Application.Builder
 {
-    public class ApplicationBuilder : INeedConfig, INeedLogging, INeedConnectionString, INeedBus, INeedModules
+    public class ApplicationBuilder : INeedConfig, INeedLogging, INeedConnectionString, INeedModules
     {
         private ILogger? _logger;
         private IConfiguration? _config;
-        private Type? _busType;
         private ConnectionString? _connectionString;
         private readonly ServiceRegistry _appRegistry = new ServiceRegistry();
         private readonly IList<Assembly> _assemblies = new List<Assembly>();
@@ -45,16 +43,10 @@ namespace XPL.Framework.Application.Builder
             return this;
         }
 
-        INeedBus INeedConnectionString.WithConnectionString(ConnectionString connectionString)
+        INeedModules INeedConnectionString.WithConnectionString(ConnectionString connectionString)
         {
             _connectionString = connectionString;
             _appRegistry.For<ConnectionString>().Use(_connectionString);
-            return this;
-        }
-
-        INeedModules INeedBus.WithBus<TBus>()
-        {
-            _busType = typeof(TBus);
             return this;
         }
 
@@ -71,7 +63,6 @@ namespace XPL.Framework.Application.Builder
         {
             if (_config is null) throw new InvalidOperationException("Cannot build application without initializing configuration");
             if (_logger is null) throw new InvalidOperationException("Cannot build application without initializing a logger");
-            if (_busType is null) throw new InvalidOperationException("Cannot build application without initializing a Command/Query bus");
             if (_connectionString is null) throw new InvalidOperationException("Cannot build application without initializing a Connection string");
 
             BootstrapApp(_config, _logger);
@@ -109,8 +100,7 @@ namespace XPL.Framework.Application.Builder
         private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use<InMemoryBus>().Scoped();
         private void AddModuleContracts()
         {
-            _appRegistry.For<ICommandValidator>().Use<CommandValidator>().Transient();
-            _appRegistry.For<IDomainEventDispatcher>().Use<DomainEventDispatcher>().Transient();
+            _appRegistry.For<IDomainEventDispatcher>().Use<DomainEventDispatcher>();
 
             foreach (var assembly in _assemblies)
             {
@@ -120,7 +110,6 @@ namespace XPL.Framework.Application.Builder
 
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommand<>));
                     scan.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
-                    scan.ConnectImplementationsToTypesClosing(typeof(ICommandRule<>));
 
                     scan.ConnectImplementationsToTypesClosing(typeof(IDomainEventHandler<>));
 

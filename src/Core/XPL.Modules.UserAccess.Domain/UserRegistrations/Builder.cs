@@ -1,6 +1,7 @@
 ﻿using Functional.Either;
 using Functional.Option;
 using System;
+using XPL.Framework.Kernel;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
@@ -56,7 +57,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
             return this;
         }
 
-        public Either<UserRegistrationError, UserRegistration> Build()
+        public UserRegistration Build()
         {
             if (_login is null || _password is null || _email is null || _firstName is null || _lastName is null)
                 throw new InvalidOperationException("Specify all builder elements before attempting to build.");
@@ -64,7 +65,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
             var login = new Login(_login);
 
             if (_loginValidator.ValidateLogin(login) is Some<UserRegistrationError> loginError)
-                return loginError.Content;
+                throw new DomainException(loginError.Content.Error);
 
             DateTime expiryDate = _systemClock.Now.AddDays(7).Date;
 

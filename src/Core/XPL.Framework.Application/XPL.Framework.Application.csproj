@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lamar" Version="4.1.0" />
     <PackageReference Include="MediatR" Version="8.0.0" />
   </ItemGroup>
 
