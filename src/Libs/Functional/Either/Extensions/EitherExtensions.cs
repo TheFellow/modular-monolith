@@ -1,5 +1,4 @@
-﻿using Functional.Option;
-using System;
+﻿using System;
 
 namespace Functional.Either
 {

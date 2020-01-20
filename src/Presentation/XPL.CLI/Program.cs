@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration;
-using XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration;
 
 namespace XPL.CLI
 {

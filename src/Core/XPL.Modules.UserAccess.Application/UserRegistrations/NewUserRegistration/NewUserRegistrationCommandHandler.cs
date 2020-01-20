@@ -2,9 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Modules.Contracts;
-using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
 
@@ -13,11 +11,11 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistrati
     public class NewUserRegistrationCommandHandler : ICommandHandler<NewUserRegistrationCommand, NewUserRegistrationResponse>
     {
         private readonly UserRegistrationRepository _repository;
-        private readonly Func<IUserRegistrationBuilder> _builderFactory;
+        private readonly Func<Builder> _builderFactory;
 
         public NewUserRegistrationCommandHandler(
             UserRegistrationRepository repository,
-            Func<IUserRegistrationBuilder> builderFactory)
+            Func<Builder> builderFactory)
         {
             _repository = repository;
             _builderFactory = builderFactory;

@@ -1,7 +1,6 @@
 ﻿using Lamar;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -12,7 +11,6 @@ using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Bus.Validation;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
-using XPL.Framework.Infrastructure.UnitOfWork;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Modules;
 using XPL.Framework.Modules.Contracts;

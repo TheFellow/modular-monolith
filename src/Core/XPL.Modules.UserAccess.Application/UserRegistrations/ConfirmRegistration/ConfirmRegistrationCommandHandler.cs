@@ -2,9 +2,7 @@
 using Functional.Option;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Modules.Contracts;
-using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
 
 namespace XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration
