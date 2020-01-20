@@ -12,6 +12,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 {
     public partial class UserRegistration
     {
+        // TODO: Move this out of the nested class
         public class UserRegistrationBuilder : IUserRegistrationBuilder
         {
             private readonly LoginValidator _loginValidator;

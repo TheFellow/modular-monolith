@@ -25,7 +25,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters
                 persisted.ExpiryDate)
             .From();
 
-        public SqlUserRegistration ToPersited(UserRegistration model)
+        public SqlUserRegistration ToPersisted(UserRegistration model)
         {
             var m = Memento.Get(model);
             return new SqlUserRegistration
@@ -47,7 +47,17 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters
 
         public void CopyChanges(UserRegistration from, SqlUserRegistration to)
         {
-            throw new NotImplementedException();
+            var m = Memento.Get(from);
+            to.ConfirmationCode = m.ConfirmationCode;
+            to.Email = m.Email;
+            to.FirstName = m.FirstName;
+            to.ExpiryDate = m.ExpiryDate;
+            to.LastName = m.LastName;
+            to.Login = m.Login;
+            to.PasswordHash = m.PasswordHash;
+            to.PasswordSalt = m.PasswordSalt;
+            to.RegistrationId = m.RegistrationId;
+            to.Status = m.Status;
         }
     }
 }

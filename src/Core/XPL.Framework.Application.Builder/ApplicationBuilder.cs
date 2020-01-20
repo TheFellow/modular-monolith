@@ -1,12 +1,14 @@
 ﻿using Lamar;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
+using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.Bus.Validation;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
@@ -106,7 +108,7 @@ namespace XPL.Framework.Application.Builder
             _appRegistry.For<IMediator>().Use<Mediator>();
             _appRegistry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
-        private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use(ctx => (IBus)ctx.GetInstance(_busType));
+        private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use<InMemoryBus>().Scoped();
         private void AddModuleContracts()
         {
             _appRegistry.For<ICommandValidator>().Use<CommandValidator>().Transient();
@@ -126,8 +128,6 @@ namespace XPL.Framework.Application.Builder
 
                     scan.ConnectImplementationsToTypesClosing(typeof(IQuery<>));
                     scan.ConnectImplementationsToTypesClosing(typeof(IQueryHandler<,>));
-
-                    scan.AddAllTypesOf<IUnitOfWork>();
                 });
             }
         }

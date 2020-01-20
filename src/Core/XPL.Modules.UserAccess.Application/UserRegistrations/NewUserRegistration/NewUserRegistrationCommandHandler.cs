@@ -6,16 +6,17 @@ using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.Builder;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
 
 namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration
 {
     public class NewUserRegistrationCommandHandler : ICommandHandler<NewUserRegistrationCommand, NewUserRegistrationResponse>
     {
-        private readonly IRepository<UserRegistration> _repository;
+        private readonly UserRegistrationRepository _repository;
         private readonly Func<IUserRegistrationBuilder> _builderFactory;
 
         public NewUserRegistrationCommandHandler(
-            IRepository<UserRegistration> repository,
+            UserRegistrationRepository repository,
             Func<IUserRegistrationBuilder> builderFactory)
         {
             _repository = repository;

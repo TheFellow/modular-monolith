@@ -11,9 +11,10 @@
     [Email]            NVARCHAR (128)   NOT NULL,
     [Status]           VARCHAR (32)     NOT NULL,
     [CreatedBy]        VARCHAR (32)     CONSTRAINT [UserAccess_UserRegistration_CreatedBy] DEFAULT (suser_sname()) NOT NULL,
-    [CreatedOn]        DATETIME         CONSTRAINT [UserAccess_UserRegistration_CreatedOn] DEFAULT (getdate()) NOT NULL,
+    [CreatedOn]        DATETIME2         CONSTRAINT [UserAccess_UserRegistration_CreatedOn] DEFAULT (getdate()) NOT NULL,
     [UpdatedBy]        VARCHAR (32)     CONSTRAINT [UserAccess_UserRegistration_UpdatedBy] DEFAULT (suser_sname()) NOT NULL,
-    [UpdatedOn]        DATETIME         CONSTRAINT [UserAccess_UserRegistration_UpdatedOn] DEFAULT (getdate()) NOT NULL,
+    [UpdatedOn]        DATETIME2         CONSTRAINT [UserAccess_UserRegistration_UpdatedOn] DEFAULT (getdate()) NOT NULL,
+    [RowVersion] ROWVERSION NOT NULL, 
     CONSTRAINT [UserAccess_UserRegistration_Id] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

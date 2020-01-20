@@ -18,5 +18,6 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model
         public DateTime ExpiryDate { get; set; }
         public string UpdatedBy { get; set; } = string.Empty;
         public DateTime UpdatedOn { get; set; }
+        public byte[] RowVersion { get; set; } = new byte[0];
     }
 }

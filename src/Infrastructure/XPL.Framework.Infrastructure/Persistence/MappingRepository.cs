@@ -33,7 +33,7 @@ namespace XPL.Framework.Infrastructure.Persistence
 
         public void Add(TModel obj)
         {
-            var persisted = Converter.ToPersited(obj);
+            var persisted = Converter.ToPersisted(obj);
 
             DbSet.Add(persisted);
             MaterializedObjects[obj] = persisted;

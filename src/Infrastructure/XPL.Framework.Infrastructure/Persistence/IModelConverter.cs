@@ -4,7 +4,7 @@
         where TPersistence : ISqlId
     {
         TModel ToModel(TPersistence persisted);
-        TPersistence ToPersited(TModel model);
+        TPersistence ToPersisted(TModel model);
         void CopyChanges(TModel from, TPersistence to);
     }
 }

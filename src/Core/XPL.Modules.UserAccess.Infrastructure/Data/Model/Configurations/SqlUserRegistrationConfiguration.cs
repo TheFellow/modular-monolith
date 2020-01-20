@@ -58,7 +58,9 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
 
             builder.Property(u => u.UpdatedOn)
                 .HasColumnName("UpdatedOn")
-                .IsRequired()
+                .IsRequired();
+
+            builder.Property(u => u.RowVersion)
                 .IsConcurrencyToken();
         }
     }

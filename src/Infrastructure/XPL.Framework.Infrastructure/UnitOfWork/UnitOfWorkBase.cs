@@ -39,7 +39,7 @@ namespace XPL.Framework.Infrastructure.UnitOfWork
                 .Where(src => src.GetEvents().Any())
                 .ToList();
 
-            var events = entities.SelectMany(e => e.GetEvents());
+            var events = entities.SelectMany(e => e.GetEvents()).ToList();
             entities.ForEach(e => e.ClearEvents());
 
             await _domainEventDispatcher.DispatchEventsAsync(events, cancellationToken);
