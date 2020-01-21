@@ -68,5 +68,8 @@
     <Build Include="UserAccess\Tables\UserRegistration.sql" />
     <Build Include="Security\UserAccess.sql" />
     <Build Include="UserAccess\Sequences\SeqPrimaryKeys.sql" />
+    <Build Include="UserAccess\Tables\User.sql" />
+    <Build Include="UserAccess\Tables\UserLogin.sql" />
+    <Build Include="UserAccess\Tables\UserEmail.sql" />
   </ItemGroup>
 </Project>

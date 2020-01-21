@@ -11,11 +11,11 @@
     [LastName]         NVARCHAR (64)    NOT NULL,
     [Email]            NVARCHAR (128)   NOT NULL,
     [Status]           VARCHAR (32)     NOT NULL,
-    [StatusDate]       DATE        CONSTRAINT [UserAccess_Userregistration_StatusDate] DEFAULT CAST(getdate() AS DATE) NOT NULL,
-    [CreatedBy]        VARCHAR (32)     CONSTRAINT [UserAccess_UserRegistration_CreatedBy] DEFAULT (suser_sname()) NOT NULL,
-    [CreatedOn]        DATETIME2         CONSTRAINT [UserAccess_UserRegistration_CreatedOn] DEFAULT (getdate()) NOT NULL,
-    [UpdatedBy]        VARCHAR (32)     CONSTRAINT [UserAccess_UserRegistration_UpdatedBy] DEFAULT (suser_sname()) NOT NULL,
-    [UpdatedOn]        DATETIME2         CONSTRAINT [UserAccess_UserRegistration_UpdatedOn] DEFAULT (getdate()) NOT NULL,
+    [StatusDate]       DATE             CONSTRAINT [UserAccess_UserRegistration_StatusDate] DEFAULT (CAST(GETDATE() AS DATE)) NOT NULL,
+    [CreatedBy]        VARCHAR (32)     CONSTRAINT [UserAccess_UserRegistration_CreatedBy] DEFAULT (SUSER_SNAME()) NOT NULL,
+    [CreatedOn]        DATETIME2        CONSTRAINT [UserAccess_UserRegistration_CreatedOn] DEFAULT (GETDATE()) NOT NULL,
+    [UpdatedBy]        VARCHAR (32)     CONSTRAINT [UserAccess_UserRegistration_UpdatedBy] DEFAULT (SUSER_SNAME()) NOT NULL,
+    [UpdatedOn]        DATETIME2        CONSTRAINT [UserAccess_UserRegistration_UpdatedOn] DEFAULT (GETDATE()) NOT NULL,
     CONSTRAINT [UserAccess_UserRegistration_Id] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
