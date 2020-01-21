@@ -8,6 +8,6 @@ namespace XPL.Framework.Application.Ports.Bus
     {
         Task<TResult> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default);
 
-        Task ExecuteQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default);
+        Task<TResult> ExecuteQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default);
     }
 }

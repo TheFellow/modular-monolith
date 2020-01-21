@@ -1,5 +1,4 @@
-﻿using Functional.Either;
-using MediatR;
+﻿using MediatR;
 
 namespace XPL.Framework.Modules.Contracts
 {

@@ -21,7 +21,7 @@ namespace XPL.Framework.Infrastructure.Bus
         public async Task<TResult> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default) =>
             await _mediator.Send(command, cancellationToken);
 
-        public Task ExecuteQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default) =>
+        public Task<TResult> ExecuteQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default) =>
             _mediator.Send(query, cancellationToken);
     }
 }

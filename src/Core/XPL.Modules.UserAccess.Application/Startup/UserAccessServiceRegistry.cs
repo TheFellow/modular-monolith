@@ -1,6 +1,8 @@
 ﻿using Lamar;
 using Microsoft.EntityFrameworkCore;
+using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.Persistence;
+using XPL.Framework.Infrastructure.UnitOfWork;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
 using XPL.Modules.UserAccess.Infrastructure.Data;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
@@ -22,8 +24,16 @@ namespace XPL.Modules.UserAccess.Application.Startup
                 })
                 .Scoped();
 
+            var assembly = GetType().Assembly.GetName().Name;
+
+            //For<IUnitOfWork>().Use<UserAccessUoW>().Scoped().Named(assembly);
+
+            Use<UserAccessUoW>().Named(assembly)
+                .For<IUnitOfWork>()
+                .For<UnitOfWorkBase<UserAccessDbContext>>();
+
+
             For<UserRegistrationRepository>().Use<UserRegistrationRepository>().Scoped();
-            For<UserAccessUoW>().Use<UserAccessUoW>().Scoped();
         }
     }
 }

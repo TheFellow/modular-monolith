@@ -1,5 +1,4 @@
 ﻿using Functional.Option;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using XPL.Framework.Infrastructure.Persistence;
@@ -10,17 +9,15 @@ using XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters;
 
 namespace XPL.Modules.UserAccess.Infrastructure.UserRegistrations
 {
-    public class UserRegistrationRepository : MappingRepository<UserAccessUoW, UserRegistration, SqlUserRegistration>
+    public class UserRegistrationRepository : MappingRepository<UserAccessDbContext, UserRegistration, SqlUserRegistration>
     {
-        public UserRegistrationRepository(UserAccessUoW uow, Func<UserRegistrationConverter> converterFactory) : base(uow)
+        public UserRegistrationRepository(UserAccessUoW uow, Func<UserRegistrationConverter> converterFactory)
+            : base(uow, dbContext => dbContext.UserRegistrations)
         {
-            DbSet = uow.SqlUserRegistrations;
             Converter = converterFactory();
         }
 
         protected override IModelConverter<UserRegistration, SqlUserRegistration> Converter { get; }
-
-        protected override DbSet<SqlUserRegistration> DbSet { get; }
 
         public Option<UserRegistration> TryFind(Guid registrationId) => DbSet
             .Where(s => s.RegistrationId == registrationId)

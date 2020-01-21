@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Modules;
 
@@ -12,7 +13,7 @@ namespace XPL.Framework.Infrastructure.UnitOfWork
     public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
         where TContext : DbContext
     {
-        protected TContext DbContext { get; }
+        public TContext DbContext { get; }
         private readonly IDomainEventDispatcher _domainEventDispatcher;
         private List<IDomainEventSource>? _domainEventSources;
 

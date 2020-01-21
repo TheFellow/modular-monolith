@@ -1,6 +1,5 @@
 ﻿using Functional.Either;
 using Functional.Option;
-using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Modules.Contracts;
@@ -15,24 +14,15 @@ namespace XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistrati
 
         public async Task<ConfirmRegistrationResponse> Handle(ConfirmRegistrationCommand request, CancellationToken cancellationToken)
         {
-            return _repository
+            var result = _repository
                 .TryFind(request.RegistrationId)
                 .Else("Cannot locate registration id")
                 .Map(u => u.Confirm(request.ConfirmationCode)
                     .Map(_ => ConfirmRegistrationResponse.Confirmed)
                     .MapLeft(_ => "Invalid confirmation code"))
                 .Reduce(err => ConfirmRegistrationResponse.Error(err));
+
+            return result;
         }
-
-
-        //_repository.TryFind(request.RegistrationId) switch
-        //{
-        //    Some<UserRegistration> registration => registration.Content.Confirm(request.ConfirmationCode) switch
-        //    {
-        //        Left<InvalidConfirmationCode, UserRegistration> error => ConfirmRegistrationResponse.Error("Incorrect confirmation code"),
-        //        _ => ConfirmRegistrationResponse.Confirmed
-        //    },
-        //    _ => ConfirmRegistrationResponse.Error("Cannot locate registration id")
-        //};
     }
 }

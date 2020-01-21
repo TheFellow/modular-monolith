@@ -3,27 +3,29 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.UnitOfWork;
 using XPL.Framework.Modules.Domain;
 
 namespace XPL.Framework.Infrastructure.Persistence
 {
-    public abstract class MappingRepository<TUnitOfWork, TModel, TPersistence> : IRepository<TModel>
+    public abstract class MappingRepository<TContext, TModel, TPersistence> : IRepository<TModel>
         where TModel : IEntity
         where TPersistence : class, ISqlId
-        where TUnitOfWork : IUnitOfWork
+        where TContext : DbContext
     {
         protected abstract IModelConverter<TModel, TPersistence> Converter { get; }
-        protected abstract DbSet<TPersistence> DbSet { get; }
+        protected DbSet<TPersistence> DbSet { get; }
 
         private IDictionary<TModel, TPersistence> MaterializedObjects { get; }
         private IDictionary<long, TModel> MaterializedIds { get; }
 
-        public MappingRepository(TUnitOfWork uow)
+        public MappingRepository(UnitOfWorkBase<TContext> uow, Func<TContext, DbSet<TPersistence>> dbSetSelector)
         {
             MaterializedObjects = new Dictionary<TModel, TPersistence>();
             MaterializedIds = new Dictionary<long, TModel>();
+            DbSet = dbSetSelector(uow.DbContext);
 
             // Prepare to collaborate
             uow.OnSaving += OnSaving;
