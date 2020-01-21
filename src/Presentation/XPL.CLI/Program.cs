@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration;
+using XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration;
 
 namespace XPL.CLI
 {
@@ -33,26 +34,19 @@ namespace XPL.CLI
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
-            //using (var userAccess = app.GetUserAccessUoW())
-            //{
-            //    WriteInfo("Create Registration for Alice.");
 
-            //    var cmd = new NewUserRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
-            //    var result = await userAccess.ExecuteCommandAsync(cmd);
-            //    DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
+            WriteInfo("Create Registration for Alice.");
 
-            //    await userAccess.CommitAsync();
-            //}
+            var cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "alice@email.com", "Robert", "Brown");
+            var result = await app.ExecuteCommandAsync(cmd);
+            DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
 
 
             WriteInfo("Confirm registration for Alice.");
 
-            var cmd = new ConfirmRegistrationCommand(new Guid("5F0D2543-D87F-49F9-B47F-6B7D9C41F1B1"), "abc123");
-            var result = await app.ExecuteCommandAsync(cmd);
-            DisplayResult(result, r => r.Message);
-
-
-
+            var confirmCmd = new ConfirmRegistrationCommand(new Guid("5F0D2543-D87F-49F9-B47F-6B7D9C41F1B1"), "abc123");
+            var confirmResult = await app.ExecuteCommandAsync(confirmCmd);
+            DisplayResult(confirmResult, r => r.Message);
         }
 
         private static void DisplayResult<T>(Either<CommandError, T> result, Func<T, string> display)

@@ -61,7 +61,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
                 .IsRequired();
 
             builder.Property(u => u.RowVersion)
-                .IsConcurrencyToken();
+                .IsRowVersion();
         }
     }
 }
