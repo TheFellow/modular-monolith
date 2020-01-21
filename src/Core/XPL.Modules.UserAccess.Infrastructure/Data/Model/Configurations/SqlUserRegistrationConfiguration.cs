@@ -13,7 +13,12 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
                 .HasKey(u => u.Id);
 
             builder.Property(u => u.Id)
+                .HasColumnName("Id")
+                .HasColumnType("bigint")
                 .UseHiLo(_sequence);
+
+            builder.Property(u => u.RowVersion)
+                .IsRowVersion();
 
             builder.Property(u => u.RegistrationId)
                 .HasColumnName("RegistrationId")
@@ -30,13 +35,20 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
                 .HasMaxLength(16)
                 .IsRequired();
 
+            builder.Property(u => u.ExpiryDate)
+                .HasColumnName("ExpiryDate")
+                .HasColumnType("date")
+                .IsRequired();
+
             builder.Property(u => u.PasswordHash)
                 .HasColumnName("PasswordHash")
+                .HasColumnType("varchar(512)")
                 .HasMaxLength(512)
                 .IsRequired();
 
             builder.Property(u => u.PasswordSalt)
                 .HasColumnName("PasswordSalt")
+                .HasColumnType("varchar(128)")
                 .HasMaxLength(128)
                 .IsRequired();
 
@@ -50,6 +62,22 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
                 .HasMaxLength(64)
                 .IsRequired();
 
+            builder.Property(u => u.Email)
+                .HasColumnName("Email")
+                .HasMaxLength(128)
+                .IsRequired();
+
+            builder.Property(u => u.Status)
+                .HasColumnName("Status")
+                .HasColumnType("varchar(32)")
+                .HasMaxLength(32)
+                .IsRequired();
+
+            builder.Property(u => u.StatusDate)
+                .HasColumnName("StatusDate")
+                .HasColumnType("date")
+                .IsRequired();
+
             builder.Property(u => u.UpdatedBy)
                 .HasColumnName("UpdatedBy")
                 .HasColumnType("varchar(32)")
@@ -59,9 +87,6 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
             builder.Property(u => u.UpdatedOn)
                 .HasColumnName("UpdatedOn")
                 .IsRequired();
-
-            builder.Property(u => u.RowVersion)
-                .IsRowVersion();
         }
     }
 }
