@@ -4,7 +4,7 @@ using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
 using XPL.Modules.UserAccess.Infrastructure.Data;
-using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
 
 namespace XPL.Modules.UserAccess.Application.Startup

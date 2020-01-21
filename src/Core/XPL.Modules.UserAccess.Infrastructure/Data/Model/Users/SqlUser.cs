@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using XPL.Framework.Infrastructure.Persistence;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Data.Model
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
     public class SqlUser : ISqlId
     {
@@ -13,5 +14,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model
         public string LastName { get; set; } = string.Empty;
         public string UpdatedBy { get; set; } = string.Empty;
         public DateTime UpdatedOn { get; set; }
+
+        public List<SqlUserEmail>? Emails { get; set; }
+        public List<SqlUserLogin>? Logins { get; set; }
     }
 }

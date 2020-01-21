@@ -3,7 +3,7 @@ using Functional.Option;
 using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Modules.Contracts;
-using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration
 {

@@ -3,11 +3,9 @@ using System;
 using System.Linq;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
-using XPL.Modules.UserAccess.Infrastructure.Data;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Converters;
 
-namespace XPL.Modules.UserAccess.Infrastructure.UserRegistrations
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations
 {
     public class UserRegistrationRepository : MappingRepository<UserAccessDbContext, UserRegistration, SqlUserRegistration>
     {

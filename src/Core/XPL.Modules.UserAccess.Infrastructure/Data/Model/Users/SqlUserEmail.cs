@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Data.Model
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
     public class SqlUserEmail
     {

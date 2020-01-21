@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Config;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
@@ -21,6 +22,10 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
             modelBuilder.HasDefaultSchema(_schema);
 
             modelBuilder.ApplyConfiguration(new SqlUserRegistrationConfiguration());
+
+            modelBuilder.ApplyConfiguration(new SqlUserConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlUserLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlUserEmailConfiguration());
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using XPL.Framework.Infrastructure.Persistence;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Data.Model
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
     public class SqlUserLogin : ISqlId
     {

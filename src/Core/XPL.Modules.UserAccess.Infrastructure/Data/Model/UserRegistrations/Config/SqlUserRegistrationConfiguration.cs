@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Config
 {
     public class SqlUserRegistrationConfiguration : IEntityTypeConfiguration<SqlUserRegistration>
     {
-        private const string _sequence = "SeqPrimaryKeys";
-
         public void Configure(EntityTypeBuilder<SqlUserRegistration> builder)
         {
             builder.ToTable("UserRegistration")
@@ -15,7 +13,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Configurations
             builder.Property(u => u.Id)
                 .HasColumnName("Id")
                 .HasColumnType("bigint")
-                .UseHiLo(_sequence);
+                .UseHiLo(UserAccessContextOptions.HiLoSequence);
 
             builder.Property(u => u.RowVersion)
                 .IsRowVersion();
