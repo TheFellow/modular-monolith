@@ -1,5 +1,4 @@
-﻿using Functional.Either;
-using Functional.Option;
+﻿using Functional.Option;
 using System;
 using XPL.Framework.Kernel;
 using XPL.Framework.Kernel.DateTimes;

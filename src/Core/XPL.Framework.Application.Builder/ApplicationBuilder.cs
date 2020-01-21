@@ -10,7 +10,6 @@ using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
-using XPL.Framework.Infrastructure.UnitOfWork;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Modules;
 using XPL.Framework.Modules.Contracts;

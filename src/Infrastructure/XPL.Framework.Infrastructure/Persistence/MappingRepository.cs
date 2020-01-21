@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.UnitOfWork;
 using XPL.Framework.Modules.Domain;
