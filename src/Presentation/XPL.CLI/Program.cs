@@ -3,8 +3,8 @@ using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Modules.Contracts;
-using XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration;
-using XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration;
 
 namespace XPL.CLI
 {

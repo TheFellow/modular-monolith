@@ -1,7 +1,7 @@
 ﻿using System;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration
+namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration
 {
     public class NewUserRegistrationResponse
     {

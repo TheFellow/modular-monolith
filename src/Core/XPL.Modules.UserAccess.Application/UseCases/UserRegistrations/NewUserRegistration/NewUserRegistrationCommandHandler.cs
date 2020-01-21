@@ -5,7 +5,7 @@ using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations.NewUserRegistration
+namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration
 {
     public class NewUserRegistrationCommandHandler : ICommandHandler<NewUserRegistrationCommand, NewUserRegistrationResponse>
     {

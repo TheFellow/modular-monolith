@@ -1,4 +1,4 @@
-﻿namespace XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration
+﻿namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration
 {
     public class ConfirmRegistrationResponse
     {

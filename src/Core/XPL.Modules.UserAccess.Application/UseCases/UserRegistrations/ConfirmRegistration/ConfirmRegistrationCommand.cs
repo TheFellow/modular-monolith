@@ -1,7 +1,7 @@
 ﻿using System;
 using XPL.Framework.Modules.Contracts;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration
+namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration
 {
     public class ConfirmRegistrationCommand : ICommand<ConfirmRegistrationResponse>
     {

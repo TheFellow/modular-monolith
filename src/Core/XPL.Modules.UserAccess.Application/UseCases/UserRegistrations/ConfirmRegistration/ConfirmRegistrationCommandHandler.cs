@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using XPL.Framework.Modules.Contracts;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations;
 
-namespace XPL.Modules.UserAccess.Application.UserRegistrations.ConfirmRegistration
+namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration
 {
     public class ConfirmRegistrationCommandHandler : ICommandHandler<ConfirmRegistrationCommand, ConfirmRegistrationResponse>
     {
