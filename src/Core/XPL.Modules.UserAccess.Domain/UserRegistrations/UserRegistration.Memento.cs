@@ -21,6 +21,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
             _confirmationCode = memento.ConfirmationCode;
             ExpiryDate = memento.ExpiryDate;
             _status = memento.ToStatus();
+            _statusDate = memento.StatusDate;
         }
 
         public sealed class Memento
@@ -32,7 +33,8 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
             public string PasswordSalt { get;  }
             public string FirstName { get;  }
             public string LastName { get;  }
-            public string Status { get;  }
+            public string Status { get; }
+            public DateTime StatusDate { get; }
             public ISystemClock SystemClock { get; }
             public Guid RegistrationId { get; }
             public DateTime ExpiryDate { get;  }
@@ -46,6 +48,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                 string firstName,
                 string lastName,
                 string status,
+                DateTime statusDate,
                 ISystemClock systemClock,
                 Guid registrationId,
                 DateTime expiryDate)
@@ -58,6 +61,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                 FirstName = firstName;
                 LastName = lastName;
                 Status = status;
+                StatusDate = statusDate;
                 SystemClock = systemClock;
                 RegistrationId = registrationId;
                 ExpiryDate = expiryDate;
@@ -65,7 +69,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 
             public Status ToStatus() => Status switch
             {
-                nameof(Unconfirmed) => new Unconfirmed(SystemClock, ExpiryDate),
+                nameof(Unconfirmed) => new Unconfirmed(SystemClock, ExpiryDate, ConfirmationCode),
                 nameof(Confirmed) => new Confirmed(),
                 nameof(Expired) => new Expired(),
                 _ => throw new InvalidOperationException()
@@ -82,6 +86,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                 r._firstName.Value,
                 r._lastName.Value,
                 r._status.GetType().Name,
+                r._statusDate,
                 r._systemClock,
                 r.RegistrationId.Id,
                 r.ExpiryDate);

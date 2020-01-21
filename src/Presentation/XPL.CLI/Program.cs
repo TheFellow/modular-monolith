@@ -34,8 +34,10 @@ namespace XPL.CLI
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
-            await RegisterAlice(app);
-            await RegisterBob(app);
+            //await RegisterAlice(app);
+            //await RegisterBob(app);
+
+            await ConfirmAlice(app);
         }
         private static async Task RegisterAlice(CliApp app)
         {
@@ -44,6 +46,16 @@ namespace XPL.CLI
             var cmd = new NewUserRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
             var result = await app.ExecuteCommandAsync(cmd);
             DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
+        }
+
+        private static async Task ConfirmAlice(CliApp app)
+        {
+            WriteInfo("Confirming Alice.");
+
+            var cmd = new ConfirmRegistrationCommand(new Guid("6A3A3891-7D14-4A21-9E5C-F5D2001B7D01"), "Abc123");
+            var result = await app.ExecuteCommandAsync(cmd);
+
+            DisplayResult(result, r => r.Message);
         }
 
         private static async Task RegisterBob(CliApp app)

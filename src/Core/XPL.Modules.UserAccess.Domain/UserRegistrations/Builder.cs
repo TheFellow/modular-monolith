@@ -72,7 +72,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
             string confirmationCode = "abc123"; // TODO: Generate confirmation code
 
             var memento = new Memento(_email, _login, confirmationCode, password.HashedPassword, password.Salt,
-                _firstName, _lastName, nameof(Unconfirmed), _systemClock, RegistrationId.New.Id, expiryDate);
+                _firstName, _lastName, nameof(Unconfirmed), _systemClock.Now.Date, _systemClock, RegistrationId.New.Id, expiryDate);
 
             return memento.From();
         }

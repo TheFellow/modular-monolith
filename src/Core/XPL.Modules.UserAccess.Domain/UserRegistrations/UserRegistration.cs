@@ -21,24 +21,18 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
         private readonly ISystemClock _systemClock;
 
         private Status _status;
+        private DateTime _statusDate;
 
         public RegistrationId RegistrationId { get; private set; }
         public DateTime ExpiryDate { get; private set; }
 
         public Either<InvalidConfirmationCode, UserRegistration> Confirm(string confirmationCode)
         {
-            Either<InvalidConfirmationCode, UserRegistration> result = this;
+            Either<InvalidConfirmationCode, UserRegistration> result = new InvalidConfirmationCode();
 
-            _status = _status.Confirm(() =>
+            _status = _status.Confirm(confirmationCode, () =>
             {
-                if (string.IsNullOrWhiteSpace(confirmationCode))
-                    throw new ArgumentException(nameof(confirmationCode));
-
-                if (confirmationCode != _confirmationCode)
-                {
-                    result = new InvalidConfirmationCode();
-                    return;
-                }
+                _statusDate = _systemClock.Now.Date;
 
                 AddDomainEvent(new UserRegistrationConfirmed(
                     RegistrationId,
@@ -47,6 +41,8 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                     _password,
                     _firstName,
                     _lastName));
+
+                result = this;
             });
 
             return result;

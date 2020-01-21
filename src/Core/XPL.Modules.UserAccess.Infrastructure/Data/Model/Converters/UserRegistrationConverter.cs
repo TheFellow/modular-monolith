@@ -19,6 +19,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters
                 persisted.FirstName,
                 persisted.LastName,
                 persisted.Status,
+                persisted.StatusDate,
                 _systemClock,
                 persisted.RegistrationId,
                 persisted.ExpiryDate)
@@ -57,6 +58,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Converters
             to.PasswordSalt = m.PasswordSalt;
             to.RegistrationId = m.RegistrationId;
             to.Status = m.Status;
+            to.StatusDate = m.StatusDate;
         }
     }
 }

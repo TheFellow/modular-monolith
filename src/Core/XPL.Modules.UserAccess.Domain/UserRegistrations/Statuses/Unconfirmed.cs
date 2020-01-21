@@ -8,17 +8,25 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses
     {
         private readonly ISystemClock _systemClock;
         private readonly DateTime _expiryDate;
+        private readonly string _confirmationCode;
 
-        public Unconfirmed(ISystemClock systemClock, DateTime expiryDate)
+        public Unconfirmed(ISystemClock systemClock, DateTime expiryDate, string confirmationCode)
         {
             _systemClock = systemClock;
             _expiryDate = expiryDate;
+            _confirmationCode = confirmationCode;
         }
 
-        public override Status Confirm(Action action)
+        public override Status Confirm(string confirmationCode, Action action)
         {
+            if (string.IsNullOrWhiteSpace(confirmationCode))
+                throw new ArgumentException(nameof(confirmationCode));
+
             if (!CanConfirm())
                 throw new DomainException("Cannot confirm registration after expiration date.");
+
+            if (confirmationCode != _confirmationCode)
+                return this;
 
             action();
             return new Confirmed();
