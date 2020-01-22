@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\XPL.Framework.Application\XPL.Framework.Application.csproj" />
     <ProjectReference Include="..\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj" />
-    <ProjectReference Include="..\XPL.Framework.Modules\XPL.Framework.Domain.csproj" />
+    <ProjectReference Include="..\XPL.Framework.Domain\XPL.Framework.Domain.csproj" />
   </ItemGroup>
 
 </Project>

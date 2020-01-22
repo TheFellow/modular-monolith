@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functional", "Functional", "{1BE87C26-24CF-42AB-9B45-C205FBE20C52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Domain", "XPL.Framework.Modules\XPL.Framework.Domain.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Domain", "XPL.Framework.Domain\XPL.Framework.Domain.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Domain", "XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj", "{F1B616CB-59B8-4E78-866E-5E19FD4725AD}"
 EndProject
