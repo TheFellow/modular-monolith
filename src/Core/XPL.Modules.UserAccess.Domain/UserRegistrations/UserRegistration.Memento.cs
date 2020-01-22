@@ -26,18 +26,18 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 
         public sealed class Memento
         {
-            public string Email { get;  }
-            public string Login { get;  }
-            public string ConfirmationCode { get;  }
-            public string PasswordHash { get;  }
-            public string PasswordSalt { get;  }
-            public string FirstName { get;  }
-            public string LastName { get;  }
+            public string Email { get; }
+            public string Login { get; }
+            public string ConfirmationCode { get; }
+            public string PasswordHash { get; }
+            public string PasswordSalt { get; }
+            public string FirstName { get; }
+            public string LastName { get; }
             public string Status { get; }
             public DateTime StatusDate { get; }
             public ISystemClock SystemClock { get; }
             public Guid RegistrationId { get; }
-            public DateTime ExpiryDate { get;  }
+            public DateTime ExpiryDate { get; }
 
             public Memento(
                 string email,

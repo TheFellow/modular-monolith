@@ -11,8 +11,4 @@
     <ProjectReference Include="..\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Users\" />
-  </ItemGroup>
-
 </Project>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Config;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data
@@ -10,6 +11,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
         private const string _schema = "UserAccess";
 
         public DbSet<SqlUserRegistration> UserRegistrations { get; set; } = null!;
+        public DbSet<SqlUser> Users { get; set; } = null!;
 
         public UserAccessDbContext(DbContextOptions<UserAccessDbContext> options)
             : base(options)

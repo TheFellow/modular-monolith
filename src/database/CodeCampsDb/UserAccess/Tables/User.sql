@@ -2,7 +2,8 @@
 (
 	[Id]				BIGINT				NOT NULL,
 	[RowVersion]		ROWVERSION			NOT NULL,
-	[UserId]			UNIQUEIDENTIFIER	NOT NULL,
+	[UserId]			UNIQUEIDENTIFIER		NOT NULL,
+	[RegistrationId]			UNIQUEIDENTIFIER		NULL,
 	[Login]				NVARCHAR(64)		NOT NULL,
 	[FirstName]			NVARCHAR(32)		NOT NULL,
     [LastName]			NVARCHAR(64)		NOT NULL,
