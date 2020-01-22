@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libs\Functional\Functional.csproj" />
     <ProjectReference Include="..\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
     <ProjectReference Include="..\XPL.Framework.Application\XPL.Framework.Application.csproj" />
     <ProjectReference Include="..\XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj" />
