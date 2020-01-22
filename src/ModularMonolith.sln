@@ -7,33 +7,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{DCDABE1A-A0D7-4337-903F-0C875E5AE812}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Infrastructure", "Core\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj", "{4CE9211C-C85D-479E-A374-1E96C7E4E706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Infrastructure", "XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj", "{4CE9211C-C85D-479E-A374-1E96C7E4E706}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.CLI", "Core\XPL.CLI\XPL.CLI.csproj", "{D33F7A21-43A7-4E41-BD25-D24D2FFE1237}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.CLI", "XPL.CLI\XPL.CLI.csproj", "{D33F7A21-43A7-4E41-BD25-D24D2FFE1237}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Application", "Core\XPL.Modules.UserAccess.Application\XPL.Modules.UserAccess.Application.csproj", "{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Application", "XPL.Modules.UserAccess.Application\XPL.Modules.UserAccess.Application.csproj", "{F2FC3CD2-534A-4A9C-AF7D-648F2BC04894}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserAccess", "UserAccess", "{FF2F3B02-9B21-471D-88B5-889CD0D353F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{D80E0EE0-2DAE-4A4A-A7B5-FC35414B5D8C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application", "Core\XPL.Framework.Application\XPL.Framework.Application.csproj", "{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application", "XPL.Framework.Application\XPL.Framework.Application.csproj", "{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application.Builder", "core\XPL.Framework.Application.Builder\XPL.Framework.Application.Builder.csproj", "{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application.Builder", "XPL.Framework.Application.Builder\XPL.Framework.Application.Builder.csproj", "{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A6806EE0-1FDC-4A49-8B06-213650A72F78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functional", "Functional", "{1BE87C26-24CF-42AB-9B45-C205FBE20C52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Modules", "Core\XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Modules", "XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Domain", "Core\XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj", "{F1B616CB-59B8-4E78-866E-5E19FD4725AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Domain", "XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj", "{F1B616CB-59B8-4E78-866E-5E19FD4725AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ValueTypes", "ValueTypes", "{9C93B6B6-4400-493D-83C1-833A2B75DAD1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Infrastructure", "Core\XPL.Modules.UserAccess.Infrastructure\XPL.Modules.UserAccess.Infrastructure.csproj", "{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Infrastructure", "XPL.Modules.UserAccess.Infrastructure\XPL.Modules.UserAccess.Infrastructure.csproj", "{6FABE17B-E763-4E53-B1C8-31CB0F604AAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Kernel", "Core\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj", "{604CEE1B-B7BF-45F3-8796-203E1D174B44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Kernel", "XPL.Framework.Kernel\XPL.Framework.Kernel.csproj", "{604CEE1B-B7BF-45F3-8796-203E1D174B44}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{56575A1B-DFED-4726-A638-7461510B379A}"
 EndProject

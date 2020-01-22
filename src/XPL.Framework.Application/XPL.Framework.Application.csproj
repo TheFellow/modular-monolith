@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\Functional\Functional.csproj" />
+    <ProjectReference Include="..\..\lib\Functional\Functional.csproj" />
     <ProjectReference Include="..\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
   </ItemGroup>
 

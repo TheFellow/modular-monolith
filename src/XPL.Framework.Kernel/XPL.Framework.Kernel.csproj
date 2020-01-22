@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\ValueTypes\ValueTypes.csproj" />
+    <ProjectReference Include="..\..\lib\ValueTypes\ValueTypes.csproj" />
   </ItemGroup>
 
 </Project>
