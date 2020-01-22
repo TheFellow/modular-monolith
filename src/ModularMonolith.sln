@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{DCDABE1A-A0D7-4337-903F-0C875E5AE812}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Infrastructure", "Infrastructure\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj", "{4CE9211C-C85D-479E-A374-1E96C7E4E706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Infrastructure", "Core\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj", "{4CE9211C-C85D-479E-A374-1E96C7E4E706}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.CLI", "Core\XPL.CLI\XPL.CLI.csproj", "{D33F7A21-43A7-4E41-BD25-D24D2FFE1237}"
 EndProject
