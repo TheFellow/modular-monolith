@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Modules.Contracts;
+using XPL.Framework.Domain.Contracts;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 

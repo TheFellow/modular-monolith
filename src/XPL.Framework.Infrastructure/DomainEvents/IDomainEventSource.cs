@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain.Model;
 
 namespace XPL.Framework.Infrastructure.DomainEvents
 {

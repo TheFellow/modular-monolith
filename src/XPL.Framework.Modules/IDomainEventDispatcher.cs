@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain.Model;
 
-namespace XPL.Framework.Modules
+namespace XPL.Framework.Domain
 {
     public interface IDomainEventDispatcher
     {

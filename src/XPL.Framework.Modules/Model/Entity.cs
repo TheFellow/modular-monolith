@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace XPL.Framework.Modules.Domain
+namespace XPL.Framework.Domain.Model
 {
     public abstract class Entity : IEntity
     {

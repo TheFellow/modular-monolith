@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Functional\Functional.csproj" />
-    <ProjectReference Include="..\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
+    <ProjectReference Include="..\XPL.Framework.Modules\XPL.Framework.Domain.csproj" />
   </ItemGroup>
 
 </Project>

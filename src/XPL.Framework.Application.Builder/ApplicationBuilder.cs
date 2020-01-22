@@ -11,10 +11,10 @@ using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Kernel.DateTimes;
-using XPL.Framework.Modules;
-using XPL.Framework.Modules.Contracts;
-using XPL.Framework.Modules.Domain;
-using XPL.Framework.Modules.Startup;
+using XPL.Framework.Domain;
+using XPL.Framework.Domain.Contracts;
+using XPL.Framework.Domain.Model;
+using XPL.Framework.Domain.Startup;
 
 namespace XPL.Framework.Application.Builder
 {

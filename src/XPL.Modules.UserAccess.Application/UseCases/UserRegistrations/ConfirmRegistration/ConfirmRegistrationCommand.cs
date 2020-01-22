@@ -1,5 +1,5 @@
 ﻿using System;
-using XPL.Framework.Modules.Contracts;
+using XPL.Framework.Domain.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration
 {

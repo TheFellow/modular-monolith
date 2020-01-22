@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Modules;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain;
+using XPL.Framework.Domain.Model;
 
 namespace XPL.Framework.Infrastructure.DomainEvents
 {

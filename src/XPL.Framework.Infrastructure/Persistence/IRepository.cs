@@ -1,6 +1,6 @@
 ﻿using Functional.Option;
 using XPL.Framework.Infrastructure.DomainEvents;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain.Model;
 
 namespace XPL.Framework.Infrastructure.Persistence
 {

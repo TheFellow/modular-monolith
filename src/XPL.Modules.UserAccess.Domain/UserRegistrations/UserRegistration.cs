@@ -3,7 +3,7 @@ using System;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Kernel.Email;
 using XPL.Framework.Kernel.Passwords;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain.Model;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Events;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses;

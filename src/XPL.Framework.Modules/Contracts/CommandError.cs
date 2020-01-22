@@ -1,7 +1,7 @@
 ﻿using System;
 using XPL.Framework.Kernel;
 
-namespace XPL.Framework.Modules.Contracts
+namespace XPL.Framework.Domain.Contracts
 {
     public class CommandError : ICorrelate
     {

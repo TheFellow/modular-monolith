@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace XPL.Framework.Modules.Contracts
+namespace XPL.Framework.Domain.Contracts
 {
     public class CommandErrorList : CommandError
     {

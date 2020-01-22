@@ -1,4 +1,4 @@
-﻿using XPL.Framework.Modules.Domain;
+﻿using XPL.Framework.Domain.Model;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 

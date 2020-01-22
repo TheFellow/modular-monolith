@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XPL.Framework.Modules.Domain
+namespace XPL.Framework.Domain.Model
 {
     public interface IEntity
     {

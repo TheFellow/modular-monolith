@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain.Model;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Events;
 using XPL.Modules.UserAccess.Domain.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;

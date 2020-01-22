@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Kernel;
-using XPL.Framework.Modules.Contracts;
+using XPL.Framework.Domain.Contracts;
 
 namespace XPL.Framework.Application
 {

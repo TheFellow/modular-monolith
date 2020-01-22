@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.UnitOfWork;
-using XPL.Framework.Modules.Domain;
+using XPL.Framework.Domain.Model;
 
 namespace XPL.Framework.Infrastructure.Persistence
 {
