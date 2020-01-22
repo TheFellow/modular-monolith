@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
+    <ProjectReference Include="..\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
     <ProjectReference Include="..\XPL.Framework.Application\XPL.Framework.Application.csproj" />
   </ItemGroup>
 

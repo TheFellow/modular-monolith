@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functional", "Functional", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functional", "Libs\Functional\Functional.csproj", "{C60F056D-A213-4D68-99DD-1AC45B57B7B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Modules", "XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Modules", "Core\XPL.Framework.Modules\XPL.Framework.Modules.csproj", "{ED71B621-822E-4F06-A372-AD59C7BB3213}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Modules.UserAccess.Domain", "Core\XPL.Modules.UserAccess.Domain\XPL.Modules.UserAccess.Domain.csproj", "{F1B616CB-59B8-4E78-866E-5E19FD4725AD}"
 EndProject
@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Kernel", "Cor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{56575A1B-DFED-4726-A638-7461510B379A}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CodeCampsDb", "database\CodeCampsDb\CodeCampsDb.sqlproj", "{89B22D37-57AD-462D-8818-1590DE11B6F1}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CodeCampsDb", "..\CodeCampsDb\CodeCampsDb.sqlproj", "{89B22D37-57AD-462D-8818-1590DE11B6F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

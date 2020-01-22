@@ -15,7 +15,7 @@
     <ProjectReference Include="..\..\Core\XPL.Framework.Application\XPL.Framework.Application.csproj" />
     <ProjectReference Include="..\..\Core\XPL.Modules.UserAccess.Application\XPL.Modules.UserAccess.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
+    <ProjectReference Include="..\..\Core\XPL.Framework.Modules\XPL.Framework.Modules.csproj" />
   </ItemGroup>
 
 </Project>
