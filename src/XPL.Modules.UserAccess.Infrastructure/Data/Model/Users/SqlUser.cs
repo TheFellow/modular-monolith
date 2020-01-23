@@ -16,7 +16,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
         public string UpdatedBy { get; set; } = string.Empty;
         public DateTime UpdatedOn { get; set; }
 
-        public List<SqlUserEmail>? Emails { get; set; }
-        public List<SqlUserLogin>? Logins { get; set; }
+        public List<SqlUserEmail> Emails { get; set; } = new List<SqlUserEmail>();
+        public List<SqlUserLogin> Logins { get; set; } = new List<SqlUserLogin>();
     }
 }

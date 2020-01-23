@@ -4,6 +4,9 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
     public class SqlUserEmail
     {
+        public const string ActiveStatus = "Active";
+        public const string InactiveStatus = "Inactive";
+
         public long Id { get; set; }
         public long UserId { get; set; }
         public string Email { get; set; } = string.Empty;

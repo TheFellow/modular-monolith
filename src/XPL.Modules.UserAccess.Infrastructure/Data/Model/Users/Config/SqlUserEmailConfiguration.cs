@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config
 {
-    public class SqlUserEmailConfiguration : IEntityTypeConfiguration<SqlUserLogin>
+    public class SqlUserEmailConfiguration : IEntityTypeConfiguration<SqlUserEmail>
     {
-        public void Configure(EntityTypeBuilder<SqlUserLogin> builder)
+        public void Configure(EntityTypeBuilder<SqlUserEmail> builder)
         {
-            builder.ToTable("UserLogin")
+            builder.ToTable("UserEmail")
                 .HasKey(o => o.Id);
 
             builder.Property(o => o.Id)
@@ -20,26 +20,22 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config
                 .HasColumnType("bigint")
                 .IsRequired();
 
-            builder.Property(o => o.PasswordHash)
-                .HasColumnName("PasswordHash")
-                .HasColumnType("varchar(512)")
-                .HasMaxLength(512)
-                .IsRequired();
-
-            builder.Property(o => o.PasswordSalt)
-                .HasColumnName("PasswordSalt")
-                .HasColumnType("varchar(128)")
+            builder.Property(o => o.Email)
+                .HasColumnName("Email")
+                .HasColumnType("nvarchar(128)")
                 .HasMaxLength(128)
                 .IsRequired();
 
-            builder.Property(o => o.BeginOnUtc)
-                .HasColumnName("BeginOnUtc")
-                .HasColumnType("datetime2")
+            builder.Property(o => o.Status)
+                .HasColumnName("Status")
+                .HasColumnType("varchar(32)")
+                .HasMaxLength(32)
                 .IsRequired();
 
-            builder.Property(o => o.EndOnUtc)
-                .HasColumnName("EndOnUtc")
-                .HasColumnType("datetime2");
+            builder.Property(o => o.StatusDate)
+                .HasColumnName("StatusDate")
+                .HasColumnType("date")
+                .IsRequired();
 
             builder.Property(o => o.UpdatedBy)
                 .HasColumnName("UpdatedBy")
