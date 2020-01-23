@@ -1,8 +1,8 @@
 ﻿using System;
-using XPL.Framework.Kernel.Email;
-using XPL.Framework.Kernel.Passwords;
 using XPL.Framework.Domain.Model;
 using XPL.Modules.UserAccess.Domain.Kernel;
+using XPL.Modules.Kernel.Passwords;
+using XPL.Modules.Kernel.Email;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Events
 {

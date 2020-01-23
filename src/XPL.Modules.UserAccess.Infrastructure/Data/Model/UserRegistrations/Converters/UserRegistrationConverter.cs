@@ -1,5 +1,5 @@
 ﻿using XPL.Framework.Infrastructure.Persistence;
-using XPL.Framework.Kernel.DateTimes;
+using XPL.Modules.Kernel.DateTimes;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using static XPL.Modules.UserAccess.Domain.UserRegistrations.UserRegistration;
 

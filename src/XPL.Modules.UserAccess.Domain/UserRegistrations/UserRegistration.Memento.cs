@@ -1,7 +1,7 @@
 ﻿using System;
-using XPL.Framework.Kernel.DateTimes;
-using XPL.Framework.Kernel.Email;
-using XPL.Framework.Kernel.Passwords;
+using XPL.Modules.Kernel.DateTimes;
+using XPL.Modules.Kernel.Email;
+using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses;
 

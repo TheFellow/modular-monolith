@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace XPL.Framework.Kernel.Passwords
+namespace XPL.Modules.Kernel.Passwords
 {
     public class PasswordHasher
     {

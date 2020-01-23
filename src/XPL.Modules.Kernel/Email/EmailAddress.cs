@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ValueTypes;
 
-namespace XPL.Framework.Kernel.Email
+namespace XPL.Modules.Kernel.Email
 {
 
     public class EmailAddress : Value

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ValueTypes;
 
-namespace XPL.Framework.Kernel.Passwords
+namespace XPL.Modules.Kernel.Passwords
 {
 
     public class Password : Value

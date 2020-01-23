@@ -15,6 +15,7 @@ using XPL.Framework.Domain.Contracts;
 using XPL.Framework.Domain.Model;
 using XPL.Framework.Domain.Startup;
 using XPL.Framework.AppBuilder.Pipeline;
+using XPL.Modules.Kernel.DateTimes;
 
 namespace XPL.Framework.AppBuilder
 {

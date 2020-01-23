@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using XPL.Modules.Kernel;
 
-namespace XPL.Framework.Kernel.Passwords
+namespace XPL.Modules.Kernel.Passwords
 {
     public class PasswordComplexityRules
     {
-        private IList<(string pattern, string message)> _patterns { get; } = new List<(string, string)>();
+        private IList<(string pattern, string message)> Patterns { get; } = new List<(string, string)>();
 
         public void EnforceComplexity(string password)
         {
-            foreach (var (pattern, message) in _patterns)
+            foreach (var (pattern, message) in Patterns)
                 if (!Regex.IsMatch(password, pattern))
                     throw new DomainException(message);
 
@@ -22,9 +23,9 @@ namespace XPL.Framework.Kernel.Passwords
             get
             {
                 var rules = new PasswordComplexityRules();
-                rules._patterns.Add((@".*[a-zA-Z]", "Password must contain a character."));
-                rules._patterns.Add((@".*[0-9]", "Password must contain a digit."));
-                rules._patterns.Add((@".{8}", "Password must be at least 8 characters long."));
+                rules.Patterns.Add((@".*[a-zA-Z]", "Password must contain a character."));
+                rules.Patterns.Add((@".*[0-9]", "Password must contain a digit."));
+                rules.Patterns.Add((@".{8}", "Password must be at least 8 characters long."));
                 return rules;
             }
         }
