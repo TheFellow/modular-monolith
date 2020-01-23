@@ -15,7 +15,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             _registrationId = m.RegistrationId.HasValue ? new RegistrationId(m.RegistrationId.Value) : new RegistrationId(Guid.Empty);
             _currentEmail = new EmailAddress(m.CurrentEmail);
             _currentLogin = new Login(m.CurrentLogin);
-            _currentPassword = Password.Raw(m.PasswordHash, m.PasswordHash);
+            _currentPassword = Password.Raw(m.PasswordHash, m.PasswordSalt);
             _firstName = new FirstName(m.FirstName);
             _lastName = new LastName(m.LastName);
         }

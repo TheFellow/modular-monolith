@@ -26,7 +26,7 @@ namespace XPL.Modules.Kernel.Passwords
         public bool Verify(string oldPassword)
         {
             var hashSalt = PasswordHasher.WithExistingSalt(oldPassword, Salt);
-            return hashSalt.Hash == hashSalt.Hash;
+            return hashSalt.Hash == HashedPassword;
         }
 
 

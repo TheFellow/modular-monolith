@@ -1,11 +1,13 @@
 ﻿using Functional.Option;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.UnitOfWork;
 using XPL.Framework.Domain.Model;
+using System.Linq.Expressions;
 
 namespace XPL.Framework.Infrastructure.Persistence
 {
@@ -14,13 +16,16 @@ namespace XPL.Framework.Infrastructure.Persistence
         where TPersistence : class, ISqlId
         where TContext : DbContext
     {
+        private readonly Func<DbSet<TPersistence>, IQueryable<TPersistence>>? _includes;
+
         protected abstract IModelConverter<TModel, TPersistence> Converter { get; }
         protected DbSet<TPersistence> DbSet { get; }
 
         private IDictionary<TModel, TPersistence> MaterializedObjects { get; }
         private IDictionary<long, TModel> MaterializedIds { get; }
 
-        public MappingRepository(UnitOfWorkBase<TContext> uow, Func<TContext, DbSet<TPersistence>> dbSetSelector)
+        public MappingRepository(UnitOfWorkBase<TContext> uow, Func<TContext, DbSet<TPersistence>> dbSetSelector,
+            Func<DbSet<TPersistence>, IQueryable<TPersistence>>? includes = null)
         {
             MaterializedObjects = new Dictionary<TModel, TPersistence>();
             MaterializedIds = new Dictionary<long, TModel>();
@@ -30,6 +35,7 @@ namespace XPL.Framework.Infrastructure.Persistence
             uow.OnSaving += OnSaving;
             uow.OnSaved += OnSaved;
             uow.RegisterDomainEventSource(this);
+            _includes = includes;
         }
 
         public void Add(TModel obj)
@@ -55,7 +61,7 @@ namespace XPL.Framework.Infrastructure.Persistence
             if (MaterializedIds.TryGetValue(id, out TModel materializedModel))
                 return materializedModel;
 
-            TPersistence? persisted = DbSet.Find(id);
+            TPersistence? persisted = (_includes == null ? DbSet :_includes(DbSet)).Where(i => i.Id == id).SingleOrDefault();
 
             if (persisted == null)
                 return None.Value;

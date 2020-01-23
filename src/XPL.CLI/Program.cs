@@ -38,7 +38,7 @@ namespace XPL.CLI
             //await RegisterAlice(app);
             //await RegisterBob(app);
 
-            await ConfirmAlice(app);
+            //await ConfirmAlice(app);
             await UpdateAlicesPassword(app);
         }
         private static async Task RegisterAlice(CliApp app)
@@ -64,7 +64,7 @@ namespace XPL.CLI
         {
             WriteInfo("Updating Alice's password.");
 
-            var cmd = new UpdatePasswordCommand("Alice", "Abc123", "def456");
+            var cmd = new UpdatePasswordCommand("Alice", "passw0rd", "p@ssw0rd");
             var result = await app.ExecuteCommandAsync(cmd);
 
             DisplayResult(result, r => r.Message);

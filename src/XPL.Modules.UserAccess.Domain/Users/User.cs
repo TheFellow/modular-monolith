@@ -22,6 +22,9 @@ namespace XPL.Modules.UserAccess.Domain.Users
             if (!_currentPassword.Verify(oldPassword))
                 return new UserError("Incorrect password");
 
+            if(oldPassword == newPassword)
+                return new UserError("Cannot change to the same password");
+
             _currentPassword = new Password(newPassword);
             return new PasswordUpdated();
         }

@@ -70,7 +70,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
 
         public void CopyChanges(User from, SqlUser sql)
         {
-            var cutoff = _systemClock.UtcNow;
+            var utcNow = _systemClock.UtcNow;
 
             var user = Memento.Get(from);
 
@@ -87,14 +87,18 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
                 audit.Force();
 
                 var oldPassword = sql.Passwords.Single(l => l.EndOnUtc == null);
-                oldPassword.EndOnUtc = cutoff.AddTicks(-1);
+                oldPassword.EndOnUtc = utcNow.AddTicks(-1);
+                oldPassword.UpdatedBy = UserInfo.UserFullName;
+                oldPassword.UpdatedOn = utcNow;
 
                 var newLogin = new SqlUserPassword
                 {
-                    BeginOnUtc = cutoff,
+                    BeginOnUtc = utcNow,
                     EndOnUtc = null,
                     PasswordHash = user.PasswordHash,
                     PasswordSalt = user.PasswordSalt,
+                    UpdatedBy = UserInfo.UserFullName,
+                    UpdatedOn = utcNow,
                 };
 
                 sql.Passwords.Add(newLogin);
@@ -115,7 +119,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
                     Status = SqlUserEmail.ActiveStatus,
                     StatusDate = _systemClock.Now.Date,
                     UpdatedBy = UserInfo.UserFullName,
-                    UpdatedOn = cutoff
+                    UpdatedOn = utcNow
                 };
 
                 sql.Emails.Add(newEmail);
