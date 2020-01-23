@@ -3,7 +3,6 @@ using ValueTypes;
 
 namespace XPL.Modules.Kernel.Passwords
 {
-
     public class Password : Value
     {
         public string HashedPassword { get; }
@@ -24,6 +23,12 @@ namespace XPL.Modules.Kernel.Passwords
             HashedPassword = hashPassword;
             Salt = salt;
         }
+        public bool Verify(string oldPassword)
+        {
+            var hashSalt = PasswordHasher.WithExistingSalt(oldPassword, Salt);
+            return hashSalt.Hash == hashSalt.Hash;
+        }
+
 
         protected override IEnumerable<ValueBase> GetValues() => Yield(HashedPassword, Salt);
     }

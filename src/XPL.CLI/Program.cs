@@ -5,6 +5,7 @@ using XPL.CLI.Application;
 using XPL.Framework.Domain.Contracts;
 using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword;
 
 namespace XPL.CLI
 {
@@ -38,6 +39,7 @@ namespace XPL.CLI
             //await RegisterBob(app);
 
             await ConfirmAlice(app);
+            await UpdateAlicesPassword(app);
         }
         private static async Task RegisterAlice(CliApp app)
         {
@@ -53,6 +55,16 @@ namespace XPL.CLI
             WriteInfo("Confirming Alice.");
 
             var cmd = new ConfirmRegistrationCommand(new Guid("63BA8AE9-FC04-4F3A-BE0E-0CE3D496A463"), "abc123");
+            var result = await app.ExecuteCommandAsync(cmd);
+
+            DisplayResult(result, r => r.Message);
+        }
+
+        private static async Task UpdateAlicesPassword(CliApp app)
+        {
+            WriteInfo("Updating Alice's password.");
+
+            var cmd = new UpdatePasswordCommand("Alice", "Abc123", "def456");
             var result = await app.ExecuteCommandAsync(cmd);
 
             DisplayResult(result, r => r.Message);

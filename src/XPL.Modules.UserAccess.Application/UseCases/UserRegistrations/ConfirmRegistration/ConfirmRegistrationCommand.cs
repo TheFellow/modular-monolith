@@ -3,7 +3,7 @@ using XPL.Framework.Domain.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration
 {
-    public class ConfirmRegistrationCommand : ICommand<ConfirmRegistrationResponse>
+    public class ConfirmRegistrationCommand : ICommand<CommandResult>
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();
         public Guid RegistrationId { get; }

@@ -29,5 +29,14 @@ namespace XPL.Modules.Kernel.Passwords
             return new HashSalt(hashPassword, salt);
         }
 
+        public static HashSalt WithExistingSalt(string password, string base64Salt)
+        {
+            var saltBytes = Convert.FromBase64String(base64Salt);
+
+            var deriveBytes = new Rfc2898DeriveBytes(password, saltBytes);
+            var hashPassword = Convert.ToBase64String(deriveBytes.GetBytes(256));
+
+            return new HashSalt(hashPassword, base64Salt);
+        }
     }
 }

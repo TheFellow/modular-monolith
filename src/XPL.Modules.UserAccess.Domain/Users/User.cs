@@ -1,4 +1,5 @@
-﻿using XPL.Framework.Domain.Model;
+﻿using Functional.Either;
+using XPL.Framework.Domain.Model;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
@@ -15,5 +16,14 @@ namespace XPL.Modules.UserAccess.Domain.Users
         private Login _currentLogin;
         private Password _currentPassword;
         private RegistrationId _registrationId;
+
+        public Either<UserError, PasswordUpdated> UpdatePassword(string oldPassword, string newPassword)
+        {
+            if (!_currentPassword.Verify(oldPassword))
+                return new UserError("Incorrect password");
+
+            _currentPassword = new Password(newPassword);
+            return new PasswordUpdated();
+        }
     }
 }
