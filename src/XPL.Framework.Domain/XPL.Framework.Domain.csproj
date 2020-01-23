@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj" />
+    <ProjectReference Include="..\XPL.Modules.Kernel\XPL.Modules.Kernel.csproj" />
   </ItemGroup>
 
 </Project>

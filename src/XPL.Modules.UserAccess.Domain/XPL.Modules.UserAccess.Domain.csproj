@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Functional\Functional.csproj" />
-    <ProjectReference Include="..\XPL.Framework.Kernel\XPL.Framework.Kernel.csproj" />
+    <ProjectReference Include="..\XPL.Modules.Kernel\XPL.Modules.Kernel.csproj" />
     <ProjectReference Include="..\XPL.Framework.Domain\XPL.Framework.Domain.csproj" />
   </ItemGroup>
 
