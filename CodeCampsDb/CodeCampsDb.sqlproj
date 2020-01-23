@@ -69,7 +69,10 @@
     <Build Include="Security\UserAccess.sql" />
     <Build Include="UserAccess\Sequences\SeqPrimaryKeys.sql" />
     <Build Include="UserAccess\Tables\User.sql" />
-    <Build Include="UserAccess\Tables\UserLogin.sql" />
+    <Build Include="UserAccess\Tables\UserPassword.sql" />
     <Build Include="UserAccess\Tables\UserEmail.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="CodeCampsDb.refactorlog" />
   </ItemGroup>
 </Project>

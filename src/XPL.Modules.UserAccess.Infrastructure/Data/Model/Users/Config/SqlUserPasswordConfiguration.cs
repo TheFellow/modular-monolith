@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config
 {
-    public class SqlUserLoginConfiguration : IEntityTypeConfiguration<SqlUserLogin>
+    public class SqlUserPasswordConfiguration : IEntityTypeConfiguration<SqlUserPassword>
     {
-        public void Configure(EntityTypeBuilder<SqlUserLogin> builder)
+        public void Configure(EntityTypeBuilder<SqlUserPassword> builder)
         {
-            builder.ToTable("UserLogin")
+            builder.ToTable("UserPassword")
                 .HasKey(o => o.Id);
 
             builder.Property(o => o.Id)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using XPL.Modules.Kernel;
 using XPL.Modules.Kernel.DateTimes;
 
 namespace XPL.Framework.Infrastructure.Data
@@ -57,11 +58,17 @@ namespace XPL.Framework.Infrastructure.Data
         {
             if (_execAudit)
             {
-                GetInfo(_updatedBy).SetValue(_persistence, Environment.UserDomainName + '\\' + Environment.UserName, null);
+                GetInfo(_updatedBy).SetValue(_persistence, UserInfo.UserFullName, null);
                 GetInfo(_updatedOn).SetValue(_persistence, _systemClock.Now, null);
             }
 
             return _persistence;
+        }
+
+        public void Force()
+        {
+            _execAudit = true;
+            Audit();
         }
     }
 }

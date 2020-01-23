@@ -3,7 +3,7 @@ using XPL.Framework.Infrastructure.Persistence;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
-    public class SqlUserLogin : ISqlId
+    public class SqlUserPassword : ISqlId
     {
         public long Id { get; set; }
         public long UserId { get; set; }

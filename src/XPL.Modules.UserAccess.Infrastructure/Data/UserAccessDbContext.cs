@@ -26,7 +26,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new SqlUserRegistrationConfiguration());
 
             modelBuilder.ApplyConfiguration(new SqlUserConfiguration());
-            modelBuilder.ApplyConfiguration(new SqlUserLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlUserPasswordConfiguration());
             modelBuilder.ApplyConfiguration(new SqlUserEmailConfiguration());
         }
     }
