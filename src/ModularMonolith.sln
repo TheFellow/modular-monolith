@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application", "XPL.Framework.Application\XPL.Framework.Application.csproj", "{B8F7AA31-B8F6-4EC9-BB1C-26A2283225CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.Application.Builder", "XPL.Framework.Application.Builder\XPL.Framework.Application.Builder.csproj", "{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPL.Framework.AppBuilder", "XPL.Framework.AppBuilder\XPL.Framework.AppBuilder.csproj", "{CEAE5B7E-67DD-4FAE-A1AF-E074AC4AC2C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{A6806EE0-1FDC-4A49-8B06-213650A72F78}"
 EndProject

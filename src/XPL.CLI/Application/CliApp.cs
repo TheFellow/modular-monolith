@@ -1,7 +1,7 @@
 ﻿using Lamar;
+using XPL.Framework.AppBuilder;
+using XPL.Framework.AppBuilder.Pipeline;
 using XPL.Framework.Application;
-using XPL.Framework.Application.Builder;
-using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.Configuration;
 using XPL.Framework.Infrastructure.Logging;

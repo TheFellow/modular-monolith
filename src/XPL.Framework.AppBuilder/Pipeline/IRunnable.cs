@@ -1,6 +1,6 @@
 ﻿using XPL.Framework.Application.Ports;
 
-namespace XPL.Framework.Application.Builder.Pipeline
+namespace XPL.Framework.AppBuilder.Pipeline
 {
     public interface IRunnable<TApp>
     {

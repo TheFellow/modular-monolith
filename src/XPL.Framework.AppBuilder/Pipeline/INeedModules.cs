@@ -1,6 +1,6 @@
 ﻿using Lamar;
 
-namespace XPL.Framework.Application.Builder.Pipeline
+namespace XPL.Framework.AppBuilder.Pipeline
 {
     public interface INeedModules
     {

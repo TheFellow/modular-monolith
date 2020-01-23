@@ -1,6 +1,6 @@
 ﻿using XPL.Framework.Infrastructure.Persistence;
 
-namespace XPL.Framework.Application.Builder.Pipeline
+namespace XPL.Framework.AppBuilder.Pipeline
 {
     public interface INeedConnectionString
     {

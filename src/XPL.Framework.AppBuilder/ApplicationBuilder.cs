@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using XPL.Framework.Application.Builder.Pipeline;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus;
@@ -15,8 +14,9 @@ using XPL.Framework.Domain;
 using XPL.Framework.Domain.Contracts;
 using XPL.Framework.Domain.Model;
 using XPL.Framework.Domain.Startup;
+using XPL.Framework.AppBuilder.Pipeline;
 
-namespace XPL.Framework.Application.Builder
+namespace XPL.Framework.AppBuilder
 {
     public class ApplicationBuilder : INeedConfig, INeedLogging, INeedConnectionString, INeedModules
     {
@@ -56,7 +56,7 @@ namespace XPL.Framework.Application.Builder
             _assemblies.Add(typeof(TRegistry).Assembly);
 
             return this;
-        } 
+        }
         #endregion
 
         IRunnable<TApp> INeedModules.Build<TApp>()
