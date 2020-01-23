@@ -5,6 +5,7 @@ using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
 using XPL.Modules.UserAccess.Infrastructure.Data;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
 
 namespace XPL.Modules.UserAccess.Application.Startup
@@ -29,6 +30,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
             For<IUnitOfWork>().Use(ctx => ctx.GetInstance<UserAccessUoW>()).Named(assemblyName);
 
             For<UserRegistrationRepository>().Use<UserRegistrationRepository>().Scoped();
+            For<UserRepository>().Use<UserRepository>().Scoped();
         }
     }
 }

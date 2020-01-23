@@ -9,7 +9,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
         public UserAccessUoW(Func<UserAccessDbContext> dbContextFactory, IDomainEventDispatcher domainEventDispatcher)
             : base(dbContextFactory, domainEventDispatcher)
         {
-            Console.WriteLine("UoW instantiated");
+            
         }
     }
 }

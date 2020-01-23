@@ -1,4 +1,6 @@
-﻿using XPL.Framework.Infrastructure.Persistence;
+﻿using System;
+using XPL.Framework.Infrastructure.Data;
+using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.Kernel.DateTimes;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using static XPL.Modules.UserAccess.Domain.UserRegistrations.UserRegistration;
@@ -32,15 +34,16 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Con
             {
                 ConfirmationCode = m.ConfirmationCode,
                 Email = m.Email,
-                FirstName = m.FirstName,
                 ExpiryDate = m.ExpiryDate,
+                FirstName = m.FirstName,
                 LastName = m.LastName,
                 Login = m.Login,
                 PasswordHash = m.PasswordHash,
                 PasswordSalt = m.PasswordSalt,
                 RegistrationId = m.RegistrationId,
                 Status = m.Status,
-                UpdatedBy = "Current User",
+                StatusDate = m.StatusDate,
+                UpdatedBy = Environment.UserName,
                 UpdatedOn = _systemClock.Now
             };
         }
@@ -48,17 +51,20 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Con
         public void CopyChanges(UserRegistration from, SqlUserRegistration to)
         {
             var m = Memento.Get(from);
-            to.ConfirmationCode = m.ConfirmationCode;
-            to.Email = m.Email;
-            to.FirstName = m.FirstName;
-            to.ExpiryDate = m.ExpiryDate;
-            to.LastName = m.LastName;
-            to.Login = m.Login;
-            to.PasswordHash = m.PasswordHash;
-            to.PasswordSalt = m.PasswordSalt;
-            to.RegistrationId = m.RegistrationId;
-            to.Status = m.Status;
-            to.StatusDate = m.StatusDate;
+
+            new AuditFieldUpdater<Memento, SqlUserRegistration>(_systemClock, m, to, t => t.UpdatedBy, t => t.UpdatedOn)
+                .Map(m => m.ConfirmationCode, t => t.ConfirmationCode)
+                .Map(m => m.Email, t => t.Email)
+                .Map(m => m.ExpiryDate, t => t.ExpiryDate)
+                .Map(m => m.FirstName, t => t.FirstName)
+                .Map(m => m.LastName, t => t.LastName)
+                .Map(m => m.Login, t => t.Login)
+                .Map(m => m.PasswordHash, t => t.PasswordHash)
+                .Map(m => m.PasswordSalt, t => t.PasswordSalt)
+                .Map(m => m.RegistrationId, t => t.RegistrationId)
+                .Map(m => m.Status, t => t.Status)
+                .Map(m => m.StatusDate, t => t.StatusDate)
+                .Audit();
         }
     }
 }
