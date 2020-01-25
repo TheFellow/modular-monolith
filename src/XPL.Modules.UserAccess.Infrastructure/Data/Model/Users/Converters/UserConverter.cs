@@ -13,7 +13,13 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
     public class UserConverter : IModelConverter<User, SqlUser>
     {
         private readonly ISystemClock _systemClock;
-        public UserConverter(ISystemClock systemClock) => _systemClock = systemClock;
+        private readonly IEmailUsage _emailUsage;
+
+        public UserConverter(ISystemClock systemClock, IEmailUsage emailUsage)
+        {
+            _systemClock = systemClock;
+            _emailUsage = emailUsage;
+        }
 
         public User ToModel(SqlUser p)
         {
@@ -28,7 +34,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
                 p.LastName,
                 currentLogin.PasswordHash,
                 currentLogin.PasswordSalt)
-                .From();
+                .From(_emailUsage);
         }
 
         public SqlUser ToPersisted(User model)
@@ -112,6 +118,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
 
                 oldEmail.Status = SqlUserEmail.InactiveStatus;
                 oldEmail.StatusDate = _systemClock.Now.Date;
+                oldEmail.UpdatedBy = UserInfo.UserFullName;
+                oldEmail.UpdatedOn = utcNow;
 
                 var newEmail = new SqlUserEmail
                 {

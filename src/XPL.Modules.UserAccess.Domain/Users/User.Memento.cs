@@ -9,7 +9,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
 {
     public partial class User
     {
-        private User(Memento m)
+        private User(Memento m, IEmailUsage emailUsage)
         {
             _userId = new UserId(m.UserId);
             _registrationId = m.RegistrationId.HasValue ? new RegistrationId(m.RegistrationId.Value) : new RegistrationId(Guid.Empty);
@@ -18,9 +18,10 @@ namespace XPL.Modules.UserAccess.Domain.Users
             _currentPassword = Password.Raw(m.PasswordHash, m.PasswordSalt);
             _firstName = new FirstName(m.FirstName);
             _lastName = new LastName(m.LastName);
+            _emailUsage = emailUsage;
         }
 
-        public User(UserRegistrationConfirmed confirmed)
+        public User(UserRegistrationConfirmed confirmed, IEmailUsage emailUsage)
         {
             _userId = UserId.New();
             _currentEmail = confirmed.Email;
@@ -29,6 +30,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             _registrationId = confirmed.RegistrationId;
             _firstName = confirmed.FirstName;
             _lastName = confirmed.LastName;
+            _emailUsage = emailUsage;
         }
 
         public class Memento
@@ -62,8 +64,8 @@ namespace XPL.Modules.UserAccess.Domain.Users
                 PasswordSalt = passwordSalt;
             }
 
-            public User From() => new User(this);
-            public static User From(Memento memento) => new User(memento);
+            public User From(IEmailUsage emailUsage) => new User(this, emailUsage);
+            public static User From(Memento memento, IEmailUsage emailUsage) => new User(memento, emailUsage);
             public static Memento Get(User u) => new Memento(
                 u._userId.Value,
                 u._registrationId.Id,

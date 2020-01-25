@@ -5,6 +5,7 @@ using XPL.CLI.Application;
 using XPL.Framework.Domain.Contracts;
 using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword;
 
 namespace XPL.CLI
@@ -38,9 +39,12 @@ namespace XPL.CLI
             //await RegisterAlice(app);
             //await RegisterBob(app);
 
-            //await ConfirmAlice(app);
+            await ConfirmAlice(app);
             await UpdateAlicesPassword(app);
+            await UpdateAlicesEmail(app);
         }
+
+
         private static async Task RegisterAlice(CliApp app)
         {
             WriteInfo("Create Registration for Alice.");
@@ -65,6 +69,16 @@ namespace XPL.CLI
             WriteInfo("Updating Alice's password.");
 
             var cmd = new UpdatePasswordCommand("Alice", "passw0rd", "p@ssw0rd");
+            var result = await app.ExecuteCommandAsync(cmd);
+
+            DisplayResult(result, r => r.Message);
+        }
+
+        private static async Task UpdateAlicesEmail(CliApp app)
+        {
+            WriteInfo("Updating Alice's Email");
+
+            var cmd = new UpdateEmailCommand("Alice", "alice.brown@email.com");
             var result = await app.ExecuteCommandAsync(cmd);
 
             DisplayResult(result, r => r.Message);

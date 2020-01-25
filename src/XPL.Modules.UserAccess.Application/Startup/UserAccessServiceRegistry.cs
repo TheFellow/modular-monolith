@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
+using XPL.Modules.UserAccess.Domain.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
+using XPL.Modules.UserAccess.Infrastructure.Users;
 
 namespace XPL.Modules.UserAccess.Application.Startup
 {
@@ -15,6 +17,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
         public UserAccessServiceRegistry()
         {
             For<ILoginExists>().Use<LoginExists>().Transient();
+            For<IEmailUsage>().Use<EmailUsage>().Transient();
 
             For<UserAccessDbContext>().Use<UserAccessDbContext>()
                 .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>

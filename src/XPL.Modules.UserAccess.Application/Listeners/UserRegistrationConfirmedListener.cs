@@ -10,11 +10,17 @@ namespace XPL.Modules.UserAccess.Application.Listeners
     public class UserRegistrationConfirmedListener : IDomainEventHandler<UserRegistrationConfirmed>
     {
         private readonly UserRepository _repository;
-        public UserRegistrationConfirmedListener(UserRepository repository) => _repository = repository;
+        private readonly IEmailUsage _emailUsage;
+
+        public UserRegistrationConfirmedListener(UserRepository repository, IEmailUsage emailUsage)
+        {
+            _repository = repository;
+            _emailUsage = emailUsage;
+        }
 
         public async Task Handle(UserRegistrationConfirmed confirmation, CancellationToken cancellationToken)
         {
-            var user = new User(confirmation);
+            var user = new User(confirmation, _emailUsage);
             _repository.Add(user);
         }
     }
