@@ -5,7 +5,7 @@ using XPL.Modules.Kernel.DateTimes;
 using XPL.Modules.UserAccess.Domain.UserRegistrations;
 using static XPL.Modules.UserAccess.Domain.UserRegistrations.UserRegistration;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Converters
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations
 {
     public class UserRegistrationConverter : IModelConverter<UserRegistration, SqlUserRegistration>
     {

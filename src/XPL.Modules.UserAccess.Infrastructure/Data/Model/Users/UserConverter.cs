@@ -8,7 +8,7 @@ using XPL.Modules.Kernel.DateTimes;
 using XPL.Modules.UserAccess.Domain.Users;
 using static XPL.Modules.UserAccess.Domain.Users.User;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
+namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
     public class UserConverter : IModelConverter<User, SqlUser>
     {
@@ -63,7 +63,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
             return new SqlUser
             {
                 UserId = m.UserId,
-                RegistrationId = (m.RegistrationId ?? Guid.Empty),
+                RegistrationId = m.RegistrationId ?? Guid.Empty,
                 FirstName = m.FirstName,
                 LastName = m.LastName,
                 Login = m.CurrentLogin,
@@ -87,7 +87,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
                 .Map(m => m.RegistrationId, u => u.RegistrationId)
                 .Map(m => m.UserId, u => u.UserId)
                 .Audit();
-            
+
             if (user.PasswordHash != sql.Passwords.Single(p => p.EndOnUtc == null).PasswordHash)
             {
                 audit.Force();
@@ -110,7 +110,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Converters
                 sql.Passwords.Add(newLogin);
             }
 
-            if(user.CurrentEmail != sql.Emails.Single(e => e.Status == SqlUserEmail.ActiveStatus).Email)
+            if (user.CurrentEmail != sql.Emails.Single(e => e.Status == SqlUserEmail.ActiveStatus).Email)
             {
                 audit.Force();
 
