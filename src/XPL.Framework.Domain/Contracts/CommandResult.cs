@@ -12,6 +12,6 @@
         }
 
         public static CommandResult Ok(string message) => new CommandResult(true, message);
-        public static CommandResult Error(string message) => new CommandResult(false, message);
+        public static CommandResult Fail(string message) => new CommandResult(false, message);
     }
 }

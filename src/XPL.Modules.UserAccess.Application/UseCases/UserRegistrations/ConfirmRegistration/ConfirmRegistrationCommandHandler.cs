@@ -20,7 +20,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmR
                 .Map(u => u.Confirm(request.ConfirmationCode)
                     .Map(_ => CommandResult.Ok("Registration confirmed."))
                     .MapLeft(_ => "Invalid confirmation code"))
-                .Reduce(err => CommandResult.Error(err));
+                .Reduce(err => CommandResult.Fail(err));
 
             return result;
         }

@@ -18,13 +18,13 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail
             var option = _repository.TryFindByLogin(request.Login);
 
             if (!(option is Some<User> some))
-                return CommandResult.Error("Unknown login.");
+                return CommandResult.Fail("Unknown login.");
 
             var user = some.Content;
             var someError = user.UpdateEmail(new EmailAddress(request.NewEmail));
 
             if (someError is Some<UserError> error)
-                return CommandResult.Error(error.Content.Message);
+                return CommandResult.Fail(error.Content.Message);
 
             return CommandResult.Ok("Email updated");
         }

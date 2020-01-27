@@ -18,13 +18,13 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword
             var option = _repository.TryFindByLogin(request.Login);
 
             if (!(option is Some<User> some))
-                return CommandResult.Error("Login not found");
+                return CommandResult.Fail("Login not found");
 
             var user = some.Content;
             Either<UserError, PasswordUpdated> result = user.UpdatePassword(request.OldPassword, request.NewPassword);
 
             return result.Map(_ => CommandResult.Ok("Password updated successfully."))
-                .Reduce(err => CommandResult.Error(err.Message));
+                .Reduce(err => CommandResult.Fail(err.Message));
         }
     }
 }

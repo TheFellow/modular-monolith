@@ -1,13 +1,12 @@
 ﻿using Functional.Option;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using XPL.Framework.Domain.Model;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.UnitOfWork;
-using XPL.Framework.Domain.Model;
-using System.Linq.Expressions;
 
 namespace XPL.Framework.Infrastructure.Persistence
 {
@@ -19,7 +18,7 @@ namespace XPL.Framework.Infrastructure.Persistence
         private readonly Func<DbSet<TPersistence>, IQueryable<TPersistence>>? _includes;
 
         protected abstract IModelConverter<TModel, TPersistence> Converter { get; }
-        protected DbSet<TPersistence> DbSet { get; }
+        private DbSet<TPersistence> DbSet { get; }
 
         private IDictionary<TModel, TPersistence> MaterializedObjects { get; }
         private IDictionary<long, TModel> MaterializedIds { get; }
@@ -61,7 +60,7 @@ namespace XPL.Framework.Infrastructure.Persistence
             if (MaterializedIds.TryGetValue(id, out TModel materializedModel))
                 return materializedModel;
 
-            TPersistence? persisted = (_includes == null ? DbSet :_includes(DbSet)).Where(i => i.Id == id).SingleOrDefault();
+            TPersistence? persisted = (_includes == null ? DbSet : _includes(DbSet)).Where(i => i.Id == id).SingleOrDefault();
 
             if (persisted == null)
                 return None.Value;
@@ -72,6 +71,8 @@ namespace XPL.Framework.Infrastructure.Persistence
 
             return model;
         }
+
+        protected Option<long> GetIdByExpression(Expression<Func<TPersistence, bool>> idSelector) => DbSet.Where(idSelector).Select(o => o.Id).FirstOrNone();
 
         private void OnSaving()
         {
