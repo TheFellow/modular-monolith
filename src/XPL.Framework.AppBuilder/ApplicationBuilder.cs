@@ -101,7 +101,7 @@ namespace XPL.Framework.AppBuilder
         private void AddCommandQueryBus() => _appRegistry.For<IBus>().Use<InMemoryBus>().Scoped();
         private void AddModuleContracts()
         {
-            _appRegistry.For<IDomainEventDispatcher>().Use<DomainEventDispatcher>();
+            _appRegistry.For<IDomainEventDispatcher>().Use<DomainEventDispatcher>().Scoped();
 
             foreach (var assembly in _assemblies)
             {
