@@ -3,7 +3,7 @@ using XPL.Framework.Application.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword
 {
-    public class UpdatePasswordCommand : ICommand<CommandResult>
+    public class UpdatePasswordCommand : ICommand<string>
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();
         public string Login { get; }

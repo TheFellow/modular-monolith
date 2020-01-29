@@ -40,9 +40,7 @@ namespace XPL.CLI
             //await RegisterBob(app);
 
             await ConfirmAlice(app);
-            await Task.Delay(1000);
             await UpdateAlicesPassword(app);
-            await Task.Delay(1000);
             await UpdateAlicesEmail(app);
         }
 
@@ -63,7 +61,7 @@ namespace XPL.CLI
             var cmd = new ConfirmRegistrationCommand(new Guid("6A3A3891-7D14-4A21-9E5C-F5D2001B7D01"), "abc123");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r.Message);
+            DisplayResult(result, r => r);
         }
 
         private static async Task UpdateAlicesPassword(CliApp app)
@@ -73,7 +71,7 @@ namespace XPL.CLI
             var cmd = new UpdatePasswordCommand("Alice", "passw0rd", "p@ssw0rd");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r.Message);
+            DisplayResult(result, r => r);
         }
 
         private static async Task UpdateAlicesEmail(CliApp app)
@@ -83,7 +81,7 @@ namespace XPL.CLI
             var cmd = new UpdateEmailCommand("Alice", "alice.brown@email.com");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r.Message);
+            DisplayResult(result, r => r);
         }
 
         private static async Task RegisterBob(CliApp app)
@@ -95,17 +93,10 @@ namespace XPL.CLI
             DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
         }
 
-        private static void DisplayResult<T>(Either<CommandError, T> result, Func<T, string> display)
-        {
-            (bool success, string message) = result
-                .Map(resp => (true, display(resp)))
-                .Reduce(err => (false, err.Error));
-
-            if (success)
-                WriteSuccess(message);
-            else
-                WriteFail(message);
-        }
+        private static void DisplayResult<T>(Result<T> result, Func<T, string> display) =>
+            result
+                .OnOk(r => WriteSuccess(display(r)))
+                .OnFail(r => WriteFail(r.Message));
 
         private static void WriteInfo(string s) => WriteColor(s, ConsoleColor.Cyan);
         private static void WriteSuccess(string s) => WriteColor("  " + s, ConsoleColor.Green);

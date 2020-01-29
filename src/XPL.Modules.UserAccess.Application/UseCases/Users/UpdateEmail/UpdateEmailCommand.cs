@@ -3,7 +3,7 @@ using XPL.Framework.Application.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail
 {
-    public class UpdateEmailCommand : ICommand<CommandResult>
+    public class UpdateEmailCommand : ICommand<string>
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();
         public string Login { get; }

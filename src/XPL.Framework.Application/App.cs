@@ -24,7 +24,7 @@ namespace XPL.Framework.Application
             _container = container;
         }
 
-        public async Task<Either<CommandError, TResult>> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
+        public async Task<Result<TResult>> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -34,19 +34,19 @@ namespace XPL.Framework.Application
                 var bus = nested.GetInstance<IBus>();
                 
                 var result = await bus.ExecuteCommandAsync(command, cancellationToken);
-                await uow.CommitAsync();
+                result.OnOk(async () => await uow.CommitAsync());
 
                 return result;
             }
             catch (DomainException ex)
             {
-                return new CommandError(ex);
+                return command.Fail(ex);
             }
             catch(Exception ex)
             {
                 string correlationId = Guid.NewGuid().ToString("N")[..6];
                 Logger.Error(ex, "An exception was thrown. Correlation {CorrelationId}", correlationId);
-                return new CommandError($"An error occurred and has been logged. Id {correlationId}");
+                return command.Fail($"An error occurred and has been logged. Id {correlationId}");
             }
         }
 

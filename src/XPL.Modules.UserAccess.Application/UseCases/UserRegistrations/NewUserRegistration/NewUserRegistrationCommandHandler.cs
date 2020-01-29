@@ -20,7 +20,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserR
             _builderFactory = builderFactory;
         }
 
-        public async Task<NewUserRegistrationResponse> Handle(NewUserRegistrationCommand request, CancellationToken cancellationToken)
+        public Task<Result<NewUserRegistrationResponse>> Handle(NewUserRegistrationCommand request, CancellationToken cancellationToken)
         {
             UserRegistration result = _builderFactory()
                 .WithLogin(request.Login)
@@ -32,7 +32,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserR
 
             _repository.Add(result);
 
-            return new NewUserRegistrationResponse(result, request.Login);
+            return request.Ok(new NewUserRegistrationResponse(result, request.Login));
         }
     }
 }

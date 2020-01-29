@@ -18,7 +18,7 @@ namespace XPL.Framework.Infrastructure.Bus
             _logger = logger;
         }
 
-        public async Task<TResult> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default) =>
+        public async Task<Result<TResult>> ExecuteCommandAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default) =>
             await _mediator.Send(command, cancellationToken);
 
         public Task<TResult> ExecuteQueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default) =>
