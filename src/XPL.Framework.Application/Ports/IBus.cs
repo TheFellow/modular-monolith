@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Domain.Contracts;
+using XPL.Framework.Application.Contracts;
 
 namespace XPL.Framework.Application.Ports.Bus
 {

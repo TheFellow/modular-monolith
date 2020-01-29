@@ -1,4 +1,4 @@
-﻿namespace XPL.Framework.Domain.Contracts
+﻿namespace XPL.Framework.Application.Contracts
 {
     public class CommandResult
     {

@@ -11,11 +11,11 @@ using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Domain;
-using XPL.Framework.Domain.Contracts;
 using XPL.Framework.Domain.Model;
 using XPL.Framework.Domain.Startup;
 using XPL.Framework.AppBuilder.Pipeline;
 using XPL.Modules.Kernel.DateTimes;
+using XPL.Framework.Application.Contracts;
 
 namespace XPL.Framework.AppBuilder
 {

@@ -3,9 +3,9 @@ using Lamar;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using XPL.Framework.Application.Contracts;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
-using XPL.Framework.Domain.Contracts;
 using XPL.Modules.Kernel;
 
 namespace XPL.Framework.Application

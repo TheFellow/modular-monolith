@@ -1,5 +1,5 @@
 ﻿using System;
-using XPL.Framework.Domain.Contracts;
+using XPL.Framework.Application.Contracts;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword
 {

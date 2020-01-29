@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPL.Framework.Domain.Contracts
+namespace XPL.Framework.Application.Contracts
 {
     public interface ICorrelate
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
-using XPL.Framework.Domain.Contracts;
+using XPL.Framework.Application.Contracts;
 using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail;

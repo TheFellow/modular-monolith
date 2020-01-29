@@ -1,7 +1,7 @@
 ﻿using Functional.Option;
 using System.Threading;
 using System.Threading.Tasks;
-using XPL.Framework.Domain.Contracts;
+using XPL.Framework.Application.Contracts;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.UserAccess.Domain.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
