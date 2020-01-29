@@ -8,7 +8,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Events
 {
     public sealed class UserRegistrationConfirmed : IDomainEvent
     {
-        public Guid CorrelationId { get; } = Guid.NewGuid();
+        public Guid CorrelationId { get; set; }
         public RegistrationId RegistrationId { get; }
         public EmailAddress Email { get; }
         public Login Login { get; }

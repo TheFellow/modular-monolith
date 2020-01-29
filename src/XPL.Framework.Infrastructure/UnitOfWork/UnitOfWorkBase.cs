@@ -29,27 +29,31 @@ namespace XPL.Framework.Infrastructure.UnitOfWork
             _domainEventSources.Add(domainEventSource);
         }
 
-        public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
+        public async Task<int> CommitAsync(Guid correlationId, CancellationToken cancellationToken = default)
         {
-            await DispatchEvents(cancellationToken);
+            await DispatchEvents(correlationId, cancellationToken);
             return await SaveChangesAsync(cancellationToken);
         }
 
-        private async Task DispatchEvents(CancellationToken cancellationToken)
+        private async Task DispatchEvents(Guid correlationId, CancellationToken cancellationToken)
         {
             List<IDomainEventSource> entities;
 
-            do
+            while (true)
             {
                 entities = (_domainEventSources ?? Enumerable.Empty<IDomainEventSource>())
                     .Where(src => src.GetEvents().Any())
                     .ToList();
 
+                if (entities.Count == 0)
+                    break;
+
                 var events = entities.SelectMany(e => e.GetEvents()).ToList();
                 entities.ForEach(e => e.ClearEvents());
+                events.ForEach(e => e.CorrelationId = correlationId);
 
                 await _domainEventDispatcher.DispatchEventsAsync(events, cancellationToken);
-            } while (entities.Count > 0);
+            }
         }
 
         public event Action? OnSaving, OnSaved;

@@ -6,6 +6,6 @@ namespace XPL.Framework.Application.Ports
 {
     public interface IUnitOfWork : IDisposable
     {
-        Task<int> CommitAsync(CancellationToken cancellationToken = default);
+        Task<int> CommitAsync(Guid correlationId, CancellationToken cancellationToken = default);
     }
 }

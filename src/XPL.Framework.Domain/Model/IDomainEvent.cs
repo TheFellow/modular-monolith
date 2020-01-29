@@ -5,6 +5,6 @@ namespace XPL.Framework.Domain.Model
 {
     public interface IDomainEvent : INotification
     {
-        public Guid CorrelationId { get; }
+        public Guid CorrelationId { get; set;  }
     }
 }

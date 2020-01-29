@@ -1,5 +1,4 @@
-﻿using Functional.Either;
-using Lamar;
+﻿using Lamar;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +33,7 @@ namespace XPL.Framework.Application
                 var bus = nested.GetInstance<IBus>();
                 
                 var result = await bus.ExecuteCommandAsync(command, cancellationToken);
-                await result.OnOk(async () => await uow.CommitAsync());
+                await result.OnOk(async () => await uow.CommitAsync(command.CorrelationId, cancellationToken));
 
                 return result;
             }
