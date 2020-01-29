@@ -26,10 +26,8 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
         public RegistrationId RegistrationId { get; private set; }
         public DateTime ExpiryDate { get; private set; }
 
-        public Either<InvalidConfirmationCode, UserRegistration> Confirm(string confirmationCode)
+        public void Confirm(string confirmationCode)
         {
-            Either<InvalidConfirmationCode, UserRegistration> result = new InvalidConfirmationCode();
-
             _status = _status.Confirm(confirmationCode, () =>
             {
                 _statusDate = _systemClock.Now.Date;
@@ -41,11 +39,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
                     _password,
                     _firstName,
                     _lastName));
-
-                result = this;
             });
-
-            return result;
         }
 
         public void Expire() => _status = _status.Expire();

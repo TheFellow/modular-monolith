@@ -16,13 +16,9 @@ namespace XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmR
         {
             var result = _repository
                 .TryFind(request.RegistrationId)
-                .Else("Cannot locate registration id")
-                .Map(u => u.Confirm(request.ConfirmationCode)
-                    .Map(_ => CommandResult.Ok("Registration confirmed."))
-                    .MapLeft(_ => "Invalid confirmation code"))
-                .Reduce(err => CommandResult.Fail(err));
+                .Tee(u => u.Confirm(request.ConfirmationCode));
 
-            return result;
+            return CommandResult.Ok("Registration confirmed.");
         }
     }
 }

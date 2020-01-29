@@ -26,7 +26,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses
                 throw new DomainException("Cannot confirm registration after expiration date.");
 
             if (confirmationCode != _confirmationCode)
-                return this;
+                throw new DomainException("Incorrect confirmation code.");
 
             action();
             return new Confirmed();
