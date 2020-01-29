@@ -14,6 +14,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Users
         private readonly UserAccessDbContext _dbContext;
         public EmailUsage(UserAccessDbContext dbContext) => _dbContext = dbContext;
 
+        // TODO: Update this to also check User table
         public Option<Login> TryGetLoginForEmail(EmailAddress newEmail) => _dbContext.Users.AsNoTracking()
             .Where(u => u.Emails.Select(e => e.Email).Contains(newEmail.Value))
             .FirstOrNone()
