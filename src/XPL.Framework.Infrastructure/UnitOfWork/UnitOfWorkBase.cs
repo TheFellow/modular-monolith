@@ -31,16 +31,25 @@ namespace XPL.Framework.Infrastructure.UnitOfWork
 
         public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
         {
-            var entities = (_domainEventSources ?? Enumerable.Empty<IDomainEventSource>())
-                .Where(src => src.GetEvents().Any())
-                .ToList();
-
-            var events = entities.SelectMany(e => e.GetEvents()).ToList();
-            entities.ForEach(e => e.ClearEvents());
-
-            await _domainEventDispatcher.DispatchEventsAsync(events, cancellationToken);
-
+            await DispatchEvents(cancellationToken);
             return await SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task DispatchEvents(CancellationToken cancellationToken)
+        {
+            List<IDomainEventSource> entities;
+
+            do
+            {
+                entities = (_domainEventSources ?? Enumerable.Empty<IDomainEventSource>())
+                    .Where(src => src.GetEvents().Any())
+                    .ToList();
+
+                var events = entities.SelectMany(e => e.GetEvents()).ToList();
+                entities.ForEach(e => e.ClearEvents());
+
+                await _domainEventDispatcher.DispatchEventsAsync(events, cancellationToken);
+            } while (entities.Count > 0);
         }
 
         public event Action? OnSaving, OnSaved;

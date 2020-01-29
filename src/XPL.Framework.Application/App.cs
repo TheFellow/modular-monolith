@@ -28,13 +28,13 @@ namespace XPL.Framework.Application
         {
             try
             {
-                var nested = _container.GetNestedContainer();
+                using var nested = _container.GetNestedContainer();
                 var uowAssembly = command.GetType().Assembly.GetName().Name;
                 var uow = nested.GetInstance<IUnitOfWork>(uowAssembly);
                 var bus = nested.GetInstance<IBus>();
                 
                 var result = await bus.ExecuteCommandAsync(command, cancellationToken);
-                result.OnOk(async () => await uow.CommitAsync());
+                await result.OnOk(async () => await uow.CommitAsync());
 
                 return result;
             }

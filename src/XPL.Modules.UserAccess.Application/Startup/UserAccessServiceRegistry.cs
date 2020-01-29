@@ -30,7 +30,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
             string assemblyName = GetType().Assembly.GetName().Name;
 
             For<UserAccessUoW>().Use<UserAccessUoW>().Scoped();
-            For<IUnitOfWork>().Use(ctx => ctx.GetInstance<UserAccessUoW>()).Named(assemblyName);
+            For<IUnitOfWork>().Use(ctx => ctx.GetInstance<UserAccessUoW>()).Named(assemblyName).Scoped();
 
             For<UserRegistrationRepository>().Use<UserRegistrationRepository>().Scoped();
             For<UserRepository>().Use<UserRepository>().Scoped();

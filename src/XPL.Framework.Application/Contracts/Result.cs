@@ -11,10 +11,20 @@ namespace XPL.Framework.Application.Contracts
 
         public static implicit operator Task<Result<T>>(Result<T> result) => Task.FromResult(result);
 
+        #region OnOk and OnFail overloads
+        
         public Result<T> OnOk(Action action)
         {
             if (this is Ok<T>)
                 action();
+
+            return this;
+        }
+
+        public async Task<Result<T>> OnOk(Func<Task> action)
+        {
+            if (this is Ok<T>)
+                await action();
 
             return this;
         }
@@ -27,10 +37,26 @@ namespace XPL.Framework.Application.Contracts
             return this;
         }
 
+        public async Task<Result<T>> OnOk(Func<T, Task> action)
+        {
+            if (this is Ok<T> ok)
+                await action(ok.Value);
+
+            return this;
+        }
+
         public Result<T> OnFail(Action action)
         {
             if (this is Error<T>)
                 action();
+
+            return this;
+        }
+
+        public async Task<Result<T>> OnFail(Func<Task> action)
+        {
+            if (this is Error<T>)
+                await action();
 
             return this;
         }
@@ -43,6 +69,15 @@ namespace XPL.Framework.Application.Contracts
             return this;
         }
 
+        public async Task<Result<T>> OnFail(Func<Error<T>, Task> action)
+        {
+            if (this is Error<T> error)
+                await action(error);
+
+            return this;
+        }
+
+        #endregion
     }
 
     public sealed class Ok<T> : Result<T>
