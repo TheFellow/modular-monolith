@@ -10,6 +10,17 @@ a Domain-Driven Design approach, and Explicit Architecture.
 I created this project as an exercise for myself to see if the way I imagined a modern architecture
 actually played out that way when if sit down and code it up. *Unsurprisingly* I've learned a few things.
 
+## Table of Contents
+
+1. [Inspiration](#Inspiration)
+1. [Code Quality](#code-quality)
+   1. [Level: Code](#level-code)
+   2. [Level: Methods, Properties, and Fields](#level-methods-properties-and-fields)
+   3. [Level: Classes, Interfaces, and Functions](#level-classes-interfaces-and-functions)
+   4. [Level: Namespaces](#level-namespaces)
+   5. [Level: Assemblies / Packages](#level-assemblies-packages)
+   6. [Level: Bounded Contexts / Modules](#level-bounded-contexts-modules)
+
 ### Inspiration
 
 **This is not an original idea.**
@@ -58,7 +69,7 @@ These code qualities apply at **all** leveles of software.
 - Program to an interface, not an implementation
 - Follow [CQS](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation)
 
-#### Level: Classes, Interfaces, Functions
+#### Level: Classes, Interfaces, and Functions
 
 ![Class Level](docs/Level-Classes.png)
 - Descriptive or Conventional class names
