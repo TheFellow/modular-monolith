@@ -13,13 +13,18 @@ actually played out that way when if sit down and code it up. *Unsurprisingly* I
 ## Table of Contents
 
 1. [Inspiration](#Inspiration)
-1. [Code Quality](#code-quality)
+2. [What You Should Know](#what-you-should-know)
+   1. [Architecture](#architecture)
+   2. [Code Style](#code-style)
+3. [Code Quality](#code-quality)
    1. [Level: Code](#level-code)
    2. [Level: Methods, Properties, and Fields](#level-methods-properties-and-fields)
    3. [Level: Classes, Interfaces, and Functions](#level-classes-interfaces-and-functions)
    4. [Level: Namespaces](#level-namespaces)
    5. [Level: Assemblies / Packages](#level-assemblies-packages)
    6. [Level: Bounded Contexts / Modules](#level-bounded-contexts-modules)
+
+----
 
 ### Inspiration
 
@@ -34,6 +39,51 @@ I will not repeat all that he's done in that repo because (a) it's a lot and (b)
 
 However, I have poured over most of his source code and there are certain things, not represented there,
 which are of particular interest to me.
+
+----
+
+### What You Should Know
+
+Everybody has their own style of coding, but some are better than others. :smirk:
+
+- I will be following all of the standard rules including GRASP practices, SOLID principles, and proper Object-Oriented Design.
+- I will use C# 8's nullable reference types everywhere.
+- Code will be defensive by design.
+
+#### Architecture
+
+The top-level architecture is [Herberto Graca](https://herbertograca.com/)'s
+[**Explicit Architecture.**](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
+I **strongly** recommend you read this series of articles.
+![Explicit Architecture](docs/ExplicitArchitecture.png)
+
+#### Code Style
+
+Object-Oriented Programming is the *transpose* of Functional Programming. 
+
+OOP is good when you have lots of types which share behavior, or can be composed together.
+- Adding a new **type** to a hierarchy is easy (one new class)
+- Adding a new **method** to the top of a hierarchy is hard (every class which inherits this needs to be updated)
+
+Functional Programming is good when you a lot of workflows on potentially disparate types
+- Adding a new **function** is easy (one new function)
+- Adding a new **type** is hard (every function that uses it needs to be updated)
+
+So, there's a trade-off between the two which hinges around the likelihood of
+having to add new behaviors to existing types in the system, or to add new types
+with similar behaviors to the system.
+
+That said, DDD tells us to use immutable value objects as much as possible. Similarly, functional
+programming almost always focuses on immutable objects.
+
+Because C# is OO-first, the solution will include plenty of objects, hopefully designed well. But, the
+lessons learned from the functional-style should be used as much as possible. This includes things like honest
+method signatures, Railway-Oriented programming, and a functional design.
+
+If you can, I would recommend that you watch everything by [Zoran Horvat](http://www.codinghelmet.com/articles)
+over on [Pluralsight](http://www.pluralsight.com/). A lot of similar information is found on his website as well.
+
+----
 
 ### Code Quality
 
