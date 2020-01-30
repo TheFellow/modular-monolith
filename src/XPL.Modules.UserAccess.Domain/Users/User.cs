@@ -39,7 +39,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
 
             Option<Login> emailUsage = _emailUsage.TryGetLoginForEmail(newEmail);
 
-            if (emailUsage is Some<Login>)
+            if (emailUsage is Some<Login> login && login != _currentLogin)
                 return new UserError("This login name is already in use");
 
             _currentEmail = newEmail;

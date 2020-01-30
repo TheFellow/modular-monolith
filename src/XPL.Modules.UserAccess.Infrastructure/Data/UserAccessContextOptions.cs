@@ -10,10 +10,11 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
 
         private static readonly ILoggerFactory _myLoggerFactory = LoggerFactory.Create(b => b.AddConsole());
 
-        public static DbContextOptions<UserAccessDbContext> GetOptions(ConnectionString connectionString) =>
+        public static DbContextOptions<UserAccessDbContext> GetOptions(ConnectionString connectionString, bool readOnly) =>
             new DbContextOptionsBuilder<UserAccessDbContext>()
                 //.UseLoggerFactory(_myLoggerFactory)
                 .UseSqlServer(connectionString.Value)
+                .UseQueryTrackingBehavior(readOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll)
                 .EnableSensitiveDataLogging()
                 .Options;
     }

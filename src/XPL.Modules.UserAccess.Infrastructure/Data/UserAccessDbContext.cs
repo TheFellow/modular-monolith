@@ -6,7 +6,7 @@ using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
-    public class UserAccessDbContext : DbContext
+    public class UserAccessDbContext : DbContext, IUserAccessQueryContext
     {
         private const string _schema = "UserAccess";
 
@@ -16,7 +16,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
         public UserAccessDbContext(DbContextOptions<UserAccessDbContext> options)
             : base(options)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

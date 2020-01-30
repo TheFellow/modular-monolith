@@ -7,8 +7,8 @@ using XPL.Modules.UserAccess.Domain.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
+using XPL.Modules.UserAccess.Infrastructure.Emails;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
-using XPL.Modules.UserAccess.Infrastructure.Users;
 
 namespace XPL.Modules.UserAccess.Application.Startup
 {
@@ -23,7 +23,15 @@ namespace XPL.Modules.UserAccess.Application.Startup
                 .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>
                 {
                     var connString = ctx.GetInstance<ConnectionString>();
-                    return UserAccessContextOptions.GetOptions(connString);
+                    return UserAccessContextOptions.GetOptions(connString, false);
+                })
+                .Scoped();
+
+            For<IUserAccessQueryContext>().Use<UserAccessDbContext>()
+                .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>
+                {
+                    var connString = ctx.GetInstance<ConnectionString>();
+                    return UserAccessContextOptions.GetOptions(connString, true);
                 })
                 .Scoped();
 

@@ -2,10 +2,12 @@
 using System;
 using XPL.Modules.Kernel;
 using XPL.Modules.Kernel.DateTimes;
+using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
 using XPL.Modules.UserAccess.Domain.UserRegistrations.Statuses;
+using XPL.Modules.UserAccess.Domain.Users;
 using static XPL.Modules.UserAccess.Domain.UserRegistrations.UserRegistration;
 
 namespace XPL.Modules.UserAccess.Domain.UserRegistrations
@@ -13,6 +15,7 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
     public class Builder
     {
         private readonly LoginValidator _loginValidator;
+        private readonly IEmailUsage _emailUsage;
         private readonly ISystemClock _systemClock;
         private string? _login;
         private string? _password;
@@ -20,9 +23,10 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
         private string? _firstName;
         private string? _lastName;
 
-        public Builder(LoginValidator loginValidator, ISystemClock systemClock)
+        public Builder(LoginValidator loginValidator, IEmailUsage emailUsage, ISystemClock systemClock)
         {
             _loginValidator = loginValidator;
+            _emailUsage = emailUsage;
             _systemClock = systemClock;
         }
 
@@ -65,6 +69,9 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 
             if (_loginValidator.ValidateLogin(login) is Some<UserRegistrationError> loginError)
                 throw new DomainException(loginError.Content.Error);
+
+            if (_emailUsage.TryGetLoginForEmail(new EmailAddress(_email)) is Some<Login>)
+                throw new DomainException("Email address is already in use.");
 
             DateTime expiryDate = _systemClock.Now.AddDays(7).Date;
 

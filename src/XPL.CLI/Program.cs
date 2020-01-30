@@ -42,6 +42,9 @@ namespace XPL.CLI
             await ConfirmAlice(app);
             await UpdateAlicesPassword(app);
             await UpdateAlicesEmail(app);
+            await UpdateAlicesEmailAgain(app);
+
+            await RegisterCharles(app);
         }
 
 
@@ -84,11 +87,30 @@ namespace XPL.CLI
             DisplayResult(result, r => r);
         }
 
+        private static async Task UpdateAlicesEmailAgain(CliApp app)
+        {
+            WriteInfo("Updating Alice's Email Again");
+
+            var cmd = new UpdateEmailCommand("Alice", "alice@email.com");
+            var result = await app.ExecuteCommandAsync(cmd);
+
+            DisplayResult(result, r => r);
+        }
+
         private static async Task RegisterBob(CliApp app)
         {
             WriteInfo("Confirm registration for Bob.");
 
             var cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "Bob@email.com", "Robert", "Brown");
+            var result = await app.ExecuteCommandAsync(cmd);
+            DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
+        }
+
+        private static async Task RegisterCharles(CliApp app)
+        {
+            WriteInfo("Confirm registration for Charles.");
+
+            var cmd = new NewUserRegistrationCommand("Charles", "passw0rd", "alice.brown@email.com", "Charles", "Brown");
             var result = await app.ExecuteCommandAsync(cmd);
             DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
         }
