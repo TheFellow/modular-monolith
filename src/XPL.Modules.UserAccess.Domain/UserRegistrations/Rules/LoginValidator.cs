@@ -9,10 +9,10 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations.Rules
 
         public LoginValidator(ILoginExists loginExists) => _loginExists = loginExists;
 
-        public Option<UserRegistrationError> ValidateLogin(Login login)
+        public Option<UserAccessError> ValidateLogin(Login login)
         {
             if (_loginExists.LoginExists(login))
-                return new UserRegistrationError($"Login \"{login.Value}\" already exists.");
+                return new UserAccessError($"Login \"{login.Value}\" already exists.");
 
             return None.Value;
         }

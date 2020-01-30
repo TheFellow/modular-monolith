@@ -67,8 +67,8 @@ namespace XPL.Modules.UserAccess.Domain.UserRegistrations
 
             var login = new Login(_login);
 
-            if (_loginValidator.ValidateLogin(login) is Some<UserRegistrationError> loginError)
-                throw new DomainException(loginError.Content.Error);
+            if (_loginValidator.ValidateLogin(login) is Some<UserAccessError> loginError)
+                throw new DomainException(loginError.Content.Message);
 
             if (_emailUsage.TryGetLoginForEmail(new EmailAddress(_email)) is Some<Login>)
                 throw new DomainException("Email address is already in use.");

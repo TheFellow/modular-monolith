@@ -3,6 +3,7 @@ using Functional.Option;
 using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Contracts;
+using XPL.Modules.UserAccess.Domain;
 using XPL.Modules.UserAccess.Domain.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 
@@ -21,7 +22,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword
                 return request.Fail("Login not found");
 
             var user = some.Content;
-            Either<UserError, PasswordUpdated> result = user.UpdatePassword(request.OldPassword, request.NewPassword);
+            Either<UserAccessError, PasswordUpdated> result = user.UpdatePassword(request.OldPassword, request.NewPassword);
 
             return result.Map(_ => request.Ok("Password updated successfully."))
                 .Reduce(err => request.Fail(err.Message));
