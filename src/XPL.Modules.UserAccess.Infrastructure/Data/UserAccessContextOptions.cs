@@ -6,8 +6,6 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
     public static class UserAccessContextOptions
     {
-        public const string HiLoSequence = "SeqPrimaryKeys";
-
         private static readonly ILoggerFactory _myLoggerFactory = LoggerFactory.Create(b => b.AddConsole());
 
         public static DbContextOptions<UserAccessDbContext> GetOptions(ConnectionString connectionString, bool readOnly) =>

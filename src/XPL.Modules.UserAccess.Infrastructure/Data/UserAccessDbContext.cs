@@ -9,6 +9,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
     public class UserAccessDbContext : DbContext, IUserAccessQueryContext
     {
         private const string _schema = "UserAccess";
+        private const string _hiLoSequence = "SeqPrimaryKeys";
 
         public DbSet<SqlUserRegistration> UserRegistrations { get; set; } = null!;
         public DbSet<SqlUser> Users { get; set; } = null!;
@@ -22,6 +23,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(_schema);
+
+            modelBuilder.UseHiLo(_hiLoSequence, _schema);
 
             modelBuilder.ApplyConfiguration(new SqlUserRegistrationConfiguration());
 

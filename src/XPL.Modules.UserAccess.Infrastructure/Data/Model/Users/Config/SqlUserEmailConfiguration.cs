@@ -12,8 +12,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config
 
             builder.Property(o => o.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint")
-                .UseHiLo(UserAccessContextOptions.HiLoSequence);
+                .HasColumnType("bigint");
 
             builder.Property(o => o.UserId)
                 .HasColumnName("UserId")

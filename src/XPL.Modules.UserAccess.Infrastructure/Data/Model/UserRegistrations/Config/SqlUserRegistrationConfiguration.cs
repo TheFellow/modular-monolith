@@ -12,8 +12,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Con
 
             builder.Property(u => u.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint")
-                .UseHiLo(UserAccessContextOptions.HiLoSequence);
+                .HasColumnType("bigint");
 
             builder.Property(u => u.RowVersion)
                 .IsRowVersion();
