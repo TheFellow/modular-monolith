@@ -18,10 +18,11 @@ namespace XPL.Modules.UserAccess.Application.Listeners
             _emailUsage = emailUsage;
         }
 
-        public async Task Handle(UserRegistrationConfirmed confirmation, CancellationToken cancellationToken)
+        public Task Handle(UserRegistrationConfirmed confirmation, CancellationToken cancellationToken)
         {
             var user = new User(confirmation, _emailUsage);
             _repository.Add(user);
+            return Task.CompletedTask;
         }
     }
 }
