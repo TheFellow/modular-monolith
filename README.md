@@ -5,7 +5,7 @@ a Domain-Driven Design approach, and Explicit Architecture.
 
 ## Why?
 
-> "In theory, theory and practice are the same. In practice, they are not."
+> In theory, theory and practice are the same. In practice, they are not.
 
 I created this project as an exercise for myself to see if the way I imagined a modern architecture
 actually played out that way when if sit down and code it up. *Unsurprisingly* I've learned a few things.
@@ -92,7 +92,7 @@ Qualities we want in our codebase:
 2. **Extensible** Adding new behavior to the system involves writing new code, not modifying existing code
 3. **Testable** The system is structured in such a way that tests can be easily written to verify behavior
 4. **Modular** The system is packaged in such a way that distinct components are logically separate and reusable
-5. **Encpsulated** Each module of the system has complete ownership over the data and behaviors it represents
+5. **Encapsulated** Each module of the system has complete ownership over the data and behaviors it represents
 6. **Discoverable** Looking at any module of the system should provide feedback about how it used and what it does
 
 These code qualities apply at **all** leveles of software.
