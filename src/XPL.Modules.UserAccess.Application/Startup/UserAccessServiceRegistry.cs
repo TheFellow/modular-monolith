@@ -9,6 +9,7 @@ using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.Emails;
 using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
+using static XPL.Modules.UserAccess.Infrastructure.Data.UserAccessContextOptions;
 
 namespace XPL.Modules.UserAccess.Application.Startup
 {
@@ -23,7 +24,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
                 .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>
                 {
                     var connString = ctx.GetInstance<ConnectionString>();
-                    return UserAccessContextOptions.GetOptions(connString, false);
+                    return UserAccessContextOptions.GetOptions(connString, TrackingBehavior.TrackAll);
                 })
                 .Scoped();
 
@@ -31,7 +32,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
                 .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>
                 {
                     var connString = ctx.GetInstance<ConnectionString>();
-                    return UserAccessContextOptions.GetOptions(connString, true);
+                    return UserAccessContextOptions.GetOptions(connString, TrackingBehavior.NoTracking);
                 })
                 .Scoped();
 
