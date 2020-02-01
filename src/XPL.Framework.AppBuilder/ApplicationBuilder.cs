@@ -44,9 +44,9 @@ namespace XPL.Framework.AppBuilder
             return this;
         }
 
-        INeedModules INeedConnectionString.WithConnectionString(ConnectionString connectionString)
+        INeedModules INeedConnectionString.WithConnectionString(Func<IConfiguration, ConnectionString> connectionString)
         {
-            _connectionString = connectionString;
+            _connectionString = connectionString(_config ?? throw new InvalidOperationException("Setup config first"));
             _appRegistry.For<ConnectionString>().Use(_connectionString);
             return this;
         }

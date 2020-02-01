@@ -22,7 +22,7 @@ namespace XPL.CLI.Application
             ApplicationBuilder.Create()
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
                 .WithLogger(LoggerFactory.ConsoleDebugLogger)
-                .WithConnectionString(new CliAppConnectionString())
+                .WithConnectionString(c => new CliAppConnectionString(c))
                 .AddModuleRegistry<UserAccessServiceRegistry>()
                 .Build<CliApp>();
         

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 
 namespace XPL.Framework.Infrastructure.Configuration
 {
@@ -7,7 +8,7 @@ namespace XPL.Framework.Infrastructure.Configuration
     {
         public static IConfiguration OptionalAppSettingsJson =>
             new ConfigurationBuilder()
-                .AddJsonFile(Environment.CurrentDirectory + "appSettings.json", optional: true)
+                .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "appSettings.json"), optional: true)
                 .Build();
     }
 }

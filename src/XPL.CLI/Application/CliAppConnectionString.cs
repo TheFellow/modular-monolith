@@ -1,10 +1,13 @@
-﻿using XPL.Framework.Infrastructure.Persistence;
+﻿using Microsoft.Extensions.Configuration;
+using XPL.Framework.Infrastructure.Persistence;
 
 namespace XPL.CLI.Application
 {
     public class CliAppConnectionString : ConnectionString
     {
-        // TODO: Pull this from configuration
-        public override string Value => @"Server=(localdb)\mssqllocaldb;Database=CodeCamps;Trusted_Connection=True;";
+        private readonly IConfiguration _configuration;
+        public CliAppConnectionString(IConfiguration configuration) => _configuration = configuration;
+
+        public override string Value => _configuration.GetConnectionString("CliDb");
     }
 }
