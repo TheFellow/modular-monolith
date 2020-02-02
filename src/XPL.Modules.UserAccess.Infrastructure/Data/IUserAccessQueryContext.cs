@@ -6,7 +6,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
     public interface IUserAccessQueryContext
     {
-        DbSet<SqlRegistration> UserRegistrations { get; set; }
+        DbSet<SqlRegistration> Registrations { get; set; }
         DbSet<SqlUser> Users { get; set; }
     }
 }

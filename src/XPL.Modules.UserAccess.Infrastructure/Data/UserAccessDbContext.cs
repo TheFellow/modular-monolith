@@ -11,7 +11,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
         private const string _schema = "UserAccess";
         private const string _hiLoSequence = "SeqPrimaryKeys";
 
-        public DbSet<SqlRegistration> UserRegistrations { get; set; } = null!;
+        public DbSet<SqlRegistration> Registrations { get; set; } = null!;
         public DbSet<SqlUser> Users { get; set; } = null!;
 
         public UserAccessDbContext(DbContextOptions<UserAccessDbContext> options)

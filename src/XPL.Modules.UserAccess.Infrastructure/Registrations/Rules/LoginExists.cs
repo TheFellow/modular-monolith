@@ -15,7 +15,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Registrations.Rules
         bool ILoginExists.LoginExists(Login login)
         {
             var loginSql = _queryContext
-                .UserRegistrations
+                .Registrations
                 .Where(u => u.Login == login.Value)
                 .Select(l => l.Login)
                 .ToList() // Can't Concat over different DbSets

@@ -8,7 +8,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
     public class RegistrationRepository : MappingRepository<UserAccessDbContext, UserRegistration, SqlRegistration>
     {
         public RegistrationRepository(UserAccessUoW uow, Func<RegistrationConverter> converterFactory)
-            : base(uow, dbContext => dbContext.UserRegistrations)
+            : base(uow, dbContext => dbContext.Registrations)
         {
             Converter = converterFactory();
         }

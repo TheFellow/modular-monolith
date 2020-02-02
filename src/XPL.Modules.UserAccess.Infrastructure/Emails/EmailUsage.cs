@@ -20,7 +20,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Emails
             .Select(su => su.Login)
             .ToList() // Can't Concat over different DbSets
             .Concat(
-                _queryContext.UserRegistrations
+                _queryContext.Registrations
                 .Where(r => r.Email == newEmail.Value)
                 .Select(r => r.Email))
             .FirstOrNone()
