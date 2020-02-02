@@ -7,4 +7,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[UserPassword]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="3d68f616-d9d2-4158-8676-61d74518a160" ChangeDateTime="02/02/2020 22:27:19">
+    <Property Name="ElementName" Value="[UserAccess].[UserRegistration]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[UserAccess]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[Registration]" />
+  </Operation>
 </Operations>

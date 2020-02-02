@@ -9,8 +9,8 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Registrations.ConfirmRegis
 {
     public class ConfirmRegistrationCommandHandler : ICommandHandler<ConfirmRegistrationCommand, string>
     {
-        private readonly UserRegistrationRepository _repository;
-        public ConfirmRegistrationCommandHandler(UserRegistrationRepository repository) => _repository = repository;
+        private readonly RegistrationRepository _repository;
+        public ConfirmRegistrationCommandHandler(RegistrationRepository repository) => _repository = repository;
 
         public Task<Result<string>> Handle(ConfirmRegistrationCommand request, CancellationToken cancellationToken) =>
             _repository

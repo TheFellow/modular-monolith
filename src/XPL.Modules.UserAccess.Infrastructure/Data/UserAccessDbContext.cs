@@ -11,7 +11,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
         private const string _schema = "UserAccess";
         private const string _hiLoSequence = "SeqPrimaryKeys";
 
-        public DbSet<SqlUserRegistration> UserRegistrations { get; set; } = null!;
+        public DbSet<SqlRegistration> UserRegistrations { get; set; } = null!;
         public DbSet<SqlUser> Users { get; set; } = null!;
 
         public UserAccessDbContext(DbContextOptions<UserAccessDbContext> options)
@@ -26,7 +26,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data
 
             modelBuilder.UseHiLo(_hiLoSequence, _schema);
 
-            modelBuilder.ApplyConfiguration(new SqlUserRegistrationConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlRegistrationConfiguration());
 
             modelBuilder.ApplyConfiguration(new SqlUserConfiguration());
             modelBuilder.ApplyConfiguration(new SqlUserPasswordConfiguration());

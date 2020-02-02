@@ -3,7 +3,7 @@ using XPL.Framework.Infrastructure.Persistence;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
 {
-    public class SqlUserRegistration : ISqlId
+    public class SqlRegistration : ISqlId
     {
         public long Id { get; set; }
         public byte[] RowVersion { get; set; } = new byte[0];

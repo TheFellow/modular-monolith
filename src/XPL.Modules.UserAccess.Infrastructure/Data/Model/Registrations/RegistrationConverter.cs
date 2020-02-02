@@ -7,12 +7,12 @@ using static XPL.Modules.UserAccess.Domain.Registrations.UserRegistration;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
 {
-    public class UserRegistrationConverter : IModelConverter<UserRegistration, SqlUserRegistration>
+    public class RegistrationConverter : IModelConverter<UserRegistration, SqlRegistration>
     {
         private readonly ISystemClock _systemClock;
-        public UserRegistrationConverter(ISystemClock systemClock) => _systemClock = systemClock;
+        public RegistrationConverter(ISystemClock systemClock) => _systemClock = systemClock;
 
-        public UserRegistration ToModel(SqlUserRegistration persisted) => new Memento(
+        public UserRegistration ToModel(SqlRegistration persisted) => new Memento(
                 persisted.Email,
                 persisted.Login,
                 persisted.ConfirmationCode,
@@ -27,10 +27,10 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
                 persisted.ExpiryDate)
             .From();
 
-        public SqlUserRegistration ToPersisted(UserRegistration model)
+        public SqlRegistration ToPersisted(UserRegistration model)
         {
             var m = Memento.Get(model);
-            return new SqlUserRegistration
+            return new SqlRegistration
             {
                 ConfirmationCode = m.ConfirmationCode,
                 Email = m.Email,
@@ -48,11 +48,11 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
             };
         }
 
-        public void CopyChanges(UserRegistration from, SqlUserRegistration to)
+        public void CopyChanges(UserRegistration from, SqlRegistration to)
         {
             var m = Memento.Get(from);
 
-            new AuditFieldUpdater<Memento, SqlUserRegistration>(_systemClock, m, to, t => t.UpdatedBy, t => t.UpdatedOn)
+            new AuditFieldUpdater<Memento, SqlRegistration>(_systemClock, m, to, t => t.UpdatedBy, t => t.UpdatedOn)
                 .Map(m => m.ConfirmationCode, t => t.ConfirmationCode)
                 .Map(m => m.Email, t => t.Email)
                 .Map(m => m.ExpiryDate, t => t.ExpiryDate)

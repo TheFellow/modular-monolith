@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations.Config
 {
-    public class SqlUserRegistrationConfiguration : IEntityTypeConfiguration<SqlUserRegistration>
+    public class SqlRegistrationConfiguration : IEntityTypeConfiguration<SqlRegistration>
     {
-        public void Configure(EntityTypeBuilder<SqlUserRegistration> builder)
+        public void Configure(EntityTypeBuilder<SqlRegistration> builder)
         {
-            builder.ToTable("UserRegistration")
+            builder.ToTable("Registration")
                 .HasKey(u => u.Id);
 
             builder.Property(u => u.Id)

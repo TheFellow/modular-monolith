@@ -9,11 +9,11 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Registrations.NewUserRegis
 {
     public class NewRegistrationCommandHandler : ICommandHandler<NewRegistrationCommand, NewRegistrationResponse>
     {
-        private readonly UserRegistrationRepository _repository;
+        private readonly RegistrationRepository _repository;
         private readonly Func<Builder> _builderFactory;
 
         public NewRegistrationCommandHandler(
-            UserRegistrationRepository repository,
+            RegistrationRepository repository,
             Func<Builder> builderFactory)
         {
             _repository = repository;

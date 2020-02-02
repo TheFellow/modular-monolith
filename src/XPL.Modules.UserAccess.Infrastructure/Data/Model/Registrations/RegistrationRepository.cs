@@ -5,15 +5,15 @@ using XPL.Modules.UserAccess.Domain.Registrations;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
 {
-    public class UserRegistrationRepository : MappingRepository<UserAccessDbContext, UserRegistration, SqlUserRegistration>
+    public class RegistrationRepository : MappingRepository<UserAccessDbContext, UserRegistration, SqlRegistration>
     {
-        public UserRegistrationRepository(UserAccessUoW uow, Func<UserRegistrationConverter> converterFactory)
+        public RegistrationRepository(UserAccessUoW uow, Func<RegistrationConverter> converterFactory)
             : base(uow, dbContext => dbContext.UserRegistrations)
         {
             Converter = converterFactory();
         }
 
-        protected override IModelConverter<UserRegistration, SqlUserRegistration> Converter { get; }
+        protected override IModelConverter<UserRegistration, SqlRegistration> Converter { get; }
 
         public Option<UserRegistration> TryFind(Guid registrationId) => GetIdByRegistrationId(registrationId)
             .Map(id => TryFind(id));

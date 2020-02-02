@@ -41,7 +41,7 @@ namespace XPL.Modules.UserAccess.Application.Startup
             For<UserAccessUoW>().Use<UserAccessUoW>().Scoped();
             For<IUnitOfWork>().Use(ctx => ctx.GetInstance<UserAccessUoW>()).Named(assemblyName).Scoped();
 
-            For<UserRegistrationRepository>().Use<UserRegistrationRepository>().Scoped();
+            For<RegistrationRepository>().Use<RegistrationRepository>().Scoped();
             For<UserRepository>().Use<UserRepository>().Scoped();
         }
     }
