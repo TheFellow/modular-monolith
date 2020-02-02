@@ -4,7 +4,7 @@ using XPL.Framework.Domain.Model;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
-using XPL.Modules.UserAccess.Domain.UserRegistrations;
+using XPL.Modules.UserAccess.Domain.Registrations;
 
 namespace XPL.Modules.UserAccess.Domain.Users
 {

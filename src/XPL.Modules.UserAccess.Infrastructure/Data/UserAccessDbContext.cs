@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations.Config;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations.Config;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config;
 

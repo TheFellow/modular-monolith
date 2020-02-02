@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.Persistence;
-using XPL.Modules.UserAccess.Domain.UserRegistrations.Rules;
+using XPL.Modules.UserAccess.Domain.Registrations.Rules;
 using XPL.Modules.UserAccess.Domain.Users;
 using XPL.Modules.UserAccess.Infrastructure.Data;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.Emails;
-using XPL.Modules.UserAccess.Infrastructure.UserRegistrations.Rules;
+using XPL.Modules.UserAccess.Infrastructure.Registrations.Rules;
 using static XPL.Modules.UserAccess.Infrastructure.Data.UserAccessContextOptions.TrackingBehavior;
 
 namespace XPL.Modules.UserAccess.Application.Startup

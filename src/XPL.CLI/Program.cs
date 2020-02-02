@@ -3,8 +3,8 @@ using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application.Contracts;
-using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.ConfirmRegistration;
-using XPL.Modules.UserAccess.Application.UseCases.UserRegistrations.NewUserRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.Registrations.ConfirmRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.Registrations.NewUserRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword;
 
@@ -52,7 +52,7 @@ namespace XPL.CLI
         {
             WriteInfo("Create Registration for Alice.");
 
-            var cmd = new NewUserRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
+            var cmd = new NewRegistrationCommand("Alice", "passw0rd", "alice@email.com", "Alice", "Brown");
             var result = await app.ExecuteCommandAsync(cmd);
             DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
         }
@@ -101,7 +101,7 @@ namespace XPL.CLI
         {
             WriteInfo("Confirm registration for Bob.");
 
-            var cmd = new NewUserRegistrationCommand("Bob", "passw0rd", "Bob@email.com", "Robert", "Brown");
+            var cmd = new NewRegistrationCommand("Bob", "passw0rd", "Bob@email.com", "Robert", "Brown");
             var result = await app.ExecuteCommandAsync(cmd);
             DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
         }
@@ -110,7 +110,7 @@ namespace XPL.CLI
         {
             WriteInfo("Confirm registration for Charles.");
 
-            var cmd = new NewUserRegistrationCommand("Charles", "passw0rd", "alice.brown@email.com", "Charles", "Brown");
+            var cmd = new NewRegistrationCommand("Charles", "passw0rd", "alice.brown@email.com", "Charles", "Brown");
             var result = await app.ExecuteCommandAsync(cmd);
             DisplayResult(result, r => $"Registered login \"{r.Login}\" id {r.RegistrationId}");
         }

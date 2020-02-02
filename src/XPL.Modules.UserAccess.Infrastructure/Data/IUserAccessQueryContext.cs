@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using XPL.Modules.UserAccess.Infrastructure.Data.Model.UserRegistrations;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data

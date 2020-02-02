@@ -2,8 +2,8 @@
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
-using XPL.Modules.UserAccess.Domain.UserRegistrations;
-using XPL.Modules.UserAccess.Domain.UserRegistrations.Events;
+using XPL.Modules.UserAccess.Domain.Registrations;
+using XPL.Modules.UserAccess.Domain.Registrations.Events;
 
 namespace XPL.Modules.UserAccess.Domain.Users
 {
