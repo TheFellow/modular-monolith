@@ -7,9 +7,9 @@ using XPL.Modules.UserAccess.Domain.Registrations.Statuses;
 
 namespace XPL.Modules.UserAccess.Domain.Registrations
 {
-    public partial class UserRegistration
+    public partial class Registration
     {
-        private UserRegistration(Memento memento)
+        private Registration(Memento memento)
         {
             _systemClock = memento.SystemClock;
             RegistrationId = new RegistrationId(memento.RegistrationId);
@@ -75,9 +75,9 @@ namespace XPL.Modules.UserAccess.Domain.Registrations
                 _ => throw new InvalidOperationException()
             };
 
-            public UserRegistration From() => From(this);
-            public static UserRegistration From(Memento memento) => new UserRegistration(memento);
-            public static Memento Get(UserRegistration r) => new Memento(
+            public Registration From() => From(this);
+            public static Registration From(Memento memento) => new Registration(memento);
+            public static Memento Get(Registration r) => new Memento(
                 r._email.Value,
                 r._login.Value,
                 r._confirmationCode,

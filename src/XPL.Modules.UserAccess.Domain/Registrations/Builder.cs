@@ -8,7 +8,7 @@ using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.Registrations.Rules;
 using XPL.Modules.UserAccess.Domain.Registrations.Statuses;
 using XPL.Modules.UserAccess.Domain.Users;
-using static XPL.Modules.UserAccess.Domain.Registrations.UserRegistration;
+using static XPL.Modules.UserAccess.Domain.Registrations.Registration;
 
 namespace XPL.Modules.UserAccess.Domain.Registrations
 {
@@ -60,7 +60,7 @@ namespace XPL.Modules.UserAccess.Domain.Registrations
             return this;
         }
 
-        public UserRegistration Build()
+        public Registration Build()
         {
             if (_login is null || _password is null || _email is null || _firstName is null || _lastName is null)
                 throw new InvalidOperationException("Specify all builder elements before attempting to build.");

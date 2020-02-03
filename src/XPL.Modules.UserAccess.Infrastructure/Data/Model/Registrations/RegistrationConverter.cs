@@ -3,16 +3,16 @@ using XPL.Framework.Infrastructure.Data;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.Kernel.DateTimes;
 using XPL.Modules.UserAccess.Domain.Registrations;
-using static XPL.Modules.UserAccess.Domain.Registrations.UserRegistration;
+using static XPL.Modules.UserAccess.Domain.Registrations.Registration;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
 {
-    public class RegistrationConverter : IModelConverter<UserRegistration, SqlRegistration>
+    public class RegistrationConverter : IModelConverter<Registration, SqlRegistration>
     {
         private readonly ISystemClock _systemClock;
         public RegistrationConverter(ISystemClock systemClock) => _systemClock = systemClock;
 
-        public UserRegistration ToModel(SqlRegistration persisted) => new Memento(
+        public Registration ToModel(SqlRegistration persisted) => new Memento(
                 persisted.Email,
                 persisted.Login,
                 persisted.ConfirmationCode,
@@ -27,7 +27,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
                 persisted.ExpiryDate)
             .From();
 
-        public SqlRegistration ToPersisted(UserRegistration model)
+        public SqlRegistration ToPersisted(Registration model)
         {
             var m = Memento.Get(model);
             return new SqlRegistration
@@ -48,7 +48,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
             };
         }
 
-        public void CopyChanges(UserRegistration from, SqlRegistration to)
+        public void CopyChanges(Registration from, SqlRegistration to)
         {
             var m = Memento.Get(from);
 

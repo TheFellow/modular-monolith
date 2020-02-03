@@ -9,7 +9,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Registrations.NewUserRegis
         public Guid RegistrationId { get; }
         public DateTime ExpiryDate { get; }
 
-        public NewRegistrationResponse(UserRegistration registration, string login)
+        public NewRegistrationResponse(Registration registration, string login)
         {
             Login = login;
             RegistrationId = registration.RegistrationId.Id;

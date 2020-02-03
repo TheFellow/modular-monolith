@@ -22,7 +22,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Registrations.NewUserRegis
 
         public Task<Result<NewRegistrationResponse>> Handle(NewRegistrationCommand request, CancellationToken cancellationToken)
         {
-            UserRegistration result = _builderFactory()
+            Registration result = _builderFactory()
                 .WithLogin(request.Login)
                 .WithPassword(request.Password)
                 .WithEmail(request.Email)

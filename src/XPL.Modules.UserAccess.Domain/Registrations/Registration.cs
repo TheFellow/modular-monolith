@@ -10,7 +10,7 @@ using XPL.Modules.Kernel.DateTimes;
 
 namespace XPL.Modules.UserAccess.Domain.Registrations
 {
-    public partial class UserRegistration : Entity
+    public partial class Registration : Entity
     {
         private readonly EmailAddress _email;
         private readonly Login _login;
