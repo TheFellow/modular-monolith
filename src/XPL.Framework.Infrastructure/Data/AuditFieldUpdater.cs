@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using XPL.Modules.Kernel;
-using XPL.Modules.Kernel.DateTimes;
+using XPL.Framework.Domain;
 
 namespace XPL.Framework.Infrastructure.Data
 {
     public sealed class AuditFieldUpdater<TSource, TPersistence>
     {
-        private readonly ISystemClock _systemClock;
+        private readonly IExecutionContext _executionContext;
         private readonly TSource _source;
         private readonly TPersistence _persistence;
         private readonly Expression<Func<TPersistence, string>> _updatedBy;
@@ -16,13 +15,13 @@ namespace XPL.Framework.Infrastructure.Data
         private bool _execAudit = false;
 
         public AuditFieldUpdater(
-            ISystemClock systemClock,
+            IExecutionContext executionContext,
             TSource source,
             TPersistence persistence,
             Expression<Func<TPersistence, string>> updatedBy,
             Expression<Func<TPersistence, DateTime>> updatedOn)
         {
-            _systemClock = systemClock;
+            _executionContext = executionContext;
             _source = source;
             _persistence = persistence;
             _updatedBy = updatedBy;
@@ -58,8 +57,8 @@ namespace XPL.Framework.Infrastructure.Data
         {
             if (_execAudit)
             {
-                GetInfo(_updatedBy).SetValue(_persistence, UserInfo.UserFullName, null);
-                GetInfo(_updatedOn).SetValue(_persistence, _systemClock.Now, null);
+                GetInfo(_updatedBy).SetValue(_persistence, _executionContext.UserInfo.UserFullName, null);
+                GetInfo(_updatedOn).SetValue(_persistence, _executionContext.SystemClock.Now, null);
             }
 
             return _persistence;

@@ -1,5 +1,5 @@
 ﻿using System;
-using XPL.Modules.Kernel.DateTimes;
+using XPL.Framework.Domain;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;

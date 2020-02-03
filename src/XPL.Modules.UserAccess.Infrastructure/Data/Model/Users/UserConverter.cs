@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using XPL.Framework.Domain;
 using XPL.Framework.Infrastructure.Data;
 using XPL.Framework.Infrastructure.Persistence;
-using XPL.Modules.Kernel;
-using XPL.Modules.Kernel.DateTimes;
 using XPL.Modules.UserAccess.Domain.Users;
 using static XPL.Modules.UserAccess.Domain.Users.User;
 
@@ -12,12 +11,12 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
     public class UserConverter : IModelConverter<User, SqlUser>
     {
-        private readonly ISystemClock _systemClock;
+        private readonly IExecutionContext _executionContext;
         private readonly IEmailUsage _emailUsage;
 
-        public UserConverter(ISystemClock systemClock, IEmailUsage emailUsage)
+        public UserConverter(IExecutionContext executionContext, IEmailUsage emailUsage)
         {
-            _systemClock = systemClock;
+            _executionContext = executionContext;
             _emailUsage = emailUsage;
         }
 
@@ -45,19 +44,19 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
             {
                 Email = m.CurrentEmail,
                 Status = SqlUserEmail.ActiveStatus,
-                StatusDate = _systemClock.Now.Date,
-                UpdatedBy = UserInfo.UserFullName,
-                UpdatedOn = _systemClock.Now,
+                StatusDate = _executionContext.SystemClock.Now.Date,
+                UpdatedBy = _executionContext.UserInfo.UserFullName,
+                UpdatedOn = _executionContext.SystemClock.Now,
             };
 
             var login = new SqlUserPassword
             {
-                BeginOnUtc = _systemClock.UtcNow,
+                BeginOnUtc = _executionContext.SystemClock.UtcNow,
                 EndOnUtc = null,
                 PasswordHash = m.PasswordHash,
                 PasswordSalt = m.PasswordSalt,
-                UpdatedBy = UserInfo.UserFullName,
-                UpdatedOn = _systemClock.Now,
+                UpdatedBy = _executionContext.UserInfo.UserFullName,
+                UpdatedOn = _executionContext.SystemClock.Now,
             };
 
             return new SqlUser
@@ -67,8 +66,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 FirstName = m.FirstName,
                 LastName = m.LastName,
                 Login = m.CurrentLogin,
-                UpdatedBy = UserInfo.UserFullName,
-                UpdatedOn = _systemClock.Now,
+                UpdatedBy = _executionContext.UserInfo.UserFullName,
+                UpdatedOn = _executionContext.SystemClock.Now,
                 Passwords = new List<SqlUserPassword>(new[] { login }),
                 Emails = new List<SqlUserEmail>(new[] { email }),
             };
@@ -76,11 +75,11 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 
         public void CopyChanges(User from, SqlUser sql)
         {
-            var utcNow = _systemClock.UtcNow;
+            var utcNow = _executionContext.SystemClock.UtcNow;
 
             var user = Memento.Get(from);
 
-            var audit = new AuditFieldUpdater<Memento, SqlUser>(_systemClock, user, sql, u => u.UpdatedBy, u => u.UpdatedOn);
+            var audit = new AuditFieldUpdater<Memento, SqlUser>(_executionContext, user, sql, u => u.UpdatedBy, u => u.UpdatedOn);
             audit.Map(m => m.FirstName, u => u.FirstName)
                 .Map(m => m.LastName, u => u.LastName)
                 .Map(m => m.CurrentLogin, u => u.Login)
@@ -94,7 +93,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 
                 var oldPassword = sql.Passwords.Single(l => l.EndOnUtc == null);
                 oldPassword.EndOnUtc = utcNow.AddTicks(-1);
-                oldPassword.UpdatedBy = UserInfo.UserFullName;
+                oldPassword.UpdatedBy = _executionContext.UserInfo.UserFullName;
                 oldPassword.UpdatedOn = utcNow;
 
                 var newLogin = new SqlUserPassword
@@ -103,7 +102,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                     EndOnUtc = null,
                     PasswordHash = user.PasswordHash,
                     PasswordSalt = user.PasswordSalt,
-                    UpdatedBy = UserInfo.UserFullName,
+                    UpdatedBy = _executionContext.UserInfo.UserFullName,
                     UpdatedOn = utcNow,
                 };
 
@@ -117,16 +116,16 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 var oldEmail = sql.Emails.Single(e => e.Status == SqlUserEmail.ActiveStatus);
 
                 oldEmail.Status = SqlUserEmail.InactiveStatus;
-                oldEmail.StatusDate = _systemClock.Now.Date;
-                oldEmail.UpdatedBy = UserInfo.UserFullName;
+                oldEmail.StatusDate = _executionContext.SystemClock.Now.Date;
+                oldEmail.UpdatedBy = _executionContext.UserInfo.UserFullName;
                 oldEmail.UpdatedOn = utcNow;
 
                 var newEmail = new SqlUserEmail
                 {
                     Email = user.CurrentEmail,
                     Status = SqlUserEmail.ActiveStatus,
-                    StatusDate = _systemClock.Now.Date,
-                    UpdatedBy = UserInfo.UserFullName,
+                    StatusDate = _executionContext.SystemClock.Now.Date,
+                    UpdatedBy = _executionContext.UserInfo.UserFullName,
                     UpdatedOn = utcNow
                 };
 

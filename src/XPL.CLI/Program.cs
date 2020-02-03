@@ -1,5 +1,4 @@
-﻿using Functional.Either;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application.Contracts;

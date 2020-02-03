@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPL.Modules.Kernel.DateTimes
+namespace XPL.Framework.Domain
 {
     public interface ISystemClock
     {

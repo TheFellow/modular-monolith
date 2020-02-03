@@ -1,12 +1,11 @@
-﻿using Functional.Either;
-using System;
+﻿using System;
 using XPL.Framework.Domain.Model;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.Registrations.Events;
 using XPL.Modules.UserAccess.Domain.Registrations.Statuses;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.Kernel.Email;
-using XPL.Modules.Kernel.DateTimes;
+using XPL.Framework.Domain;
 
 namespace XPL.Modules.UserAccess.Domain.Registrations
 {

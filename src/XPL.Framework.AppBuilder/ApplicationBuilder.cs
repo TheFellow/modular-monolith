@@ -9,13 +9,13 @@ using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Infrastructure.Bus;
 using XPL.Framework.Infrastructure.DomainEvents;
 using XPL.Framework.Infrastructure.Persistence;
-using XPL.Framework.Kernel.DateTimes;
 using XPL.Framework.Domain;
 using XPL.Framework.Domain.Model;
 using XPL.Framework.AppBuilder.Pipeline;
-using XPL.Modules.Kernel.DateTimes;
 using XPL.Framework.Application.Contracts;
 using XPL.Framework.Application.Startup;
+using XPL.Framework.Application.ExecutionContexts;
+using XPL.Framework.Infrastructure.DateTimes;
 
 namespace XPL.Framework.AppBuilder
 {
@@ -81,9 +81,9 @@ namespace XPL.Framework.AppBuilder
         {
             AddConfig(config);
             AddLogging(logger);
-            AddSystemClock();
             AddMediator();
             AddCommandQueryBus();
+            AddFrameworkClasses();
             AddModuleContracts();
             AddStartupClasses();
         }
@@ -92,7 +92,14 @@ namespace XPL.Framework.AppBuilder
 
         private void AddConfig(IConfiguration config) => _appRegistry.For<IConfiguration>().Use(config).Singleton();
         private void AddLogging(ILogger logger) => _appRegistry.For<ILogger>().Use(logger).Singleton();
-        private void AddSystemClock() => _appRegistry.For<ISystemClock>().Use<SystemClock>();
+        private void AddFrameworkClasses()
+        {
+            _appRegistry.For<ISystemClock>().Use<SystemClock>();
+
+            _appRegistry.For<IExecutionContext>().Use<ExecutionContext>();
+            _appRegistry.Injectable<IUserInfo>();
+        }
+
         private void AddMediator()
         {
             _appRegistry.For<IMediator>().Use<Mediator>();

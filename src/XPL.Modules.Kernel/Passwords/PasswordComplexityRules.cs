@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using XPL.Modules.Kernel;
 
 namespace XPL.Modules.Kernel.Passwords
 {

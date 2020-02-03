@@ -1,7 +1,7 @@
 ﻿using System;
-using XPL.Modules.Kernel.DateTimes;
+using XPL.Framework.Domain;
 
-namespace XPL.Framework.Kernel.DateTimes
+namespace XPL.Framework.Infrastructure.DateTimes
 {
     public class SystemClock : ISystemClock
     {
