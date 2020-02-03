@@ -17,12 +17,6 @@ actually played out that way when if sit down and code it up. *Unsurprisingly* I
    1. [Architecture](#architecture)
    2. [Code Style](#code-style)
 3. [Code Quality](#code-quality)
-   1. [Level: Code](#level-code)
-   2. [Level: Methods, Properties, and Fields](#level-methods-properties-and-fields)
-   3. [Level: Classes, Interfaces, and Functions](#level-classes-interfaces-and-functions)
-   4. [Level: Namespaces](#level-namespaces)
-   5. [Level: Assemblies / Packages](#level-assemblies-packages)
-   6. [Level: Bounded Contexts / Modules](#level-bounded-contexts-modules)
 
 ----
 
@@ -95,74 +89,5 @@ Qualities we want in our codebase:
 5. **Encapsulated** Each module of the system has complete ownership over the data and behaviors it represents
 6. **Discoverable** Looking at any module of the system should provide feedback about how it used and what it does
 
-These code qualities apply at **all** leveles of software.
+These code qualities apply at **all** leveles of software. More [here](docs/CodeQuality.md).
 
-#### Level: Code
-
-![Code Level](docs/Level-Code.png)
-- Coding style and alignment (.editorconfig)
-- Naming conventions
-- Avoiding branching / looping structures where possible
-- Creating nested / local methods to split long segments
-- Using language extensions
-- Low astonishment
-- Favor expressions over statements
-
-#### Level: Methods, Properties, and Fields
-
-![Method Level](docs/Level-Methods.png)
-- Descriptive method names
-- Honest method signatures
-- Correct method/property exposures
-- Defense **by design**,  **not** defensive code
-- Throw exceptions when necessary, not for control flow
-- Program to an interface, not an implementation
-- Follow [CQS](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation)
-
-#### Level: Classes, Interfaces, and Functions
-
-![Class Level](docs/Level-Classes.png)
-- Descriptive or Conventional class names
-- Follow [SOLID](https://en.wikipedia.org/wiki/SOLID) principles
-- Expose projections of internal state as required for testing
-- Encapsulate implementation
-- Avoid primitive obsession with Value types
-- Implement one cohesive behavior completely, delegating when needed
-- Avoid high coupling
-- Create pure functions to compliment immutable objects
-
-#### Level: Namespaces
-
-![Namespace Level](docs/Level-Namespaces.png)
-- Descriptive and consistent names and structure
-- Logically partition the behavior
-- Contain implementations and expose interfaces
-- High discoverability
-- Use to build logical components
-- Contain classes with high cohesion
-
-#### Level: Assemblies / Packages
-
-![Assembly level](docs/Level-Assemblies.png)
-- Consistent naming
-- High discoverability
-- Package Cohesion principles
-   - REP: Release reuse equivalency (Reusable is releasable)
-   - CCP: Common closure prin. (Classes that change together are packaged together)
-   - CRP: Common reuse prin. (Classes used together are packaged together)
-- Package Coupling principles
-   - ADP: Acyclic dependencies prin. (No cyclic dependencies)
-   - SDP: Stable dependencies prin. (Depend in the direction of stability)
-   - SAP: Stable abstractions prin. (Stable packages are abstract packages)
-
-#### Level: Bounded Contexts / Modules
-
-![Module Level](docs/Level-Modules.png)
-
-- Current context in relation to other contexts
-- Clean boundaries (minimal or no kernel)
-- Clean communication
-- Each context has a single Ubiquitous Language with absolutely no ambiguity in terminology or concepts
-- Alignment to subdomains and business capabilities
-- Follows CQRS by default
-- The context is partitioned into components where applicable, each as independent as possible
