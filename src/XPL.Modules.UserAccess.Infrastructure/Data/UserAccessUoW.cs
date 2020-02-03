@@ -1,6 +1,6 @@
 ﻿using System;
 using XPL.Framework.Infrastructure.UnitOfWork;
-using XPL.Framework.Domain;
+using XPL.Framework.Infrastructure;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data
 {

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Domain.Model;
 
-namespace XPL.Framework.Domain
+namespace XPL.Framework.Infrastructure
 {
     public interface IDomainEventDispatcher
     {
