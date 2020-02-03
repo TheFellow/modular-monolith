@@ -17,6 +17,7 @@ actually played out that way when if sit down and code it up. *Unsurprisingly* I
    1. [Architecture](#architecture)
    2. [Code Style](#code-style)
 3. [Code Quality](#code-quality)
+4. [Explicit Architecture](#explicit-architecture)
 
 ----
 
@@ -91,3 +92,14 @@ Qualities we want in our codebase:
 
 These code qualities apply at **all** leveles of software. More [here](docs/CodeQuality.md).
 
+----
+
+### Explicit Architecture
+
+We will follow Uncle Bob's advice regarding keeping frameworks at arms length, and follow the clean architectures dependency rule.
+
+At the same time, we do not want to re-invent the wheel every time we need to interact with a Module (Bounded Context), or add a new one.
+
+We can achieve both of these at the same time by creating our own framework.
+
+#### High-Level View
