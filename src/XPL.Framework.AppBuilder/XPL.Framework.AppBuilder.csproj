@@ -12,6 +12,7 @@
     <ProjectReference Include="..\XPL.Framework.Infrastructure\XPL.Framework.Infrastructure.csproj" />
     <ProjectReference Include="..\XPL.Framework.Application\XPL.Framework.Application.csproj" />
     <ProjectReference Include="..\XPL.Framework.Domain\XPL.Framework.Domain.csproj" />
+    <ProjectReference Include="..\XPL.Modules.UserAccess.Infrastructure\XPL.Modules.UserAccess.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

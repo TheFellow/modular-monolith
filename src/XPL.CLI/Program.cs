@@ -35,15 +35,17 @@ namespace XPL.CLI
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
+            WriteInfo($"Loggin in as Alice: {app.Login("Alice", "passw0rd")}");
+
             //await RegisterAlice(app);
             //await RegisterBob(app);
 
-            await ConfirmAlice(app);
-            await UpdateAlicesPassword(app);
+            //await ConfirmAlice(app);
+            //await UpdateAlicesPassword(app);
             await UpdateAlicesEmail(app);
             await UpdateAlicesEmailAgain(app);
 
-            await RegisterCharles(app);
+            //await RegisterCharles(app);
         }
 
 

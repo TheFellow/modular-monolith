@@ -1,9 +1,11 @@
-﻿namespace XPL.Framework.Domain
+﻿using System.Security.Claims;
+
+namespace XPL.Framework.Domain
 {
     public interface IUserInfo
     {
-        string UserDomainName { get; }
         string UserFullName { get; }
-        string UserName { get; }
+
+        ClaimsIdentity Identity { get; }
     }
 }

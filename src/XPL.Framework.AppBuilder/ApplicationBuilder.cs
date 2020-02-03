@@ -17,6 +17,7 @@ using XPL.Framework.Infrastructure.DateTimes;
 using XPL.Framework.Infrastructure.ExecutionContexts;
 using XPL.Framework.Infrastructure;
 using XPL.Framework.Domain;
+using XPL.Modules.UserAccess.Infrastructure.Authentication;
 
 namespace XPL.Framework.AppBuilder
 {
@@ -96,6 +97,8 @@ namespace XPL.Framework.AppBuilder
         private void AddFrameworkClasses()
         {
             _appRegistry.For<ISystemClock>().Use<SystemClock>();
+
+            _appRegistry.For<IAuthentication>().Use<Authenticate>();
 
             _appRegistry.For<IExecutionContext>().Use<ExecutionContext>();
             _appRegistry.Injectable<IUserInfo>();
