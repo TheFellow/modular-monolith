@@ -12,12 +12,16 @@ actually played out that way when if sit down and code it up. *Unsurprisingly* I
 
 ## Table of Contents
 
-1. [Inspiration](#Inspiration)
+1. [Inspiration](#inspiration)
 2. [What You Should Know](#what-you-should-know)
    1. [Architecture](#architecture)
    2. [Code Style](#code-style)
 3. [Code Quality](#code-quality)
 4. [Explicit Architecture](#explicit-architecture)
+   1. [Modules](#modules)
+   2. [Framework](#framework)
+   3. [Connecting Modules to the Framework](#connecting-modules-to-the-framework)
+5. [The Domain](#the-domain)
 
 ----
 
@@ -154,5 +158,5 @@ The Module assemblies are free to reference Framework assemblies as long as they
 This layout of references is shown here:
 ![Connecting Modules to the Framework](docs/Connecting-Modules-With-Framework.png)
 
-#### High-Level View
+### The Domain
 
