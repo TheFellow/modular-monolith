@@ -1,4 +1,4 @@
-﻿namespace XPL.Framework.Domain.Startup
+﻿namespace XPL.Framework.Application.Startup
 {
     public interface IRunOnInit
     {
