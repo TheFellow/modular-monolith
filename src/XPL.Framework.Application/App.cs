@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using XPL.Framework.Application.Contracts;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
+using XPL.Framework.Domain;
 using XPL.Modules.Kernel;
 
 namespace XPL.Framework.Application
@@ -12,6 +13,7 @@ namespace XPL.Framework.Application
     public abstract class App
     {
         private readonly IContainer _container;
+        public abstract IUserInfo CurrentUser { get; protected set; }
 
         public AppInfo AppInfo { get; }
         public ILogger Logger { get; }
@@ -28,6 +30,8 @@ namespace XPL.Framework.Application
             try
             {
                 using var nested = _container.GetNestedContainer();
+                nested.Inject(CurrentUser);
+
                 var uowAssembly = command.GetType().Assembly.GetName().Name;
                 var uow = nested.GetInstance<IUnitOfWork>(uowAssembly);
                 var bus = nested.GetInstance<IBus>();

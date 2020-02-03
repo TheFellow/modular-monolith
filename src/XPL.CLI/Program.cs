@@ -60,7 +60,7 @@ namespace XPL.CLI
         {
             WriteInfo("Confirming Alice.");
 
-            var cmd = new ConfirmRegistrationCommand(new Guid("63BA8AE9-FC04-4F3A-BE0E-0CE3D496A463"), "abc123");
+            var cmd = new ConfirmRegistrationCommand(new Guid("6A3A3891-7D14-4A21-9E5C-F5D2001B7D01"), "abc123");
             var result = await app.ExecuteCommandAsync(cmd);
 
             DisplayResult(result, r => r);
