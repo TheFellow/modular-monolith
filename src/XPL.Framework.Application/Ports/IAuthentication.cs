@@ -6,5 +6,7 @@ namespace XPL.Framework.Application.Ports
     public interface IAuthentication
     {
         Option<ClaimsIdentity> Login(string login, string password);
+
+        public const string Issuer = "XPL.UserAccess";
     }
 }

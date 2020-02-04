@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Infrastructure.DomainEvents;
-using XPL.Framework.Domain;
 
 namespace XPL.Framework.Infrastructure.UnitOfWork
 {

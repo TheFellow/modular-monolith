@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application.Contracts;
@@ -35,7 +36,18 @@ namespace XPL.CLI
         {
             app.Logger.Info("Application {@AppInfo} Started.", app.AppInfo);
 
-            WriteInfo($"Loggin in as Alice: {app.Login("Alice", "passw0rd")}");
+            if (app.Login("Alice", "passw0rd"))
+            {
+                string name = app.CurrentUser.Identity.FindFirst(ClaimTypes.Name).Value;
+                string? firstName = app.CurrentUser.Identity.FindFirst(ClaimTypes.GivenName)?.Value;
+                string? lastName = app.CurrentUser.Identity.FindFirst(ClaimTypes.Surname)?.Value;
+                string displayName = name + " " + (firstName ?? string.Empty) + " " + (lastName ?? string.Empty);
+                WriteInfo($"Logged in as {displayName.Trim()}");
+            }
+            else
+            {
+                WriteFail("Failed to login");
+            }
 
             //await RegisterAlice(app);
             //await RegisterBob(app);
