@@ -45,5 +45,10 @@ namespace XPL.CLI.Application
 
             return true;
         }
+
+        public void Logout()
+        {
+            CurrentUser = new AnonymousUserInfo();
+        }
     }
 }

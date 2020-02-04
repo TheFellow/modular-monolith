@@ -5,6 +5,7 @@ using System.Security.Claims;
 using XPL.Framework.Application.Ports;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Infrastructure.Data;
+using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Authentication
 {
@@ -16,7 +17,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Authentication
         public Option<ClaimsIdentity> Login(string login, string password)
         {
             var (user, success) = _queryContext
-                .Users.Include(u => u.Passwords)
+                .Users.Include(u => u.Passwords).Include(u => u.Emails)
                 .FirstOrNone(u => u.Login == login)
                 .Map(u => (user: u, password: u.Passwords.Single(p => p.EndOnUtc == null)))
                 .Map(t => (t.user, password: Password.Raw(t.password.PasswordHash, t.password.PasswordSalt)))
@@ -31,11 +32,12 @@ namespace XPL.Modules.UserAccess.Infrastructure.Authentication
             identity.AddClaim(AuthClaim(ClaimTypes.Name, login));
             identity.AddClaim(AuthClaim(ClaimTypes.GivenName, user.FirstName));
             identity.AddClaim(AuthClaim(ClaimTypes.Surname, user.LastName));
+            identity.AddClaim(AuthClaim(ClaimTypes.Email, user.Emails.Single(e => e.Status == SqlUserEmail.ActiveStatus).Email));
 
             return identity;
         }
 
         private Claim AuthClaim(string claimType, string value) =>
-            new Claim(claimType, value, ClaimValueTypes.String, IAuthentication.Issuer);
+            new Claim(claimType, value, ClaimValueTypes.String, IAuthentication.AuthenticationIssuer);
     }
 }

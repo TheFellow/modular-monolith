@@ -7,6 +7,6 @@ namespace XPL.Framework.Application.Ports
     {
         Option<ClaimsIdentity> Login(string login, string password);
 
-        public const string Issuer = "XPL.UserAccess";
+        public const string AuthenticationIssuer = "XPL Authentication Authority";
     }
 }
