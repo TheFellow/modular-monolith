@@ -1,7 +1,9 @@
 ﻿using Functional.Either;
 using Functional.Option;
 using System.Collections.Generic;
+using System.Linq;
 using XPL.Framework.Domain.Model;
+using XPL.Modules.Kernel;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
@@ -16,7 +18,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
         private readonly LastName _lastName;
         private readonly Login _currentLogin;
         private readonly RegistrationId _registrationId;
-        private readonly IEnumerable<Role> _roles;
+        private readonly IList<Role> _roles;
         
         private EmailAddress _currentEmail;
         private Password _currentPassword;
@@ -47,6 +49,25 @@ namespace XPL.Modules.UserAccess.Domain.Users
 
             _currentEmail = newEmail;
             return None.Value;
+        }
+
+        public void GrantRole(Role role)
+        {
+            if (_roles.Contains(role))
+                return;
+
+            _roles.Add(role);
+        }
+
+        public void RevokeRole(Role role)
+        {
+            if (!_roles.Contains(role))
+                return;
+
+            if (role == Role.Member)
+                throw new DomainException("Cannot remove the Member role");
+
+            _roles.Remove(role);
         }
     }
 }

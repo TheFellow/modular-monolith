@@ -33,7 +33,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 p.LastName,
                 currentLogin.PasswordHash,
                 currentLogin.PasswordSalt,
-                p.Roles.Select(r => r.Role))
+                p.Roles.Where(r => r.EndOnUtc == null).Select(r => r.Role))
                 .From(_emailUsage);
         }
 

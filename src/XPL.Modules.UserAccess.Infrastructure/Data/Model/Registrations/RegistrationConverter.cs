@@ -1,5 +1,4 @@
-﻿using System;
-using XPL.Framework.Domain;
+﻿using XPL.Framework.Domain;
 using XPL.Framework.Infrastructure.Data;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.Registrations;
@@ -30,7 +29,10 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
 
         public SqlRegistration ToPersisted(Registration model)
         {
+            var auditor = new Auditor(_executionContext);
+
             var m = Memento.Get(model);
+
             return new SqlRegistration
             {
                 ConfirmationCode = m.ConfirmationCode,
@@ -44,9 +46,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
                 RegistrationId = m.RegistrationId,
                 Status = m.Status,
                 StatusDate = m.StatusDate,
-                UpdatedBy = Environment.UserName,
-                UpdatedOn = _executionContext.SystemClock.Now
-            };
+            }.Audit(auditor);
         }
 
         public void CopyChanges(Registration from, SqlRegistration to)
