@@ -65,7 +65,7 @@
     <Folder Include="UserAccess\Sequences\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="UserAccess\Tables\UserRegistration.sql" />
+    <Build Include="UserAccess\Tables\Registration.sql" />
     <Build Include="Security\UserAccess.sql" />
     <Build Include="UserAccess\Sequences\SeqPrimaryKeys.sql" />
     <Build Include="UserAccess\Tables\User.sql" />
