@@ -14,7 +14,7 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Registrations.ConfirmRegis
 
         public Task<Result<string>> Handle(ConfirmRegistrationCommand request, CancellationToken cancellationToken) =>
             _repository
-                .TryFind(request.RegistrationId)
+                .TryFind(request.Login)
                 .Tee(u => u.Confirm(request.ConfirmationCode))
                 .Map(_ => request.Ok("Registration confirmed"))
                 .Reduce(request.Fail("Registration Id not found"));

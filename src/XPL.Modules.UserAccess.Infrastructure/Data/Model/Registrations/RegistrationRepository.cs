@@ -15,9 +15,9 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations
 
         protected override IModelConverter<Registration, SqlRegistration> Converter { get; }
 
-        public Option<Registration> TryFind(Guid registrationId) => GetIdByRegistrationId(registrationId)
+        public Option<Registration> TryFind(string login) => GetIdByGetIdByLogin(login)
             .Map(id => TryFind(id));
 
-        public Option<long> GetIdByRegistrationId(Guid registrationId) => GetIdByExpression(s => s.RegistrationId == registrationId);
+        public Option<long> GetIdByGetIdByLogin(string login) => GetIdByExpression(s => s.Login == login);
     }
 }

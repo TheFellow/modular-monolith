@@ -6,12 +6,12 @@ namespace XPL.Modules.UserAccess.Application.UseCases.Registrations.ConfirmRegis
     public class ConfirmRegistrationCommand : ICommand<string>
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();
-        public Guid RegistrationId { get; }
+        public string Login { get; }
         public string ConfirmationCode { get; }
 
-        public ConfirmRegistrationCommand(Guid registrationId, string confirmationCode)
+        public ConfirmRegistrationCommand(string login, string confirmationCode)
         {
-            RegistrationId = registrationId;
+            Login = login;
             ConfirmationCode = confirmationCode;
         }
     }
