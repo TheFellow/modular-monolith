@@ -76,4 +76,7 @@
   <ItemGroup>
     <RefactorLog Include="CodeCampsDb.refactorlog" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="EFHelper.sql" />
+  </ItemGroup>
 </Project>
