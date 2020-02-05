@@ -17,6 +17,7 @@ using XPL.Framework.Infrastructure.DateTimes;
 using XPL.Framework.Infrastructure.ExecutionContexts;
 using XPL.Framework.Infrastructure;
 using XPL.Framework.Domain;
+using XPL.Modules.UserAccess.Infrastructure.Authentication;
 
 namespace XPL.Framework.AppBuilder
 {
