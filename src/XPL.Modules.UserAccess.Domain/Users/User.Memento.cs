@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Domain.Kernel;
@@ -19,6 +21,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             _firstName = new FirstName(m.FirstName);
             _lastName = new LastName(m.LastName);
             _emailUsage = emailUsage;
+            _roles = m.Roles.Select(r => new Role(r)).ToList();
         }
 
         public User(UserRegistrationConfirmed confirmed, IEmailUsage emailUsage)
@@ -31,6 +34,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             _firstName = confirmed.FirstName;
             _lastName = confirmed.LastName;
             _emailUsage = emailUsage;
+            _roles = new List<Role>() { Role.Member };
         }
 
         public class Memento
@@ -43,6 +47,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             public string LastName { get; }
             public string PasswordHash { get; }
             public string PasswordSalt { get; }
+            public List<string> Roles { get; }
 
             public Memento(
                 Guid userId,
@@ -52,7 +57,8 @@ namespace XPL.Modules.UserAccess.Domain.Users
                 string firstName,
                 string lastName,
                 string passwordHash,
-                string passwordSalt)
+                string passwordSalt,
+                IEnumerable<string> roles)
             {
                 UserId = userId;
                 RegistrationId = registrationId;
@@ -62,6 +68,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
                 LastName = lastName;
                 PasswordHash = passwordHash;
                 PasswordSalt = passwordSalt;
+                Roles = roles.ToList();
             }
 
             public User From(IEmailUsage emailUsage) => new User(this, emailUsage);
@@ -74,7 +81,8 @@ namespace XPL.Modules.UserAccess.Domain.Users
                 u._firstName.Value,
                 u._lastName.Value,
                 u._currentPassword.HashedPassword,
-                u._currentPassword.Salt);
+                u._currentPassword.Salt,
+                u._roles.Select(r => r.Value));
 
         }
     }

@@ -32,7 +32,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 p.FirstName,
                 p.LastName,
                 currentLogin.PasswordHash,
-                currentLogin.PasswordSalt)
+                currentLogin.PasswordSalt,
+                p.Roles.Select(r => r.Role))
                 .From(_emailUsage);
         }
 
@@ -40,14 +41,14 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
         {
             var m = Memento.Get(model);
 
+            var auditor = new Auditor(_executionContext);
+
             var email = new SqlUserEmail
             {
                 Email = m.CurrentEmail,
                 Status = SqlUserEmail.ActiveStatus,
                 StatusDate = _executionContext.SystemClock.Now.Date,
-                UpdatedBy = _executionContext.UserInfo.UserFullName,
-                UpdatedOn = _executionContext.SystemClock.Now,
-            };
+            }.Audit(auditor);
 
             var login = new SqlUserPassword
             {
@@ -55,9 +56,14 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 EndOnUtc = null,
                 PasswordHash = m.PasswordHash,
                 PasswordSalt = m.PasswordSalt,
-                UpdatedBy = _executionContext.UserInfo.UserFullName,
-                UpdatedOn = _executionContext.SystemClock.Now,
-            };
+            }.Audit(auditor);
+
+            var roles = m.Roles.Select(r => new SqlUserRole
+            {
+                BeginOnUtc = _executionContext.SystemClock.UtcNow,
+                EndOnUtc = null,
+                Role = r,
+            }.Audit(auditor));
 
             return new SqlUser
             {
@@ -66,16 +72,15 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 FirstName = m.FirstName,
                 LastName = m.LastName,
                 Login = m.CurrentLogin,
-                UpdatedBy = _executionContext.UserInfo.UserFullName,
-                UpdatedOn = _executionContext.SystemClock.Now,
                 Passwords = new List<SqlUserPassword>(new[] { login }),
                 Emails = new List<SqlUserEmail>(new[] { email }),
-            };
+                Roles = roles.ToList()
+            }.Audit(auditor);
         }
 
         public void CopyChanges(User from, SqlUser sql)
         {
-            var utcNow = _executionContext.SystemClock.UtcNow;
+            var auditor = new Auditor(_executionContext);
 
             var user = Memento.Get(from);
 
@@ -92,19 +97,16 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 audit.Force();
 
                 var oldPassword = sql.Passwords.Single(l => l.EndOnUtc == null);
-                oldPassword.EndOnUtc = utcNow.AddTicks(-1);
-                oldPassword.UpdatedBy = _executionContext.UserInfo.UserFullName;
-                oldPassword.UpdatedOn = utcNow;
+                oldPassword.EndOnUtc = auditor.UtcNow.AddTicks(-1);
+                oldPassword.Audit(auditor);
 
                 var newLogin = new SqlUserPassword
                 {
-                    BeginOnUtc = utcNow,
+                    BeginOnUtc = auditor.UtcNow,
                     EndOnUtc = null,
                     PasswordHash = user.PasswordHash,
                     PasswordSalt = user.PasswordSalt,
-                    UpdatedBy = _executionContext.UserInfo.UserFullName,
-                    UpdatedOn = utcNow,
-                };
+                }.Audit(auditor);
 
                 sql.Passwords.Add(newLogin);
             }
@@ -116,20 +118,40 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 var oldEmail = sql.Emails.Single(e => e.Status == SqlUserEmail.ActiveStatus);
 
                 oldEmail.Status = SqlUserEmail.InactiveStatus;
-                oldEmail.StatusDate = _executionContext.SystemClock.Now.Date;
-                oldEmail.UpdatedBy = _executionContext.UserInfo.UserFullName;
-                oldEmail.UpdatedOn = utcNow;
+                oldEmail.StatusDate = auditor.Now.Date;
+                oldEmail.Audit(auditor);
 
                 var newEmail = new SqlUserEmail
                 {
                     Email = user.CurrentEmail,
                     Status = SqlUserEmail.ActiveStatus,
-                    StatusDate = _executionContext.SystemClock.Now.Date,
-                    UpdatedBy = _executionContext.UserInfo.UserFullName,
-                    UpdatedOn = utcNow
-                };
+                    StatusDate = auditor.Now.Date,
+                }.Audit(auditor);
 
                 sql.Emails.Add(newEmail);
+            }
+
+            var addedRoles = user.Roles.Except(sql.Roles.Select(r => r.Role));
+            var removedRoles = sql.Roles.Select(r => r.Role).Except(user.Roles).ToList();
+
+            if (addedRoles.Union(removedRoles).Any())
+                audit.Force();
+
+            foreach (var role in addedRoles)
+            {
+                sql.Roles.Add(new SqlUserRole
+                {
+                    BeginOnUtc = auditor.UtcNow,
+                    EndOnUtc = null,
+                    Role = role,
+                }.Audit(auditor));
+            }
+
+            foreach (var role in removedRoles)
+            {
+                var sqlRole = sql.Roles.Single(s => s.Role == role);
+                sqlRole.EndOnUtc = auditor.UtcNow;
+                sqlRole.Audit(auditor);
             }
         }
     }

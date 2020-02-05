@@ -1,9 +1,9 @@
 ﻿using System;
-using XPL.Framework.Infrastructure.Persistence;
+using XPL.Framework.Infrastructure.Data;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
-    public class SqlUserPassword : ISqlId
+    public class SqlUserPassword : IAuditable
     {
         public long Id { get; set; }
         public long UserId { get; set; }

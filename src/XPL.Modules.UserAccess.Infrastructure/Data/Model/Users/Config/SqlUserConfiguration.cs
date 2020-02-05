@@ -58,6 +58,10 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config
             builder.HasMany(o => o.Passwords)
                 .WithOne()
                 .HasForeignKey(l => l.UserId);
+
+            builder.HasMany(o => o.Roles)
+                .WithOne()
+                .HasForeignKey(r => r.UserId);
         }
     }
 }

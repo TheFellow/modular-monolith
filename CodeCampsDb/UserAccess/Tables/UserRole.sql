@@ -4,7 +4,7 @@
     [UserId] BIGINT NOT NULL, 
     [Role] VARCHAR(64) NOT NULL, 
     [BeginOnUtc] DATETIME2 NOT NULL, 
-    [EndOnUtc] DATETIME2 NOT NULL, 
+    [EndOnUtc] DATETIME2 NULL, 
     [CreatedBy] VARCHAR(32) NOT NULL CONSTRAINT [UserAccess_UserRole_CreatedBy] DEFAULT (SUSER_SNAME()),
     [CreatedOn] DATETIME2 NOT NULL CONSTRAINT [UserAccess_UserRole_CreatedOn] DEFAULT (GETDATE()),
     [UpdatedBy] VARCHAR(32) NOT NULL, 

@@ -1,5 +1,6 @@
 ﻿using Functional.Either;
 using Functional.Option;
+using System.Collections.Generic;
 using XPL.Framework.Domain.Model;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
@@ -10,15 +11,17 @@ namespace XPL.Modules.UserAccess.Domain.Users
 {
     public partial class User : Entity
     {
-        private UserId _userId;
+        private readonly UserId _userId;
+        private readonly FirstName _firstName;
+        private readonly LastName _lastName;
+        private readonly Login _currentLogin;
+        private readonly RegistrationId _registrationId;
+        private readonly IEnumerable<Role> _roles;
+        
         private EmailAddress _currentEmail;
-        private FirstName _firstName;
-        private LastName _lastName;
-        private Login _currentLogin;
         private Password _currentPassword;
-        private RegistrationId _registrationId;
 
-        private IEmailUsage _emailUsage;
+        private readonly IEmailUsage _emailUsage;
 
         public Either<UserAccessError, PasswordUpdated> UpdatePassword(string oldPassword, string newPassword)
         {

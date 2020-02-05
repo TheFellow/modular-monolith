@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using XPL.Framework.Infrastructure.Data;
 using XPL.Framework.Infrastructure.Persistence;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 {
-    public class SqlUser : ISqlId
+    public class SqlUser : ISqlId, IAuditable
     {
         public long Id { get; set; }
         public byte[] RowVersion { get; set; } = new byte[0];
@@ -18,5 +19,6 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
 
         public List<SqlUserEmail> Emails { get; set; } = new List<SqlUserEmail>();
         public List<SqlUserPassword> Passwords { get; set; } = new List<SqlUserPassword>();
+        public List<SqlUserRole> Roles { get; set; } = new List<SqlUserRole>();
     }
 }

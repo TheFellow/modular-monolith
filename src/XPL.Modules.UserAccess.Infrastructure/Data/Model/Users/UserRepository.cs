@@ -11,7 +11,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
     {
         public UserRepository(UnitOfWorkBase<UserAccessDbContext> uow, Func<UserConverter> converterFactory)
             : base(uow, dbContext => dbContext.Users,
-                  dbSet => dbSet.Include(u => u.Passwords).Include(u => u.Emails))
+                  dbSet => dbSet.Include(u => u.Passwords).Include(u => u.Emails).Include(u => u.Roles))
         {
             Converter = converterFactory();
         }
