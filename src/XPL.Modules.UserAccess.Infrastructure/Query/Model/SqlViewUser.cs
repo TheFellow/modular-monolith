@@ -1,6 +1,6 @@
 ﻿namespace XPL.Modules.UserAccess.Infrastructure.Query.Model
 {
-    public class SqlUserView
+    public class SqlViewUser
     {
         public long Id { get; set; }
         public string Login { get; set; } = string.Empty;

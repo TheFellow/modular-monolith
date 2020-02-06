@@ -10,8 +10,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Query
         private const string _schema = "UserAccess";
         private readonly ConnectionString _connectionString;
 
-        public DbSet<SqlUserView> Users { get; set; } = null!;
-        public DbSet<SqlLoginView> Logins { get; set; } = null!;
+        public DbSet<SqlViewUser> Users { get; set; } = null!;
+        public DbSet<SqlViewLogin> Logins { get; set; } = null!;
 
         public UserAccessQueryContext(ConnectionString connectionString) => _connectionString = connectionString;
 
@@ -21,8 +21,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Query
         {
             modelBuilder.HasDefaultSchema(_schema);
 
-            modelBuilder.ApplyConfiguration(new SqlUserViewConfiguration());
-            modelBuilder.ApplyConfiguration(new SqlLoginViewConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlViewUserConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlViewLoginConfiguration());
         }
     }
 }

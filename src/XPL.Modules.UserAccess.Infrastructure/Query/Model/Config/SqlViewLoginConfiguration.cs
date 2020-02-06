@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Query.Model.Config
 {
-    public class SqlLoginViewConfiguration : IEntityTypeConfiguration<SqlLoginView>
+    public class SqlViewLoginConfiguration : IEntityTypeConfiguration<SqlViewLogin>
     {
-        public void Configure(EntityTypeBuilder<SqlLoginView> builder)
+        public void Configure(EntityTypeBuilder<SqlViewLogin> builder)
         {
             builder.ToView("vLogin").HasNoKey();
 

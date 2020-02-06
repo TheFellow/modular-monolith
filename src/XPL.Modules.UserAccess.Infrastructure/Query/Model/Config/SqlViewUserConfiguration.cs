@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Query.Model.Config
 {
-    public class SqlUserViewConfiguration : IEntityTypeConfiguration<SqlUserView>
+    public class SqlViewUserConfiguration : IEntityTypeConfiguration<SqlViewUser>
     {
-        public void Configure(EntityTypeBuilder<SqlUserView> builder)
+        public void Configure(EntityTypeBuilder<SqlViewUser> builder)
         {
             builder.ToView("vUser").HasNoKey();
 

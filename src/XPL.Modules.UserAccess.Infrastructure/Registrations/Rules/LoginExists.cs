@@ -19,7 +19,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Registrations.Rules
                 .Where(l => l.Login == login.Value)
                 .FirstOrNone();
 
-            return loginSql is Some<SqlLoginView>;
+            return loginSql is Some<SqlViewLogin>;
         }
     }
 }

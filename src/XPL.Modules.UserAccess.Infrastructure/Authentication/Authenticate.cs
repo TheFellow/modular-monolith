@@ -1,8 +1,10 @@
 ﻿using Functional.Option;
+using System;
 using System.Security.Claims;
 using XPL.Framework.Application.Ports;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Infrastructure.Query;
+using XPL.Modules.UserAccess.Infrastructure.Query.Model;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Authentication
 {
@@ -24,12 +26,24 @@ namespace XPL.Modules.UserAccess.Infrastructure.Authentication
 
             var identity = new ClaimsIdentity();
 
+            AddAuthenitcationClaims(user, identity);
+            AddAuthorizationClaims(user, identity);
+
+            return identity;
+        }
+
+
+        private void AddAuthenitcationClaims(SqlViewUser user, ClaimsIdentity identity)
+        {
             identity.AddClaim(AuthClaim(ClaimTypes.Name, user.Login));
             identity.AddClaim(AuthClaim(ClaimTypes.GivenName, user.FirstName));
             identity.AddClaim(AuthClaim(ClaimTypes.Surname, user.LastName));
             identity.AddClaim(AuthClaim(ClaimTypes.Email, user.Email));
+        }
 
-            return identity;
+        private void AddAuthorizationClaims(SqlViewUser user, ClaimsIdentity identity)
+        {
+            
         }
 
         private Claim AuthClaim(string claimType, string value) =>
