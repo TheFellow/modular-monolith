@@ -8,8 +8,8 @@ using XPL.Modules.UserAccess.Infrastructure.Data;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations;
 using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users;
 using XPL.Modules.UserAccess.Infrastructure.Emails;
+using XPL.Modules.UserAccess.Infrastructure.Query;
 using XPL.Modules.UserAccess.Infrastructure.Registrations.Rules;
-using static XPL.Modules.UserAccess.Infrastructure.Data.UserAccessContextOptions.TrackingBehavior;
 
 namespace XPL.Modules.UserAccess.Application.Startup
 {
@@ -24,17 +24,11 @@ namespace XPL.Modules.UserAccess.Application.Startup
                 .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>
                 {
                     var connString = ctx.GetInstance<ConnectionString>();
-                    return UserAccessContextOptions.GetOptions(connString, TrackAll);
+                    return UserAccessContextOptions.GetOptions(connString);
                 })
                 .Scoped();
 
-            For<IUserAccessQueryContext>().Use<UserAccessDbContext>()
-                .Ctor<DbContextOptions<UserAccessDbContext>>().Is(ctx =>
-                {
-                    var connString = ctx.GetInstance<ConnectionString>();
-                    return UserAccessContextOptions.GetOptions(connString, NoTracking);
-                })
-                .Scoped();
+            For<UserAccessQueryContext>().Use<UserAccessQueryContext>().Scoped();
 
             string assemblyName = GetType().Assembly.GetName().Name;
 

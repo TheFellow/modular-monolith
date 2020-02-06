@@ -58,7 +58,7 @@ namespace XPL.CLI
             await UpdateAlicesEmail(app);
             await UpdateAlicesEmailAgain(app);
 
-            //await RegisterCharles(app);
+            await RegisterCharles(app);
         }
 
 

@@ -6,7 +6,7 @@ using XPL.Modules.UserAccess.Infrastructure.Data.Model.Users.Config;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data
 {
-    public class UserAccessDbContext : DbContext, IUserAccessQueryContext
+    public class UserAccessDbContext : DbContext
     {
         private const string _schema = "UserAccess";
         private const string _hiLoSequence = "SeqPrimaryKeys";

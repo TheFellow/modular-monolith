@@ -2,30 +2,24 @@
 using System.Linq;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.Registrations.Rules;
-using XPL.Modules.UserAccess.Infrastructure.Data;
+using XPL.Modules.UserAccess.Infrastructure.Query;
+using XPL.Modules.UserAccess.Infrastructure.Query.Model;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Registrations.Rules
 {
     public class LoginExists : ILoginExists
     {
-        private readonly IUserAccessQueryContext _queryContext;
+        private readonly UserAccessQueryContext _queryContext;
 
-        public LoginExists(IUserAccessQueryContext queryContext) => _queryContext = queryContext;
+        public LoginExists(UserAccessQueryContext queryContext) => _queryContext = queryContext;
 
         bool ILoginExists.LoginExists(Login login)
         {
-            var loginSql = _queryContext
-                .Registrations
-                .Where(u => u.Login == login.Value)
-                .Select(l => l.Login)
-                .ToList() // Can't Concat over different DbSets
-                .Concat(
-                    _queryContext.Users
-                    .Where(u => u.Login == login.Value)
-                    .Select(l => l.Login))
+            var loginSql = _queryContext.Logins
+                .Where(l => l.Login == login.Value)
                 .FirstOrNone();
 
-            return loginSql is Some<string>;
+            return loginSql is Some<SqlLoginView>;
         }
     }
 }
