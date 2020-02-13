@@ -1,12 +1,13 @@
 ﻿using Functional.Option;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using XPL.Framework.Application.Ports;
 using XPL.Modules.Kernel.Passwords;
 using XPL.Modules.UserAccess.Infrastructure.Query;
 using XPL.Modules.UserAccess.Infrastructure.Query.Model;
 
-namespace XPL.Modules.UserAccess.Infrastructure.Authentication
+namespace XPL.Modules.UserAccess.Infrastructure.Auth
 {
     public class Authenticate : IAuthentication
     {
@@ -27,7 +28,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Authentication
             var identity = new ClaimsIdentity();
 
             AddAuthenitcationClaims(user, identity);
-            AddAuthorizationClaims(user, identity);
+            AddAuthorizationClaims(identity);
 
             return identity;
         }
@@ -41,9 +42,15 @@ namespace XPL.Modules.UserAccess.Infrastructure.Authentication
             identity.AddClaim(AuthClaim(ClaimTypes.Email, user.Email));
         }
 
-        private void AddAuthorizationClaims(SqlViewUser user, ClaimsIdentity identity)
+        private void AddAuthorizationClaims(ClaimsIdentity identity)
         {
-            // TODO: Pull claims from vUserRole
+            var roles = _queryContext.Roles
+                .Where(r => r.Login == identity.Name)
+                .Select(r => r.Role)
+                .ToList();
+
+            foreach (var role in roles)
+                identity.AddClaim(new Claim(ClaimTypes.Role, role, ClaimValueTypes.String, IAuthorization.AuthorizationIssuer));
         }
 
         private Claim AuthClaim(string claimType, string value) =>

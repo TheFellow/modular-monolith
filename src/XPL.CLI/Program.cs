@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
@@ -41,19 +42,20 @@ namespace XPL.CLI
                 string name = app.CurrentUser.Identity.FindFirst(ClaimTypes.Name).Value;
                 string? firstName = app.CurrentUser.Identity.FindFirst(ClaimTypes.GivenName)?.Value;
                 string? lastName = app.CurrentUser.Identity.FindFirst(ClaimTypes.Surname)?.Value;
-                string displayName = name + " " + (firstName ?? string.Empty) + " " + (lastName ?? string.Empty);
+                string roles = string.Join(", ", app.CurrentUser.Identity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value));
+                string displayName = name + " " + (firstName ?? string.Empty) + " " + (lastName ?? string.Empty) + $" -- [{roles}]";
                 WriteInfo($"Logged in as {displayName.Trim()}");
             }
             else
             {
                 WriteFail("Failed to login. Program aborting.");
-                //return;
+                return;
             }
 
             //await RegisterAlice(app);
             //await RegisterBob(app);
 
-            await ConfirmAlice(app);
+            //await ConfirmAlice(app);
             //await UpdateAlicesPassword(app);
             //await UpdateAlicesEmail(app);
             //await UpdateAlicesEmailAgain(app);

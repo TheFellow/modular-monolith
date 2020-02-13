@@ -12,6 +12,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Query
 
         public DbSet<SqlViewUser> Users { get; set; } = null!;
         public DbSet<SqlViewLogin> Logins { get; set; } = null!;
+        public DbSet<SqlViewLoginRole> Roles { get; set; } = null!;
 
         public UserAccessQueryContext(ConnectionString connectionString) => _connectionString = connectionString;
 
@@ -23,6 +24,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Query
 
             modelBuilder.ApplyConfiguration(new SqlViewUserConfiguration());
             modelBuilder.ApplyConfiguration(new SqlViewLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new SqlViewLoginRoleConfig());
         }
     }
 }
