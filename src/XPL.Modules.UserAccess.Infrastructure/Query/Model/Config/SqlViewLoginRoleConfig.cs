@@ -11,7 +11,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Query.Model.Config
 
             builder.Property(o => o.Login)
                 .HasColumnName("Login")
-                .HasColumnType("nvarchar(64)");
+                .HasColumnType("nvarchar(128)");
             
             builder.Property(o => o.Role)
                 .HasColumnName("Role")

@@ -43,7 +43,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Authentication
 
         private void AddAuthorizationClaims(SqlViewUser user, ClaimsIdentity identity)
         {
-            
+            // TODO: Pull claims from vUserRole
         }
 
         private Claim AuthClaim(string claimType, string value) =>

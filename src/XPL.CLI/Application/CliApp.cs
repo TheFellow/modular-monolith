@@ -29,7 +29,7 @@ namespace XPL.CLI.Application
         public static IRunnable<CliApp> Build() =>
             ApplicationBuilder.Create()
                 .WithConfig(ConfigurationFactory.OptionalAppSettingsJson)
-                .WithLogger(LoggerFactory.ConsoleDebugLogger)
+                .WithLogger(LoggerFactory.ConsoleInfoLogger)
                 .WithConnectionString(c => new CliAppConnectionString(c))
                 .AddModuleRegistry<UserAccessServiceRegistry>()
                 .Build<CliApp>();

@@ -47,18 +47,18 @@ namespace XPL.CLI
             else
             {
                 WriteFail("Failed to login. Program aborting.");
-                return;
+                //return;
             }
 
             //await RegisterAlice(app);
             //await RegisterBob(app);
 
-            //await ConfirmAlice(app);
+            await ConfirmAlice(app);
             //await UpdateAlicesPassword(app);
-            await UpdateAlicesEmail(app);
-            await UpdateAlicesEmailAgain(app);
+            //await UpdateAlicesEmail(app);
+            //await UpdateAlicesEmailAgain(app);
 
-            await RegisterCharles(app);
+            //await RegisterCharles(app);
         }
 
 

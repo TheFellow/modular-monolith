@@ -1,9 +1,4 @@
-﻿
-
-
-
-
-CREATE VIEW [UserAccess].[vLogin]
+﻿CREATE VIEW [UserAccess].[vLogin]
 AS
 SELECT	u.[Login],
 		ue.[Email]

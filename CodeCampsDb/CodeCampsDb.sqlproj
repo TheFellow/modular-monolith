@@ -75,6 +75,7 @@
     <Build Include="UserAccess\Tables\UserRole.sql" />
     <Build Include="UserAccess\Views\vUser.sql" />
     <Build Include="UserAccess\Views\vLogin.sql" />
+    <Build Include="UserAccess\Views\vLoginRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="CodeCampsDb.refactorlog" />

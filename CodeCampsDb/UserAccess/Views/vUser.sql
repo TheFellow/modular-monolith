@@ -1,6 +1,4 @@
-﻿
-
-CREATE VIEW [UserAccess].[vUser]
+﻿CREATE VIEW [UserAccess].[vUser]
 AS
 SELECT	u.[Id],
 		u.[Login],
