@@ -21,6 +21,7 @@ using XPL.Modules.UserAccess.Infrastructure.Auth;
 
 namespace XPL.Framework.AppBuilder
 {
+    // TODO: Refactor this
     public class ApplicationBuilder : INeedConfig, INeedLogging, INeedConnectionString, INeedModules
     {
         private ILogger? _logger;
@@ -99,6 +100,7 @@ namespace XPL.Framework.AppBuilder
             _appRegistry.For<ISystemClock>().Use<SystemClock>();
 
             _appRegistry.For<IAuthentication>().Use<Authenticate>();
+            _appRegistry.For<IAuthorization>().Use<Authorization>();
 
             _appRegistry.For<IExecutionContext>().Use<ExecutionContext>();
             _appRegistry.Injectable<IUserInfo>();

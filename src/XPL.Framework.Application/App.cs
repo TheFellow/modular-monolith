@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using XPL.Framework.Application.Contracts;
+using XPL.Framework.Application.Contracts.Security;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Application.Ports.Bus;
 using XPL.Framework.Domain;
@@ -32,6 +33,9 @@ namespace XPL.Framework.Application
                 using var nested = _container.GetNestedContainer();
                 nested.Inject(CurrentUser);
 
+                var authService = nested.GetInstance<IAuthorization>();
+                authService.Authorize(command);
+
                 var uowAssembly = command.GetType().Assembly.GetName().Name;
                 var uow = nested.GetInstance<IUnitOfWork>(uowAssembly);
                 var bus = nested.GetInstance<IBus>();
@@ -44,6 +48,10 @@ namespace XPL.Framework.Application
             catch (DomainException ex)
             {
                 return command.Fail(ex);
+            }
+            catch (UnauthorizedException)
+            {
+                return command.Fail("Unauthorized");
             }
             catch(Exception ex)
             {

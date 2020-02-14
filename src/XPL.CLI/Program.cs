@@ -57,8 +57,8 @@ namespace XPL.CLI
 
             //await ConfirmAlice(app);
             //await UpdateAlicesPassword(app);
-            //await UpdateAlicesEmail(app);
-            //await UpdateAlicesEmailAgain(app);
+            await UpdateAlicesEmail(app);
+            await UpdateAlicesEmailAgain(app);
 
             //await RegisterCharles(app);
         }
@@ -97,7 +97,7 @@ namespace XPL.CLI
         {
             WriteInfo("Updating Alice's Email");
 
-            var cmd = new UpdateEmailCommand("Alice", "alice.brown@email.com");
+            var cmd = new UpdateEmailCommand("Alice123", "alice.brown@email.com");
             var result = await app.ExecuteCommandAsync(cmd);
 
             DisplayResult(result, r => r);

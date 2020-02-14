@@ -1,8 +1,10 @@
 ﻿using System;
 using XPL.Framework.Application.Contracts;
+using XPL.Framework.Application.Contracts.Security;
 
 namespace XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword
 {
+    [Authorize(Login = nameof(Login))]
     public class UpdatePasswordCommand : ICommand<string>
     {
         public Guid CorrelationId { get; } = Guid.NewGuid();

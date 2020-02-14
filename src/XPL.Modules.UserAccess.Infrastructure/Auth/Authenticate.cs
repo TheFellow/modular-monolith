@@ -1,5 +1,4 @@
 ﻿using Functional.Option;
-using System;
 using System.Linq;
 using System.Security.Claims;
 using XPL.Framework.Application.Ports;
@@ -36,10 +35,10 @@ namespace XPL.Modules.UserAccess.Infrastructure.Auth
 
         private void AddAuthenitcationClaims(SqlViewUser user, ClaimsIdentity identity)
         {
-            identity.AddClaim(AuthClaim(ClaimTypes.Name, user.Login));
-            identity.AddClaim(AuthClaim(ClaimTypes.GivenName, user.FirstName));
-            identity.AddClaim(AuthClaim(ClaimTypes.Surname, user.LastName));
-            identity.AddClaim(AuthClaim(ClaimTypes.Email, user.Email));
+            identity.AddClaim(AuthenticationClaim(ClaimTypes.Name, user.Login));
+            identity.AddClaim(AuthenticationClaim(ClaimTypes.GivenName, user.FirstName));
+            identity.AddClaim(AuthenticationClaim(ClaimTypes.Surname, user.LastName));
+            identity.AddClaim(AuthenticationClaim(ClaimTypes.Email, user.Email));
         }
 
         private void AddAuthorizationClaims(ClaimsIdentity identity)
@@ -53,7 +52,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Auth
                 identity.AddClaim(new Claim(ClaimTypes.Role, role, ClaimValueTypes.String, IAuthorization.AuthorizationIssuer));
         }
 
-        private Claim AuthClaim(string claimType, string value) =>
+        private Claim AuthenticationClaim(string claimType, string value) =>
             new Claim(claimType, value, ClaimValueTypes.String, IAuthentication.AuthenticationIssuer);
     }
 }

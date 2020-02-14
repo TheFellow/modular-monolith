@@ -1,10 +1,10 @@
-﻿using System.Security.Claims;
+﻿using XPL.Framework.Application.Contracts;
 
 namespace XPL.Framework.Application.Ports
 {
     public interface IAuthorization
     {
-        bool Authorize(ClaimsIdentity identity, string authClaim);
+        void Authorize<TResult>(ICommand<TResult> command);
 
         public const string AuthorizationIssuer = "XPL Authorization Authority";
     }
