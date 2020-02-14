@@ -4,8 +4,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using XPL.CLI.Application;
 using XPL.Framework.Application.Contracts;
+using XPL.Modules.Kernel.Security;
 using XPL.Modules.UserAccess.Application.UseCases.Registrations.ConfirmRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.Registrations.NewUserRegistration;
+using XPL.Modules.UserAccess.Application.UseCases.Users.GrantRole;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword;
 
@@ -57,12 +59,12 @@ namespace XPL.CLI
 
             //await ConfirmAlice(app);
             //await UpdateAlicesPassword(app);
-            await UpdateAlicesEmail(app);
-            await UpdateAlicesEmailAgain(app);
+            //await UpdateAlicesEmail(app);
+            //await UpdateAlicesEmailAgain(app);
+            await GrantAliceAdminRole(app);
 
             //await RegisterCharles(app);
         }
-
 
         private static async Task RegisterAlice(CliApp app)
         {
@@ -80,7 +82,7 @@ namespace XPL.CLI
             var cmd = new ConfirmRegistrationCommand("alice", "abc123");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r);
+            DisplayResult(result);
         }
 
         private static async Task UpdateAlicesPassword(CliApp app)
@@ -90,7 +92,7 @@ namespace XPL.CLI
             var cmd = new UpdatePasswordCommand("Alice", "passw0rd", "p@ssw0rd");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r);
+            DisplayResult(result);
         }
 
         private static async Task UpdateAlicesEmail(CliApp app)
@@ -100,7 +102,7 @@ namespace XPL.CLI
             var cmd = new UpdateEmailCommand("Alice123", "alice.brown@email.com");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r);
+            DisplayResult(result);
         }
 
         private static async Task UpdateAlicesEmailAgain(CliApp app)
@@ -110,7 +112,17 @@ namespace XPL.CLI
             var cmd = new UpdateEmailCommand("Alice", "alice@email.com");
             var result = await app.ExecuteCommandAsync(cmd);
 
-            DisplayResult(result, r => r);
+            DisplayResult(result);
+        }
+
+        private static async Task GrantAliceAdminRole(CliApp app)
+        {
+            WriteInfo("Grant Admin access to Alice");
+
+            var cmd = new GrantRoleCommand("Alice", Roles.AdminRole.Value);
+            var result = await app.ExecuteCommandAsync(cmd);
+
+            DisplayResult(result);
         }
 
         private static async Task RegisterBob(CliApp app)
@@ -135,6 +147,10 @@ namespace XPL.CLI
             result
                 .OnOk(r => WriteSuccess(display(r)))
                 .OnFail(r => WriteFail(r.Message));
+
+        private static void DisplayResult(Result<string> result) =>
+            result.OnOk(r => WriteSuccess(r))
+            .OnFail(r => WriteFail(r.Message));
 
         private static void WriteInfo(string s) => WriteColor(s, ConsoleColor.Cyan);
         private static void WriteSuccess(string s) => WriteColor("  " + s, ConsoleColor.Green);

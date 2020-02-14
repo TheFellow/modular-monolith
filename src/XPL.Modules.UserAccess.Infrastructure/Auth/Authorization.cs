@@ -6,6 +6,7 @@ using XPL.Framework.Application.Contracts;
 using XPL.Framework.Application.Contracts.Security;
 using XPL.Framework.Application.Ports;
 using XPL.Framework.Domain;
+using XPL.Modules.Kernel.Security;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Auth
 {
@@ -16,7 +17,7 @@ namespace XPL.Modules.UserAccess.Infrastructure.Auth
 
         public void Authorize<TResult>(ICommand<TResult> command)
         {
-            if (_userInfo.Identity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == Constants.AdminRole))
+            if (_userInfo.Identity.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == Roles.AdminRole))
                 return;
 
             var option = command.GetType()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
+using XPL.Modules.Kernel.Security;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.Registrations;
 using XPL.Modules.UserAccess.Domain.Registrations.Events;
@@ -34,7 +35,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             _firstName = confirmed.FirstName;
             _lastName = confirmed.LastName;
             _emailUsage = emailUsage;
-            _roles = new List<Role>() { Role.Member };
+            _roles = new List<Role>() { Roles.Member };
         }
 
         public class Memento

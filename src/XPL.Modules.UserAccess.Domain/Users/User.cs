@@ -1,11 +1,11 @@
 ﻿using Functional.Either;
 using Functional.Option;
 using System.Collections.Generic;
-using System.Linq;
 using XPL.Framework.Domain.Model;
 using XPL.Modules.Kernel;
 using XPL.Modules.Kernel.Email;
 using XPL.Modules.Kernel.Passwords;
+using XPL.Modules.Kernel.Security;
 using XPL.Modules.UserAccess.Domain.Kernel;
 using XPL.Modules.UserAccess.Domain.Registrations;
 
@@ -64,7 +64,7 @@ namespace XPL.Modules.UserAccess.Domain.Users
             if (!_roles.Contains(role))
                 return;
 
-            if (role == Role.Member)
+            if (role == Roles.Member)
                 throw new DomainException("Cannot remove the Member role");
 
             _roles.Remove(role);
