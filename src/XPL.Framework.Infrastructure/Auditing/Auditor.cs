@@ -1,7 +1,7 @@
 ﻿using System;
 using XPL.Framework.Domain;
 
-namespace XPL.Framework.Infrastructure.Data
+namespace XPL.Framework.Infrastructure.Auditing
 {
     public sealed class Auditor
     {

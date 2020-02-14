@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPL.Framework.Infrastructure.Data
+namespace XPL.Framework.Infrastructure.Auditing
 {
     public static class AuditableExtensions
     {

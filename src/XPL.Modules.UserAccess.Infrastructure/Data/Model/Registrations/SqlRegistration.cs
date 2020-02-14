@@ -1,5 +1,5 @@
 ﻿using System;
-using XPL.Framework.Infrastructure.Data;
+using XPL.Framework.Infrastructure.Auditing;
 using XPL.Framework.Infrastructure.Persistence;
 
 namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Registrations

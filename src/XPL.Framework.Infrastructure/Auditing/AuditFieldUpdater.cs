@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using XPL.Framework.Domain;
 
-namespace XPL.Framework.Infrastructure.Data
+namespace XPL.Framework.Infrastructure.Auditing
 {
     public sealed class AuditFieldUpdater<TSource, TPersistence>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using XPL.Framework.Domain;
-using XPL.Framework.Infrastructure.Data;
+using XPL.Framework.Infrastructure.Auditing;
 using XPL.Framework.Infrastructure.Persistence;
 using XPL.Modules.UserAccess.Domain.Users;
 using static XPL.Modules.UserAccess.Domain.Users.User;
