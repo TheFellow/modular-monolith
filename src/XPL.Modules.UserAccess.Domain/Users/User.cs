@@ -56,6 +56,9 @@ namespace XPL.Modules.UserAccess.Domain.Users
             if (_roles.Contains(role))
                 return;
 
+            if (!Roles.IsValidRole(role))
+                throw new DomainException("Invalid Role");
+
             _roles.Add(role);
         }
 
@@ -63,6 +66,9 @@ namespace XPL.Modules.UserAccess.Domain.Users
         {
             if (!_roles.Contains(role))
                 return;
+
+            if (!Roles.IsValidRole(role))
+                throw new DomainException("Invalid Role");
 
             if (role == Roles.Member)
                 throw new DomainException("Cannot remove the Member role");

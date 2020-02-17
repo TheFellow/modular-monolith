@@ -131,8 +131,8 @@ namespace XPL.Modules.UserAccess.Infrastructure.Data.Model.Users
                 sql.Emails.Add(newEmail);
             }
 
-            var addedRoles = user.Roles.Except(sql.Roles.Select(r => r.Role));
-            var removedRoles = sql.Roles.Select(r => r.Role).Except(user.Roles).ToList();
+            var addedRoles = user.Roles.Except(sql.Roles.Where(s => s.EndOnUtc == null).Select(r => r.Role));
+            var removedRoles = sql.Roles.Where(s => s.EndOnUtc == null).Select(r => r.Role).Except(user.Roles).ToList();
 
             if (addedRoles.Union(removedRoles).Any())
                 audit.Force();

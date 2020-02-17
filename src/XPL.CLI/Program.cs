@@ -8,6 +8,7 @@ using XPL.Modules.Kernel.Security;
 using XPL.Modules.UserAccess.Application.UseCases.Registrations.ConfirmRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.Registrations.NewUserRegistration;
 using XPL.Modules.UserAccess.Application.UseCases.Users.GrantRole;
+using XPL.Modules.UserAccess.Application.UseCases.Users.RevokeRole;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdateEmail;
 using XPL.Modules.UserAccess.Application.UseCases.Users.UpdatePassword;
 
@@ -62,6 +63,7 @@ namespace XPL.CLI
             //await UpdateAlicesEmail(app);
             //await UpdateAlicesEmailAgain(app);
             await GrantAliceAdminRole(app);
+            //await RevokeAliceAdminRole(app);
 
             //await RegisterCharles(app);
         }
@@ -119,7 +121,17 @@ namespace XPL.CLI
         {
             WriteInfo("Grant Admin access to Alice");
 
-            var cmd = new GrantRoleCommand("Alice", Roles.AdminRole.Value);
+            var cmd = new GrantRoleCommand("Alice", Roles.AdminRoleValue);
+            var result = await app.ExecuteCommandAsync(cmd);
+
+            DisplayResult(result);
+        }
+
+        private static async Task RevokeAliceAdminRole(CliApp app)
+        {
+            WriteInfo("Revoke Admin access to Alice");
+
+            var cmd = new RevokeRoleCommand("Alice", Roles.AdminRoleValue);
             var result = await app.ExecuteCommandAsync(cmd);
 
             DisplayResult(result);
