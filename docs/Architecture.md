@@ -90,4 +90,8 @@ Items which come to mind (including those listed) are:
 So then let's figure out what we need for our command pipeline.
 We need a result class, logging which is result aware, basic command validation, domain exception of which the logging is aware as well.
 
+![v0.2.1](v0.2.1.png)
+
+
+
 
