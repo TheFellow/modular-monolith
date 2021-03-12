@@ -6,6 +6,6 @@ namespace Xpl.Framework.Messaging
 {
     public interface ICommandBus
     {
-        public Task<TResult> Send<TResult>(Command<TResult> command, CancellationToken cancellationToken);
+        public Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default);
     }
 }

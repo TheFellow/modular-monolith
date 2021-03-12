@@ -1,4 +1,5 @@
 ﻿using System;
+using Xpl.Framework;
 
 namespace Xpl.Sandbox.Cli
 {
@@ -7,6 +8,8 @@ namespace Xpl.Sandbox.Cli
         static void Main(string[] args)
         {
             // Explicit sandbox
+            var app = XplApp.Start();
+
         }
     }
 }
