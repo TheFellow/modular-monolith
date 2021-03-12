@@ -85,3 +85,5 @@ Items which come to mind (including those listed) are:
 - Authorization
 - Command Validation (sub-cutaneous)
 
+### 0.2.1 Command Pipeline
+
