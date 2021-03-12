@@ -13,15 +13,11 @@ actually played out that way when if sit down and code it up. *Unsurprisingly* I
 ## Table of Contents
 
 1. [Inspiration](#inspiration)
-2. [What You Should Know](#what-you-should-know)
-   1. [Architecture](#architecture)
-   2. [Code Style](#code-style)
-3. [Code Quality](#code-quality)
-4. [Explicit Architecture](#explicit-architecture)
-   1. [Modules](#modules)
-   2. [Framework](#framework)
-   3. [Connecting Modules to the Framework](#connecting-modules-to-the-framework)
-5. [The Domain](#the-domain)
+2. [My Goals for this Project](#my-goals-for-this-project)
+   1. [Larger Goals](#larger-goals)
+3. [Architecture](#architecture)
+4. [Code Style](#code-style)
+5. [Code Quality](#code-quality)
 
 ----
 
@@ -39,24 +35,70 @@ I will not repeat all that he's done in that repo because (a) it's a lot and (b)
 However, I have poured over most of his source code and there are certain things, not represented there,
 which are of particular interest to me.
 
+#### Technical Inspiration
+
+There are a handful of sources and examples that I have some familiarity with and appreciation for.
+All subject to my modification of course...
+- [Herberto Graca](https://herbertograca.com/)'s mental model of architecture
+- [Jasper](http://jasperfx.github.io/)'s application and messaging model
+- [abp.io](https://docs.abp.io/en/abp/latest/Best-Practices/Index)'s approach to organizing modules and DDD
+- [Code Framework](https://docs.codeframework.io/)'s approach to well structured XAML-based front ends
+- [Zoran Horvat](http://www.codinghelmet.com/articles)'s coding style
+- Countless others...
+
 ----
 
-### What You Should Know
+### My Goals for this Project
 
 Everybody has their own style of coding, but some are better than others. :smirk:
 
 - I will be following all of the standard rules including GRASP practices, SOLID principles, and proper Object-Oriented Design.
+  - Yes I will use patterns as they appear; no I will not force them in.
 - I will use nullable reference types everywhere.
+  - I plan to use ideas from functional languages (like F#) in the project. E.g. `Option<T>`
 - Code will be defensive by design.
 
-#### Architecture
+#### Larger Goals
+
+- Build out a hand-rolled application framework
+  - Message Based
+  - CQRS
+  - DDD
+  - Explicit (see below)
+  - Best Practices
+
+- Demonstrate modules which use different front-ends.
+  - WinUI 3 XAML
+  - REST API
+  - Console?
+  - MVC
+    - Sub-goal: Learn MVC
+    - Sub-goal: Learn TypeScript
+
+- Demonstrate modules which use different back-ends
+  - To force the issue of abstracting persistence
+  - Maybe even different styles of back-end?
+    - Relational (we'll start here, in my comfort zone)
+    - Event Sourced?
+    - Graph?
+    - Document?
+    - CSV? (hehe...)
+
+- Integrate a module and/or domain logic written in F#
+  - Sub-goal: Learn F#
+
+----
+
+### Architecture
 
 The top-level architecture is [Herberto Graca](https://herbertograca.com/)'s
 [**Explicit Architecture.**](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 I **strongly** recommend you read this series of articles.
 ![Explicit Architecture](docs/ExplicitArchitecture.png)
 
-#### Code Style
+Dig into the [architecture](docs/Architecture.md).
+
+### Code Style
 
 Object-Oriented Programming is the *transpose* of Functional Programming. 
 
@@ -95,68 +137,3 @@ Qualities we want in our codebase:
 6. **Discoverable** Looking at any module of the system should provide feedback about how it used and what it does
 
 These code qualities apply at **all** leveles of software. More [here](docs/CodeQuality.md).
-
-----
-
-### Explicit Architecture
-
-We will follow Uncle Bob's advice regarding keeping frameworks at arms length, and follow the clean architectures dependency rule.
-
-At the same time, we do not want to re-invent the wheel every time we need to interact with a Module (Bounded Context), or add a new one.
-
-We can achieve both of these at the same time by creating our own framework classes.
-
-Because I'm following the *Explicit Architecture,* I'm using the *XPL* prefix for all classes. (Plus it's nice and short.)
-
-#### Modules
-
-In Modules (Bounded Contexts) the dependency rule is simple.
-
-- The application layer refers to both the Infrastructure layer and the Domain layer.
-- The Infrastructure layer refers to the Domain layer
-
-![Module References](docs/Module-References.png)
-
-- In fact, the only reason the Application assembly references Infrastructure directly is to register concrete Infrastructure implementations with
-interface delcarations in the Domain layer.
-- The Infrastructure layer refers to the Domain layer for the purposes of implementing services required by the domain layer.
-
-#### Framework
-
-The Framework assemblies have four assemblies setup slightly differently.
-
-- The Framework Application layer defines:
-  - Module Contract types (including `ICommand`, `ICommandHandler`, etc.)
-  - Module Port types (including `IBus` and `ILogger`, etc.)
-  - Application Startup classes (convenience classes for code that needs to run on application startup)
-  - The base App type (from which individual applications will inherit)
-- The Framework Domain layer defines:
-  - Base Domain model types (like `Entity` and `IDomainEvent`)
-  - The `IDomainEventDispatcher` interface
-- The Framework Infrastructure layer defines:
-  - Port implementations (hence the refence to the Application layer, like `InMemoryBus` and `DomainEventDispatcher`)
-  - Infrastructure implementations including:
-    - Unit of Work
-    - Configuration
-    - Mapping `repository` base type
-    - Etc.
-
-The AppBuilder assembly contains the code to bootstrap and configure a whole application together.
-It is referred to by assemblies in the Presentation layer in order to configure and assemble the particular application being built.
-
-![Framework References](docs/Framework-References.png)
-
-#### Connecting Modules to the Framework
-
-The Module assemblies are free to reference Framework assemblies as long as they still follow the Dependency Rule.
-
-- That is `Module.Domain` can refer to `Framework.Domain`, but nothing else because Domain is at the core.
-- `Module.Infrastructure` can refer to `Module.Domain`, but also to `Framework.Infrastructure` and `Framework.Domain`
-  - This is so that Module Infra classes can make use of Framework Infra classes to support Module Domain classes which use Framework Domain classes.
-- `Module.Application` is similar, and can refer to any subordinate Module assembly, but also the Framework Application, Infrastructure, and Domain assemblies.
-
-This layout of references is shown here:
-![Connecting Modules to the Framework](docs/Connecting-Modules-With-Framework.png)
-
-### The Domain
-
