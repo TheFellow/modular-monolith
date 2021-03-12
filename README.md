@@ -46,7 +46,7 @@ which are of particular interest to me.
 Everybody has their own style of coding, but some are better than others. :smirk:
 
 - I will be following all of the standard rules including GRASP practices, SOLID principles, and proper Object-Oriented Design.
-- I will use C# 8's nullable reference types everywhere.
+- I will use nullable reference types everywhere.
 - Code will be defensive by design.
 
 #### Architecture

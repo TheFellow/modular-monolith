@@ -48,6 +48,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{25D232EF-8C40-4425-A2FF-8F791FAD5B7C}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\CodeQuality.md = ..\docs\CodeQuality.md
+		..\docs\Connecting-Modules-With-Framework.png = ..\docs\Connecting-Modules-With-Framework.png
+		..\docs\ExplicitArchitecture.png = ..\docs\ExplicitArchitecture.png
+		..\docs\Framework-References.png = ..\docs\Framework-References.png
+		..\docs\Level-Assemblies.png = ..\docs\Level-Assemblies.png
+		..\docs\Level-Classes.png = ..\docs\Level-Classes.png
+		..\docs\Level-Code.png = ..\docs\Level-Code.png
+		..\docs\Level-Methods.png = ..\docs\Level-Methods.png
+		..\docs\Level-Modules.png = ..\docs\Level-Modules.png
+		..\docs\Level-Namespaces.png = ..\docs\Level-Namespaces.png
+		..\docs\Module-References.png = ..\docs\Module-References.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +139,7 @@ Global
 		{89B22D37-57AD-462D-8818-1590DE11B6F1} = {56575A1B-DFED-4726-A638-7461510B379A}
 		{CDC3BCB8-9974-4036-9721-41C24F73C08A} = {1BE87C26-24CF-42AB-9B45-C205FBE20C52}
 		{FD537A02-67AA-49B9-A0AD-0A0685B756EF} = {9C93B6B6-4400-493D-83C1-833A2B75DAD1}
+		{25D232EF-8C40-4425-A2FF-8F791FAD5B7C} = {263AAADA-DABC-40F0-8DFA-B7CF11C300F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED51870B-F52D-45C2-B30F-013A195BC2A7}
