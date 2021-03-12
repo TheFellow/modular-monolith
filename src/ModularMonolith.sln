@@ -38,6 +38,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{25D232EF-8
 		..\docs\Module-References.png = ..\docs\Module-References.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{D67943CD-12E1-438F-A787-3C7B2BC578B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xpl.Sandbox.Cli", "Xpl.Sandbox.Cli\Xpl.Sandbox.Cli.csproj", "{1310621B-E7F4-497E-B6DC-4335F2DC1A1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +62,10 @@ Global
 		{FD537A02-67AA-49B9-A0AD-0A0685B756EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD537A02-67AA-49B9-A0AD-0A0685B756EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD537A02-67AA-49B9-A0AD-0A0685B756EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1310621B-E7F4-497E-B6DC-4335F2DC1A1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1310621B-E7F4-497E-B6DC-4335F2DC1A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1310621B-E7F4-497E-B6DC-4335F2DC1A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1310621B-E7F4-497E-B6DC-4335F2DC1A1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +77,7 @@ Global
 		{CDC3BCB8-9974-4036-9721-41C24F73C08A} = {1BE87C26-24CF-42AB-9B45-C205FBE20C52}
 		{FD537A02-67AA-49B9-A0AD-0A0685B756EF} = {9C93B6B6-4400-493D-83C1-833A2B75DAD1}
 		{25D232EF-8C40-4425-A2FF-8F791FAD5B7C} = {263AAADA-DABC-40F0-8DFA-B7CF11C300F6}
+		{1310621B-E7F4-497E-B6DC-4335F2DC1A1B} = {D67943CD-12E1-438F-A787-3C7B2BC578B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED51870B-F52D-45C2-B30F-013A195BC2A7}

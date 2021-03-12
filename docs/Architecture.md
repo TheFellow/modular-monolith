@@ -87,3 +87,7 @@ Items which come to mind (including those listed) are:
 
 ### 0.2.1 Command Pipeline
 
+So then let's figure out what we need for our command pipeline.
+We need a result class, logging which is result aware, basic command validation, domain exception of which the logging is aware as well.
+
+
