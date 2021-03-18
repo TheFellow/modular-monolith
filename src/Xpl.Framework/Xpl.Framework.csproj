@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lamar" Version="5.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xpl.Framework.Logging\Xpl.Framework.Logging.csproj" />
+    <ProjectReference Include="..\Xpl.Framework.Messaging\Xpl.Framework.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>
