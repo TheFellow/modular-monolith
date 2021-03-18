@@ -1,4 +1,4 @@
-﻿namespace Xpl.Framework.Messaging.Results
+﻿namespace Xpl.Framework.Messaging.Commands
 {
     public abstract class Result<T>
     {

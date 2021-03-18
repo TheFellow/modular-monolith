@@ -3,10 +3,16 @@ using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Xpl.Framework.Messaging.Results;
 
-namespace Xpl.Framework.Messaging
+namespace Xpl.Framework.Messaging.Commands
 {
+
+    /*
+        - 
+        - Logging of Result
+        - Exception to Result
+        - 
+    */
     public class CommandBus : ICommandBus
     {
         private readonly IContainer _container;

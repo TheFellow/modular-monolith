@@ -1,4 +1,5 @@
 ﻿using Lamar;
+using Xpl.Framework.Messaging.IoC;
 
 namespace Xpl.Framework
 {
@@ -6,7 +7,7 @@ namespace Xpl.Framework
     {
         public IoC()
         {
-            IncludeRegistry<Messaging.IoC>();
+            IncludeRegistry<ModuleRegistry>();
         }
     }
 }

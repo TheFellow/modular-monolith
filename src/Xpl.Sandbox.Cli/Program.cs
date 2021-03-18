@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xpl.Framework.Messaging;
-using Xpl.Framework.Messaging.Results;
+using Xpl.Framework.Messaging.Commands;
 
 namespace Xpl.Sandbox.Cli
 {

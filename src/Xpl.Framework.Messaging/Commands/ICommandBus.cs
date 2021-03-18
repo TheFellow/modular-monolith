@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Xpl.Framework.Messaging.Results;
 
-namespace Xpl.Framework.Messaging
+namespace Xpl.Framework.Messaging.Commands
 {
     public interface ICommandBus
     {

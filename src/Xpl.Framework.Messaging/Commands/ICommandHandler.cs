@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Xpl.Framework.Messaging.Commands;
 
 namespace Xpl.Framework.Messaging
 {
