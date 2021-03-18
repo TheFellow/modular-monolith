@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Messaging", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework", "Xpl.Framework\Xpl.Framework.csproj", "{3F9EF946-06B4-4FF0-9889-C42C1B14B68F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Messaging.IoC.Tests", "..\test\Xpl.Framework.Messaaaging.IoC.Tests\Xpl.Framework.Messaging.IoC.Tests.csproj", "{52C102EF-64D5-4D36-AEFD-C9892A0B6240}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Messaging.IoC.Tests", "..\test\Xpl.Framework.Messaging.IoC.Tests\Xpl.Framework.Messaging.IoC.Tests.csproj", "{52C102EF-64D5-4D36-AEFD-C9892A0B6240}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6AEFDBC3-2DED-47F6-B348-1EA886F70A43}"
 EndProject
