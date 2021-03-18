@@ -1,5 +1,4 @@
-﻿using Lamar;
-using Serilog;
+﻿using Serilog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,35 +11,35 @@ namespace Xpl.Sandbox.Cli
     {
         static async Task Main(string[] args)
         {
-            // Explicit sandbox
-            var ctr = new Container(c =>
-            {
-                c.IncludeRegistry<Framework.IoC>();
-                c.Scan(scanner =>
-                {
-                    scanner.AssemblyContainingType<Program>();
-                    scanner.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
-                });
-            });
+            var ctr = Bootstrap.Container();
 
             var logger = ctr.GetInstance<ILogger>();
 
             var bus = ctr.GetInstance<ICommandBus>();
-            var result = await bus.Send(new MyCommand());
+            await SendCommand(true, logger, bus);
+            await SendCommand(false, logger, bus);
+        }
+
+        private static async Task SendCommand(bool success, ILogger logger, ICommandBus bus)
+        {
+            var result = await bus.Send(new MyCommand(success));
             result
                 .OnOk(i => logger.Information("Result is {Result}", i))
                 .OnError(msg => logger.Information("Error is {Error}", msg));
         }
     }
 
-    public class MyCommand : Command<int> { }
+    public class MyCommand : Command<int> {
+        public bool Success { get; }
+        public MyCommand(bool success) => Success = success;
+    }
     public class MyCommandHandler : ICommandHandler<MyCommand, int>
     {
         public Task<int> Handle(MyCommand request, CancellationToken cancellationToken)
         {
             Console.WriteLine("Handled");
-            throw new Exception("Unexpected exception!");
-            return Task.FromResult(4);
+            if(request.Success) return Task.FromResult(4);
+            throw new Exception("An error!");
         }
     }
 }
