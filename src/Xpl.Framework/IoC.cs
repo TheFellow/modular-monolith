@@ -8,7 +8,7 @@ namespace Xpl.Framework
     {
         public IoC()
         {
-            IncludeRegistry<ModuleRegistry>();
+            IncludeRegistry<MessagingRegistry>();
             IncludeRegistry<LoggingRegistry>();
         }
     }

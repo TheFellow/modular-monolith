@@ -15,19 +15,18 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
         }
 
         public async Task<Result<T>> Send<T>(ICommand<T> command, CancellationToken cancellationToken = default)
-        {
-            var logger = _logger.ForContext(command.GetType());
-            logger.Information("Sending command {Command}", command);
+        {            
+            _logger.Information("Sending {Command}#{Id}", command, command.CorrelationId);
 
             var result = await _bus.Send(command, cancellationToken);
 
             if (result is Ok<T> ok)
             {
-                _logger.Information("Command success: Returned {@Result}", ok.Value);
+                _logger.Information("Success {Command}#{Id}: {@Result}", command, command.CorrelationId, ok.Value);
             }
             else if (result is Error<T> error)
             {
-                _logger.Information("Command failed: Returned {Error}", error.Message);
+                _logger.Error("Error {Command}#{Id}: {Error}", command, command.CorrelationId, error.Message);
             }
 
             return result;

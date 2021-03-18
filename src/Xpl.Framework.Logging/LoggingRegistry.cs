@@ -2,6 +2,7 @@
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 namespace Xpl.Framework.Logging
 {
@@ -13,7 +14,10 @@ namespace Xpl.Framework.Logging
         }
 
         public Logger Logger { get; } = new LoggerConfiguration()
-                .WriteTo.Console(LogEventLevel.Information)
+                //.WriteTo.Console(new CompactJsonFormatter(), LogEventLevel.Information)
+                .WriteTo.Console(LogEventLevel.Information,
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .Enrich.FromLogContext()
                 .CreateLogger();
 }
 }

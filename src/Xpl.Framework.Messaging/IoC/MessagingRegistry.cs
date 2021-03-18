@@ -1,16 +1,20 @@
 ﻿using Lamar;
 using MediatR;
+using Xpl.Framework.Logging;
 using Xpl.Framework.Messaging.Commands;
 using Xpl.Framework.Messaging.Commands.Pipeline;
 
 namespace Xpl.Framework.Messaging.IoC
 {
-    public class ModuleRegistry : ServiceRegistry
+    public class MessagingRegistry : ServiceRegistry
     {
-        public ModuleRegistry()
+        public MessagingRegistry()
         {
+            IncludeRegistry<LoggingRegistry>();
+
             For<ICommandBus>().Use<CommandBus>().Scoped();
-            this.RegisterPipelineFor<ICommandBus, CommandResultLogger>();
+            this.RegisterPipelineFor<ICommandBus,
+                CommandResultLogger, ExceptionToResult>();
 
             // In reverse order
             // For<ICommandBus>().DecorateAllWith<TDecorator>() where TDecorator : ICommandBus

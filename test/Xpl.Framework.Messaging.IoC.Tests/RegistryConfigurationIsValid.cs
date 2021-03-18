@@ -9,7 +9,7 @@ namespace Xpl.Framework.Messaging.IoC.Tests
         [TestMethod]
         public void MessagingRegistryIsValid()
         {
-            var reg = new ModuleRegistry();
+            var reg = new MessagingRegistry();
             var container = new Container(reg);
 
             container.AssertConfigurationIsValid();

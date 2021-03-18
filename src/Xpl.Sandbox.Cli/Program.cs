@@ -1,4 +1,5 @@
 ﻿using Lamar;
+using Serilog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,20 +23,23 @@ namespace Xpl.Sandbox.Cli
                 });
             });
 
-            Console.WriteLine(ctr.WhatDoIHave());
+            var logger = ctr.GetInstance<ILogger>();
 
             var bus = ctr.GetInstance<ICommandBus>();
             var result = await bus.Send(new MyCommand());
-            Console.WriteLine($"Result is {((result is Ok<int> r) ? r.Value.ToString() : "Error")}");
+            result
+                .OnOk(i => logger.Information("Result is {Result}", i))
+                .OnError(msg => logger.Information("Error is {Error}", msg));
         }
     }
 
-    public class MyCommand : ICommand<int> { }
+    public class MyCommand : Command<int> { }
     public class MyCommandHandler : ICommandHandler<MyCommand, int>
     {
         public Task<int> Handle(MyCommand request, CancellationToken cancellationToken)
         {
             Console.WriteLine("Handled");
+            throw new Exception("Unexpected exception!");
             return Task.FromResult(4);
         }
     }
