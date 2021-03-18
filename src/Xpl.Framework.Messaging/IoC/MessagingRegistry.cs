@@ -16,9 +16,6 @@ namespace Xpl.Framework.Messaging.IoC
             this.RegisterPipelineFor<ICommandBus,
                 CommandResultLogger, ExceptionToResult>();
 
-            // In reverse order
-            // For<ICommandBus>().DecorateAllWith<TDecorator>() where TDecorator : ICommandBus
-
             For<IMediator>().Use<Mediator>().Scoped();
             For<ServiceFactory>().Use(ctx => ctx.GetInstance);
         }
