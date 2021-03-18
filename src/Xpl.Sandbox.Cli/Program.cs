@@ -12,7 +12,6 @@ namespace Xpl.Sandbox.Cli
         static async Task Main(string[] args)
         {
             // Explicit sandbox
-            var ioc = new Framework.IoC();
             var ctr = new Container(c =>
             {
                 c.IncludeRegistry<Framework.IoC>();
@@ -22,19 +21,22 @@ namespace Xpl.Sandbox.Cli
                     scanner.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
                 });
             });
+
+            Console.WriteLine(ctr.WhatDoIHave());
+
             var bus = ctr.GetInstance<ICommandBus>();
             var result = await bus.Send(new MyCommand());
             Console.WriteLine($"Result is {((result is Ok<int> r) ? r.Value.ToString() : "Error")}");
         }
+    }
 
-        public class MyCommand : ICommand<int> { }
-        public class MyCommandHandler : ICommandHandler<MyCommand, int>
+    public class MyCommand : ICommand<int> { }
+    public class MyCommandHandler : ICommandHandler<MyCommand, int>
+    {
+        public Task<int> Handle(MyCommand request, CancellationToken cancellationToken)
         {
-            public Task<int> Handle(MyCommand request, CancellationToken cancellationToken)
-            {
-                Console.WriteLine("Handled");
-                return Task.FromResult(4);
-            }
+            Console.WriteLine("Handled");
+            return Task.FromResult(4);
         }
     }
 }

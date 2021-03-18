@@ -1,6 +1,7 @@
 ﻿using Lamar;
 using MediatR;
 using Xpl.Framework.Messaging.Commands;
+using Xpl.Framework.Messaging.Commands.Pipeline;
 
 namespace Xpl.Framework.Messaging.IoC
 {
@@ -9,6 +10,7 @@ namespace Xpl.Framework.Messaging.IoC
         public ModuleRegistry()
         {
             For<ICommandBus>().Use<CommandBus>().Scoped();
+            this.RegisterPipelineFor<ICommandBus, CommandResultLogger>();
 
             // In reverse order
             // For<ICommandBus>().DecorateAllWith<TDecorator>() where TDecorator : ICommandBus
