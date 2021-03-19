@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Xpl.Framework.Messaging.Commands
 {
@@ -15,6 +16,18 @@ namespace Xpl.Framework.Messaging.Commands
         {
             if (result is Error<T> error)
                 action(error.Message);
+            return result;
+        }
+
+        public static async Task<Result<T>> Handle<T>(this Result<T> result, Func<T, Task> onOk, Func<string, Task> onError)
+        {
+            var task = result switch
+            {
+                Ok<T> ok => onOk(ok.Value),
+                Error<T> error => onError(error.Message),
+                _ => throw new InvalidOperationException("We need discriminated unions")
+            };
+            await task;
             return result;
         }
     }
