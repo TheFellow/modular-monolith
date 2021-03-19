@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Xpl.Framework.Messaging.Commands.Pipeline
 {
-    public class CommandResultLogger : ICommandBus
+    public class CommandResultLogger : ICommandDispatcher
     {
-        private readonly ICommandBus _bus;
+        private readonly ICommandDispatcher _bus;
         private readonly ILogger _logger;
-        public CommandResultLogger(ICommandBus bus, ILogger logger)
+        public CommandResultLogger(ICommandDispatcher bus, ILogger logger)
         {
             _bus = bus;
             _logger = logger;

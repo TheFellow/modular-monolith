@@ -1,9 +1,8 @@
 ﻿namespace Xpl.Framework.Messaging.IoC.Tests.TestModel
 {
-    public class ResultLogger : ICommandBus
+    public class StepBase : ICommandBus
     {
         public ICommandBus Inner { get; }
-        public ResultLogger(ICommandBus inner) => Inner = inner;
+        public StepBase(ICommandBus inner) => Inner = inner;
     }
-
 }

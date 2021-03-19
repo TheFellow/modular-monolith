@@ -13,7 +13,6 @@ namespace Xpl.Sandbox.Cli
                     {
                         scanner.AssemblyContainingType<Program>();
                         scanner.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
-                        scanner.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<,>));
                     });
                 });
     }

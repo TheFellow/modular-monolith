@@ -22,7 +22,8 @@ namespace Xpl.Sandbox.Cli
 
         private static async Task SendCommand(bool success, ILogger logger, ICommandBus bus)
         {
-            var result = await bus.Send(new MyCommand(success));
+            var cts = new CancellationTokenSource();
+            var result = await bus.Send(new MyCommand(success), cts.Token);
             result
                 .OnOk(i => logger.Information("Result is {Result}", i))
                 .OnError(msg => logger.Information("Error is {Error}", msg));

@@ -13,8 +13,9 @@ namespace Xpl.Framework.Messaging.IoC
             IncludeRegistry<LoggingRegistry>();
 
             For<ICommandBus>().Use<CommandBus>().Scoped();
-            this.RegisterPipelineFor<ICommandBus,
-                CommandResultLogger, ExceptionToResult>();
+
+            For<ICommandDispatcher>().Use<CommandDispatcher>();
+            this.RegisterPipelineFor<ICommandDispatcher, CommandResultLogger, ExceptionToResult, CommandValidator>();
 
             For<IMediator>().Use<Mediator>().Scoped();
             For<ServiceFactory>().Use(ctx => ctx.GetInstance);

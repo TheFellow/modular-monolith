@@ -30,5 +30,18 @@ namespace Xpl.Framework.Messaging.IoC
             registry.For<TInterface>().DecorateAllWith<T2>();
             registry.For<TInterface>().DecorateAllWith<T1>();
         }
+
+        public static void RegisterPipelineFor<TInterface, T1, T2, T3, T4>(this ServiceRegistry registry)
+            where T4 : TInterface
+            where T3 : TInterface
+            where T2 : TInterface
+            where T1 : TInterface
+            where TInterface : class
+        {
+            registry.For<TInterface>().DecorateAllWith<T4>();
+            registry.For<TInterface>().DecorateAllWith<T3>();
+            registry.For<TInterface>().DecorateAllWith<T2>();
+            registry.For<TInterface>().DecorateAllWith<T1>();
+        }
     }
 }
