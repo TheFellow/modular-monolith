@@ -2,6 +2,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Xpl.Core.Application;
+using Xpl.Core.Domain;
 using Xpl.Framework.Messaging;
 using Xpl.Framework.Messaging.Commands;
 
@@ -34,13 +36,13 @@ namespace Xpl.Sandbox.Cli
         public bool Success { get; }
         public MyCommand(bool success) => Success = success;
     }
-    public class MyCommandHandler : ICommandHandler<MyCommand, int>
+    public class MyCommandHandler : UseCase<MyCommand, int>
     {
-        public Task<int> Handle(MyCommand request, CancellationToken cancellationToken)
+        public override Task<int> Handle(MyCommand request, CancellationToken cancellationToken)
         {
             Console.WriteLine("Handled");
             if(request.Success) return Task.FromResult(4);
-            throw new Exception("An error!");
+            throw new DomainException("This request was supposed to fail");
         }
     }
 }

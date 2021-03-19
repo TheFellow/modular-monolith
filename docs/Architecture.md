@@ -92,6 +92,21 @@ We need a result class, logging which is result aware, basic command validation,
 
 ![v0.2.1](v0.2.1.png)
 
+#### A simple implementation
+
+So I have what I want in the command pipeline currently.
+It is simple but has some important features that I know I'll need.
+
+- Commands will execute in their own logical transaction
+  - The Command Bus itself simply creates a nested IoC container and then invokes the command pipeline
+  - This means that object scopes registered in the IoC container will be respected when consumed
+  - This will allow me to slot in other transactional patterns like Unit of Work and Domain Event Dispatching
+
+One thing which is missing in the current implementation is the last entry (before the use case itself),
+the Domain Exception to Result Decorator.
+It turns out it actually simpler to just handle `DomainException`s in the ExceptionToResult decoartor.
+The only difference is that the messages reported by the `DomainException` are safe for user-consumption.
+Thus, their exception messages are reported back as the error instead of a generic message.
 
 
 

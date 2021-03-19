@@ -1,14 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Xpl.Core.Application\Xpl.Core.Application.csproj" />
+    <ProjectReference Include="..\Xpl.Core.Domain\Xpl.Core.Domain.csproj" />
     <ProjectReference Include="..\Xpl.Framework.Messaging\Xpl.Framework.Messaging.csproj" />
-    <ProjectReference Include="..\Xpl.Framework\Xpl.Framework.csproj" />
   </ItemGroup>
 
 </Project>

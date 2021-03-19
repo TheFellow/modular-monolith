@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Xpl.Core.Domain\Xpl.Core.Domain.csproj" />
     <ProjectReference Include="..\Xpl.Framework.Logging\Xpl.Framework.Logging.csproj" />
   </ItemGroup>
 

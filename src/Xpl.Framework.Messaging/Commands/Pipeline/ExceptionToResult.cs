@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Xpl.Core.Domain;
 
 namespace Xpl.Framework.Messaging.Commands.Pipeline
 {
@@ -23,9 +24,16 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
                 _logger.Information("Exception to result: Send");
                 return await _bus.Send(command, cancellationToken);
             }
+            catch(DomainException dex)
+            {
+                _logger.Information(dex, "Domain error processing command {Id}", command.CorrelationId);
+                return Result<T>.Error(dex.Message);
+
+            }
             catch (Exception ex)
             {
-                return Result<T>.Error(ex.Message);
+                _logger.Error(ex, "Error processing command {Id}", command.CorrelationId);
+                return Result<T>.Error($"An error occurred processing command {command.CorrelationId}");
             }
             finally
             {
