@@ -2,7 +2,7 @@
 
 namespace Xpl.Framework.Messaging.Commands
 {
-    public static class ResultExtenssions
+    public static class ResultExtensions
     {
         public static Result<T> OnOk<T>(this Result<T> result, Action<T> action)
         {

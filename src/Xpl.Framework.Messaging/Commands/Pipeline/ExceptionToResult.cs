@@ -20,7 +20,7 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
         {
             try
             {
-                _logger.Debug("Exception to result: Send");
+                _logger.Information("Exception to result: Send");
                 return await _bus.Send(command, cancellationToken);
             }
             catch (Exception ex)
@@ -29,7 +29,7 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
             }
             finally
             {
-                _logger.Debug("Exception to result: End");
+                _logger.Information("Exception to result: End");
             }
         }
     }

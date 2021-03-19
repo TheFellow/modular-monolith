@@ -44,11 +44,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Messaging", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework", "Xpl.Framework\Xpl.Framework.csproj", "{3F9EF946-06B4-4FF0-9889-C42C1B14B68F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Messaging.IoC.Tests", "..\test\Xpl.Framework.Messaging.IoC.Tests\Xpl.Framework.Messaging.IoC.Tests.csproj", "{52C102EF-64D5-4D36-AEFD-C9892A0B6240}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Messaging.Tests", "..\test\Xpl.Framework.Messaging.Tests\Xpl.Framework.Messaging.Tests.csproj", "{52C102EF-64D5-4D36-AEFD-C9892A0B6240}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6AEFDBC3-2DED-47F6-B348-1EA886F70A43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xpl.Framework.Logging", "Xpl.Framework.Logging\Xpl.Framework.Logging.csproj", "{3D9AB5C6-98EF-49E3-9E51-770E4EF6A28D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpl.Framework.Logging", "Xpl.Framework.Logging\Xpl.Framework.Logging.csproj", "{3D9AB5C6-98EF-49E3-9E51-770E4EF6A28D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
