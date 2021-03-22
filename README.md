@@ -39,7 +39,7 @@ which are of particular interest to me.
 
 There are a handful of sources and examples that I have some familiarity with and appreciation for.
 All subject to my modification of course...
-- [Herberto Graca](https://herbertograca.com/)'s mental model of architecture
+- [Herberto Graca](https://herbertograca.com/)'s mental model of explicit architecture
 - [Jasper](http://jasperfx.github.io/)'s application and messaging model
 - [abp.io](https://docs.abp.io/en/abp/latest/Best-Practices/Index)'s approach to organizing modules and DDD
 - [Code Framework](https://docs.codeframework.io/)'s approach to well structured XAML-based front ends

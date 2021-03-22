@@ -108,5 +108,24 @@ It turns out it actually simpler to just handle `DomainException`s in the Except
 The only difference is that the messages reported by the `DomainException` are safe for user-consumption.
 Thus, their exception messages are reported back as the error instead of a generic message.
 
+### Application Use Case
+
+Once we're ready to handle the use case we cross the boundary into the application core and now lean towards DDD.
+
+Let's talk about events... They come in a a few flavors, and we need to discriminate between them.
+1. Domain Events
+   1. A `DomainEvent` is an event that arises as a result of some operation on a `Domain` entity or service
+   2. A `DomainEvent` is emitted before the `UnitOfWork` is committed, and so any changes which result from
+   linked `DomainEventHandler`s are included in the database transaction, and so are atomic
+   3. A `DomainEvent` never leaves the domain layer, and so may carry domain objects and information
+   4. A `DomainEventHandler` would be used to keep coupling low between multiple objects involced in a single operation
+2. Local Events
+   1. A `LocalEvent` is an event which may still carry `Domain` objects and information, but is handled separately from the `UnitOfWork`
+   2. A `LocalEventHandler` resides in the Application Layer and may emit an integration event, or perform another operation within the Domain Layer
+   3. A `LocalEventHandler` is scoped to the current bounded context
+
+This all sounds good on paper. Let's write some code and see what happens.
+
+![use-case](use-case.png)
 
 
