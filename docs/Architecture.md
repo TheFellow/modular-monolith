@@ -124,7 +124,8 @@ Let's talk about events... They come in a a few flavors, and we need to discrimi
    2. A `LocalEventHandler` resides in the Application Layer and may emit an integration event, or perform another operation within the Domain Layer
    3. A `LocalEventHandler` is scoped to the current bounded context
 
-This all sounds good on paper. Let's write some code and see what happens.
+This all sounds good on paper.
+Let's write some code and see what happens, as this may already be getting the cart before the horse.
 
 ![use-case](use-case.png)
 
