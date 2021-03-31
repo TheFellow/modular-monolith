@@ -15,7 +15,7 @@ namespace Xpl.Framework.Logging
         public Logger Logger { get; } = new LoggerConfiguration()
                 //.WriteTo.Console(new CompactJsonFormatter(), LogEventLevel.Information)
                 .WriteTo.Console(LogEventLevel.Debug,
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {EventId}] {Message:lj}{NewLine}{Exception}")
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .Enrich.FromLogContext()
                 .CreateLogger();
 }
