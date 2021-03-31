@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xpl.Framework.Messaging.Commands;
 using Xpl.Framework.Messaging.Commands.Pipeline;
-using Xpl.Framework.Messaging.Commands.Pipeline.Logging;
 
 namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
 {
