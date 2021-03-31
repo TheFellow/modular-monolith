@@ -3,6 +3,7 @@ using MediatR;
 using Xpl.Framework.Logging;
 using Xpl.Framework.Messaging.Commands;
 using Xpl.Framework.Messaging.Commands.Pipeline;
+using Xpl.Framework.Messaging.Commands.Pipeline.Logging;
 
 namespace Xpl.Framework.Messaging.IoC
 {

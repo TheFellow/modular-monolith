@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xpl.Framework.Messaging.Commands.Pipeline
+namespace Xpl.Framework.Messaging.Commands.Pipeline.Logging
 {
     public class CommandResultLogger : ICommandDispatcher
     {
@@ -14,7 +14,7 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
         }
 
         public async Task<Result<T>> Send<T>(ICommand<T> command, CancellationToken cancellationToken = default)
-        {            
+        {
             _logger.Sending(command.GetType(), command.CorrelationId);
 
             var result = await _bus.Send(command, cancellationToken);
