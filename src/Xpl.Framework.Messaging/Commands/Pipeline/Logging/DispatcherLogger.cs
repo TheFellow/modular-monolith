@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using System;
 
-namespace Xpl.Framework.Messaging.Commands.Pipeline
+namespace Xpl.Framework.Messaging.Commands.Pipeline.Logging
 {
     public class DispatcherLogger : IDispatcherLogger
     {

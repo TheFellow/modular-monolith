@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xpl.Framework.Messaging.Commands.Pipeline.Logging
+namespace Xpl.Framework.Messaging.Commands.Pipeline
 {
     public class CommandResultLogger : ICommandDispatcher
     {

@@ -21,23 +21,23 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
         {
             try
             {
-                _logger.Information("Exception to result: Send");
+                _logger.Debug("Exception to result: Send");
                 return await _bus.Send(command, cancellationToken);
             }
             catch(DomainException dex)
             {
                 _logger.Information(dex, "Domain error processing command {Id}", command.CorrelationId);
-                return Result.Error<T>(dex.Message);
+                return command.Error(dex.Message);
 
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error processing command {Id}", command.CorrelationId);
-                return Result.Error<T>($"An error occurred processing command {command.CorrelationId}");
+                return command.Error($"An error occurred processing command {command.CorrelationId}");
             }
             finally
             {
-                _logger.Information("Exception to result: End");
+                _logger.Debug("Exception to result: End");
             }
         }
     }
