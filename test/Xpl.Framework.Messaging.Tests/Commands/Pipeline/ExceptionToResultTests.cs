@@ -15,9 +15,20 @@ using Xpl.Framework.Messaging.Commands.Pipeline;
 namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
 {
     [TestClass]
-    public class ExceptionToResultTests
+    public class ExceptionToResultTests_Struct : ExceptionToResultTests<int>
     {
-        private static Command<int> _command;
+        protected override int OkResult => 4;
+    }
+
+    [TestClass]
+    public class ExceptionToResultTests_Class : ExceptionToResultTests<object>
+    {
+        protected override object OkResult { get; } = new object();
+    }
+
+    public abstract class ExceptionToResultTests<TResult>
+    {
+        private static Command<TResult> _command;
         private static CancellationTokenSource _cancellationTokenSource;
         private static CancellationToken _cancellationToken;
 
@@ -27,10 +38,12 @@ namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
         private static ExceptionToResult GetSut() => GetSut(_dispatcherMock.Object, _loggerMock.Object);
         private static ExceptionToResult GetSut(ICommandDispatcher dispatcher, ILogger logger) => new(dispatcher, logger);
 
+        protected abstract TResult OkResult { get; }
+
         [TestInitialize]
         public async Task TestInit()
         {
-            _command = new Command<int>();
+            _command = new Command<TResult>();
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
 
@@ -51,13 +64,16 @@ namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
         }
 
         [TestMethod]
-        public void NoException_ReturnsOk_OfInt()
+        public void NoException_ReturnsResult_OfDispatcher()
         {
-            var sut = GetSut(_dispatcherMock.Object, _loggerMock.Object);
+            var dispatcherMock = new Mock<ICommandDispatcher>();
+            dispatcherMock.Setup(d => d.Send(It.IsAny<ICommand<TResult>>(), It.IsAny<CancellationToken>()))
+                .Returns(_command.Ok(OkResult));
 
-            Func<Task<Result<int>>> act = () => sut.Send(_command, _cancellationToken);
+            var sut = GetSut(dispatcherMock.Object, _loggerMock.Object);
+            Func<Task<Result<TResult>>> func = () => sut.Send(_command, _cancellationToken);
 
-            act.Should().NotThrow("no exception was thrown");
+            func.Should().NotThrow("no exception was thrown");
         }
 
         [TestMethod]
@@ -68,7 +84,7 @@ namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
 
             var result = await sut.Send(_command, _cancellationToken);
 
-            result.Should().BeOfType<Error<int>>("it threw an exception")
+            result.Should().BeOfType<Error<TResult>>("it threw an exception")
                 .Which.Message.Should().Be("The message", "that was the exception message");
         }
 
@@ -80,7 +96,7 @@ namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
 
             var result = await sut.Send(_command, _cancellationToken);
 
-            result.Should().BeOfType<Error<int>>("it threw an exception")
+            result.Should().BeOfType<Error<TResult>>("it threw an exception")
                 .Which.Message.Should().Contain(_command.CorrelationId.ToString(), "The correlation id should be returned");
         }
 
