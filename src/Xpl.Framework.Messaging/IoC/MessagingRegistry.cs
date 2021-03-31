@@ -19,6 +19,8 @@ namespace Xpl.Framework.Messaging.IoC
 
             For<IMediator>().Use<Mediator>().Scoped();
             For<ServiceFactory>().Use(ctx => ctx.GetInstance);
+
+            For<IDispatcherLogger>().Use<DispatcherLogger>().Scoped();
         }
     }
 }

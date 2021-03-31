@@ -7,8 +7,8 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
     public class CommandResultLogger : ICommandDispatcher
     {
         private readonly ICommandDispatcher _bus;
-        private readonly ILogger _logger;
-        public CommandResultLogger(ICommandDispatcher bus, ILogger logger)
+        private readonly IDispatcherLogger _logger;
+        public CommandResultLogger(ICommandDispatcher bus, IDispatcherLogger logger)
         {
             _bus = bus;
             _logger = logger;
@@ -16,17 +16,16 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
 
         public async Task<Result<T>> Send<T>(ICommand<T> command, CancellationToken cancellationToken = default)
         {            
-            _logger.Information("Sending {Command}#{Id}", command, command.CorrelationId);
+            _logger.Sending(command.GetType(), command.CorrelationId);
 
             var result = await _bus.Send(command, cancellationToken);
-
-            if (result is Ok<T> ok)
+            if (result is Ok<T>)
             {
-                _logger.Information("Success {Command}#{Id}: {@Result}", command, command.CorrelationId, ok.Value);
+                _logger.Success(command.CorrelationId);
             }
             else if (result is Error<T> error)
             {
-                _logger.Error("Error {Command}#{Id}: {Error}", command, command.CorrelationId, error.Message);
+                _logger.Error(command.CorrelationId, error.Message);
             }
 
             return result;

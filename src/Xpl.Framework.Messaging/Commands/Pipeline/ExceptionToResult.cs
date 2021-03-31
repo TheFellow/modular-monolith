@@ -27,13 +27,13 @@ namespace Xpl.Framework.Messaging.Commands.Pipeline
             catch(DomainException dex)
             {
                 _logger.Information(dex, "Domain error processing command {Id}", command.CorrelationId);
-                return Result<T>.Error(dex.Message);
+                return Result.Error<T>(dex.Message);
 
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error processing command {Id}", command.CorrelationId);
-                return Result<T>.Error($"An error occurred processing command {command.CorrelationId}");
+                return Result.Error<T>($"An error occurred processing command {command.CorrelationId}");
             }
             finally
             {
