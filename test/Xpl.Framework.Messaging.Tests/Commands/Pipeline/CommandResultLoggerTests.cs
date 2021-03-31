@@ -1,14 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xpl.Framework.Messaging.Commands;
 using Xpl.Framework.Messaging.Commands.Pipeline;
+using Xpl.Framework.Messaging.Commands.Pipeline.Logging;
 
 namespace Xpl.Framework.Messaging.Tests.Commands.Pipeline
 {
