@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 namespace Xpl.Framework.Messaging.Commands
 {
     public class CommandDispatcher : ICommandDispatcher
-
     {
         private readonly IMediator _mediator;
         public CommandDispatcher(IMediator mediator) => _mediator = mediator;
