@@ -9,6 +9,7 @@ using Mixology.Dispatcher;
 using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Audit.Presentation;
 using Mixology.Modules.Drinks;
 using Mixology.Modules.Drinks.Presentation;
 using Mixology.Modules.Ingredients;
@@ -18,13 +19,16 @@ using Mixology.Modules.Inventory.Presentation;
 using Mixology.Modules.Menus;
 using Mixology.Modules.Orders;
 using Mixology.Modules.Tagging;
+using Mixology.Modules.Tagging.Presentation;
 using Mixology.Persistence;
 using Mixology.Presentation;
 using Mixology.Presentation.Dashboard;
 using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
 using Mixology.Tui.Workspaces;
+using Mixology.Tui.Workspaces.Audit;
 using Mixology.Tui.Workspaces.Drinks;
+using Mixology.Tui.Workspaces.Tags;
 using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Events;
@@ -151,6 +155,21 @@ public sealed class HostedTuiRuntime(ITuiRunner? runner = null) : ITuiRuntime
                 host.Services.GetRequiredService<IngredientsModule>(),
                 host.Services.GetRequiredService<InventoryActionProjector>(),
                 host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                options.Actor),
+            [TuiRoutes.Audit.Id] = AuditWorkspace.CreateFactory(
+                host.Services.GetRequiredService<AuditModule>(),
+                host.Services.GetRequiredService<AuditActionProjector>(),
+                session,
+                options.Actor),
+            [TuiRoutes.Tags.Id] = TagsWorkspace.CreateFactory(
+                host.Services.GetRequiredService<TaggingModule>(),
+                host.Services.GetRequiredService<TaggingActionProjector>(),
+                host.Services.GetRequiredService<DrinksModule>(),
+                host.Services.GetRequiredService<IngredientsModule>(),
+                host.Services.GetRequiredService<InventoryModule>(),
+                host.Services.GetRequiredService<MenusModule>(),
+                host.Services.GetRequiredService<OrdersModule>(),
                 session,
                 options.Actor),
         };
