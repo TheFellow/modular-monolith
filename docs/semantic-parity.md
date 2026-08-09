@@ -5,11 +5,12 @@ requires production-shaped tests, not only a matching type or method name.
 
 ## Foundation
 
-- [ ] Prefixed, strongly typed IDs for drinks, ingredients, inventory, menus,
+- [x] Prefixed, strongly typed IDs for drinks, ingredients, inventory, menus,
   orders, and audit entries
-- [ ] Typed application errors with safe messages and CLI/HTTP/gRPC mappings
-- [ ] Cursor paging with stable order and post-authorization page filling
-- [ ] Money, currency, volume/discrete measurement, tags, and quality values
+- [x] Typed application errors with safe messages and CLI/HTTP/gRPC mappings
+- [x] Cursor paging primitives and complete traversal; authorized page filling
+  remains part of the query pipeline slice
+- [x] Money, currency, volume/discrete measurement, tags, and quality values
 - [ ] Checked filter grammar, canonical AST, exact evaluator, and safe pushdowns
 - [ ] Shared SQLite store, migrations, explicit unit of work, and rollback
 - [ ] Fresh operation contexts, middleware order, telemetry, and auditing
@@ -44,4 +45,3 @@ requires production-shaped tests, not only a matching type or method name.
 - [ ] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
 - [ ] Real cross-process writes are observable through every other surface
 - [ ] Self-contained Windows, macOS, and Linux publish smoke tests
-
