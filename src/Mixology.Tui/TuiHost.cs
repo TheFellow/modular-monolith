@@ -10,6 +10,7 @@ using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Drinks;
+using Mixology.Modules.Drinks.Presentation;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Presentation;
 using Mixology.Modules.Inventory;
@@ -23,6 +24,7 @@ using Mixology.Presentation.Dashboard;
 using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
 using Mixology.Tui.Workspaces;
+using Mixology.Tui.Workspaces.Drinks;
 using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Events;
@@ -131,6 +133,13 @@ public sealed class HostedTuiRuntime(ITuiRunner? runner = null) : ITuiRuntime
         {
             [TuiRoutes.Dashboard.Id] = () => new DashboardWorkspace(
                 token => dashboard.LoadAsync(session, token)),
+            [TuiRoutes.Drinks.Id] = DrinksWorkspace.CreateFactory(
+                host.Services.GetRequiredService<DrinksModule>(),
+                host.Services.GetRequiredService<IngredientsModule>(),
+                host.Services.GetRequiredService<DrinkActionProjector>(),
+                host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                options.Actor),
             [TuiRoutes.Ingredients.Id] = IngredientsWorkspace.CreateFactory(
                 host.Services.GetRequiredService<IngredientsModule>(),
                 host.Services.GetRequiredService<IngredientActionProjector>(),

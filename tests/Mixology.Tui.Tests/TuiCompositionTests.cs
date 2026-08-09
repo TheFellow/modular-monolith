@@ -25,7 +25,7 @@ public sealed class TuiCompositionTests
 
             Assert.True(File.Exists(database));
             Assert.Equal(
-                [TuiRoutes.Dashboard.Id, TuiRoutes.Ingredients.Id, TuiRoutes.Inventory.Id],
+                [TuiRoutes.Dashboard.Id, TuiRoutes.Drinks.Id, TuiRoutes.Ingredients.Id, TuiRoutes.Inventory.Id],
                 runner.Routes);
             Assert.Contains("Mixology > Dashboard", runner.Screen, StringComparison.Ordinal);
             Assert.Contains("Drinks", runner.Screen, StringComparison.Ordinal);
