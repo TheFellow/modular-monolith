@@ -155,6 +155,8 @@ public sealed class CliApplicationTests
         StringWriter inventoryOutput = new();
         StringWriter drinkOutput = new();
         StringWriter listOutput = new();
+        StringWriter menuOutput = new();
+        StringWriter menuShowOutput = new();
         StringWriter error = new();
 
         try
@@ -202,6 +204,34 @@ public sealed class CliApplicationTests
                 "--actor", "manager",
                 "drinks", "create", "--stdin",
             ]).InvokeAsync();
+            string drinkId = drinkOutput.ToString().Trim();
+            int menuExit = await CliApplication.Build(menuOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "menus", "create", "CLI Menu",
+            ]).InvokeAsync();
+            string menuId = menuOutput.ToString().Trim();
+            int addDrinkExit = await CliApplication.Build(TextWriter.Null, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "menus", "add-drink",
+                "--menu-id", menuId,
+                "--drink-id", drinkId,
+            ]).InvokeAsync();
+            int publishExit = await CliApplication.Build(TextWriter.Null, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "menus", "publish", "--id", menuId,
+            ]).InvokeAsync();
+            int showMenuExit = await CliApplication.Build(menuShowOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "anonymous",
+                "menus", "show", "--id", menuId, "--json",
+            ]).InvokeAsync();
             int listExit = await CliApplication.Build(listOutput, error).Parse(
             [
                 "--db", database,
@@ -212,10 +242,15 @@ public sealed class CliApplicationTests
             Assert.Equal(0, ingredientExit);
             Assert.Equal(0, inventoryExit);
             Assert.Equal(0, drinkExit);
+            Assert.Equal(0, menuExit);
+            Assert.Equal(0, addDrinkExit);
+            Assert.Equal(0, publishExit);
+            Assert.Equal(0, showMenuExit);
             Assert.Equal(0, listExit);
             Assert.StartsWith("ing-", ingredientId, StringComparison.Ordinal);
             Assert.Equal(ingredientId, inventoryOutput.ToString().Trim());
             Assert.StartsWith("drk-", drinkOutput.ToString().Trim(), StringComparison.Ordinal);
+            Assert.StartsWith("mnu-", menuId, StringComparison.Ordinal);
             Assert.Empty(error.ToString());
             using JsonDocument document = JsonDocument.Parse(listOutput.ToString());
             JsonElement drink = Assert.Single(document.RootElement.GetProperty("items").EnumerateArray());
@@ -224,6 +259,11 @@ public sealed class CliApplicationTests
                 ingredientId,
                 drink.GetProperty("recipe").GetProperty("ingredients")[0]
                     .GetProperty("ingredient_id").GetString());
+            using JsonDocument menuDocument = JsonDocument.Parse(menuShowOutput.ToString());
+            Assert.Equal("published", menuDocument.RootElement.GetProperty("status").GetString());
+            Assert.Equal(
+                drinkId,
+                menuDocument.RootElement.GetProperty("items")[0].GetProperty("drinkId").GetString());
         }
         finally
         {

@@ -22,6 +22,8 @@ using Mixology.Modules.Inventory;
 using Mixology.Modules.Inventory.Models;
 using Mixology.Modules.Inventory.Requests;
 using Mixology.Modules.Menus;
+using Mixology.Modules.Menus.Models;
+using Mixology.Modules.Menus.Requests;
 using Mixology.Persistence;
 
 namespace Mixology.Cli;
@@ -79,6 +81,14 @@ public static class CliApplication
                 cancellationToken).ConfigureAwait(false),
             output,
             error);
+        MenusCommandContext menusContext = new(
+            async (parseResult, cancellationToken) => await HostedMenusCommandSession.OpenAsync(
+                parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
+                Actor.Parse(parseResult.GetValue(actor)),
+                cancellationToken).ConfigureAwait(false),
+            output,
+            error,
+            input);
 
         Command status = new("status", "Initialize storage and report foundation readiness.");
         status.SetAction(async (parseResult, cancellationToken) =>
@@ -102,6 +112,7 @@ public static class CliApplication
         root.Subcommands.Add(DrinksCommands.Build(drinksContext));
         root.Subcommands.Add(IngredientsCommands.Build(ingredientsContext));
         root.Subcommands.Add(InventoryCommands.Build(inventoryContext));
+        root.Subcommands.Add(MenusCommands.Build(menusContext));
         root.Subcommands.Add(AuditCommands.Build(auditContext));
         return root;
     }
@@ -283,6 +294,66 @@ public static class CliApplication
             SetInventoryRequest request,
             CancellationToken cancellationToken) =>
             inventory.SetAsync(session, request, cancellationToken);
+
+        public async ValueTask DisposeAsync()
+        {
+            await host.StopAsync(CancellationToken.None).ConfigureAwait(false);
+            host.Dispose();
+        }
+    }
+
+    private sealed class HostedMenusCommandSession(
+        IHost host,
+        MenusModule menus,
+        MixologySession session) : IMenusCommandSession
+    {
+        public static async ValueTask<IMenusCommandSession> OpenAsync(
+            string databasePath,
+            Actor actor,
+            CancellationToken cancellationToken)
+        {
+            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            return new HostedMenusCommandSession(
+                host,
+                host.Services.GetRequiredService<MenusModule>(),
+                host.Services.GetRequiredService<MixologySessionFactory>().Create(actor));
+        }
+
+        public Task<Page<Menu>> ListAsync(ListMenusRequest request, CancellationToken cancellationToken) =>
+            menus.ListAsync(session, request, cancellationToken);
+
+        public Task<Menu> GetAsync(MenuId id, CancellationToken cancellationToken) =>
+            menus.GetAsync(session, id, cancellationToken);
+
+        public Task<ReadinessReport> ReadinessAsync(MenuId id, CancellationToken cancellationToken) =>
+            menus.ReadinessAsync(session, id, cancellationToken);
+
+        public Task<MenuAnalysis> AnalyzeAsync(
+            MenuId id,
+            double targetMargin,
+            CancellationToken cancellationToken) =>
+            menus.AnalyzeAsync(session, id, targetMargin, cancellationToken);
+
+        public Task<Menu> CreateAsync(CreateMenuRequest request, CancellationToken cancellationToken) =>
+            menus.CreateAsync(session, request, cancellationToken);
+
+        public Task<Menu> UpdateAsync(UpdateMenuRequest request, CancellationToken cancellationToken) =>
+            menus.UpdateAsync(session, request, cancellationToken);
+
+        public Task<Menu> DeleteAsync(MenuId id, CancellationToken cancellationToken) =>
+            menus.DeleteAsync(session, id, cancellationToken);
+
+        public Task<Menu> AddDrinkAsync(AddMenuItemRequest request, CancellationToken cancellationToken) =>
+            menus.AddDrinkAsync(session, request, cancellationToken);
+
+        public Task<Menu> RemoveDrinkAsync(RemoveMenuItemRequest request, CancellationToken cancellationToken) =>
+            menus.RemoveDrinkAsync(session, request, cancellationToken);
+
+        public Task<Menu> PublishAsync(MenuId id, CancellationToken cancellationToken) =>
+            menus.PublishAsync(session, id, cancellationToken);
+
+        public Task<Menu> DraftAsync(MenuId id, CancellationToken cancellationToken) =>
+            menus.DraftAsync(session, id, cancellationToken);
 
         public async ValueTask DisposeAsync()
         {
