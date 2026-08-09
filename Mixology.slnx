@@ -9,5 +9,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Mixology.Cli.Tests/Mixology.Cli.Tests.csproj" />
     <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
+    <Project Path="tests/Mixology.Persistence.Tests/Mixology.Persistence.Tests.csproj" />
   </Folder>
 </Solution>

@@ -12,7 +12,7 @@ requires production-shaped tests, not only a matching type or method name.
   remains part of the query pipeline slice
 - [x] Money, currency, volume/discrete measurement, tags, and quality values
 - [ ] Checked filter grammar, canonical AST, exact evaluator, and safe pushdowns
-- [ ] Shared SQLite store, migrations, explicit unit of work, and rollback
+- [x] Shared SQLite store, initial migration, explicit session transaction, and rollback
 - [ ] Fresh operation contexts, middleware order, telemetry, and auditing
 - [ ] Cedar policies/entities through `cedar-dotnet`
 - [ ] Generated two-phase, non-cascading event dispatcher

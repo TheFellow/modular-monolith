@@ -15,10 +15,12 @@ tested vertical slices. See [the port roadmap](docs/roadmap.md) and
 ## Development loop
 
 ```sh
+dotnet tool restore
 dotnet restore Mixology.slnx
 dotnet build Mixology.slnx --no-restore
 dotnet test Mixology.slnx --no-build
 dotnet format Mixology.slnx --verify-no-changes --no-restore
+dotnet ef migrations has-pending-model-changes --project src/Mixology.Persistence --no-build
 ```
 
 The repository pins the .NET 10 SDK and treats compiler, analyzer, and configured
