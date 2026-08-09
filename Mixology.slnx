@@ -7,6 +7,7 @@
     <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Mixology.Application.Tests/Mixology.Application.Tests.csproj" />
     <Project Path="tests/Mixology.Cli.Tests/Mixology.Cli.Tests.csproj" />
     <Project Path="tests/Mixology.Filtering.Tests/Mixology.Filtering.Tests.csproj" />
     <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
