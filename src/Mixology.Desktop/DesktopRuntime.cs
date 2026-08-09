@@ -64,7 +64,7 @@ public sealed class HostedDesktopRuntime(IDesktopLifetime? lifetime = null) : ID
             shell = new ShellViewModel(
                 navigation,
                 workspaces,
-                new RejectDirtyNavigationConfirmation(),
+                new AvaloniaDirtyNavigationConfirmation(),
                 dispatcher);
             shell.InitializeAsync().GetAwaiter().GetResult();
             return lifetime.Run(new DesktopApplication(shell));

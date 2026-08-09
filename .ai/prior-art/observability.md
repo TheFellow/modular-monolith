@@ -30,6 +30,16 @@ sink supplies append, exclusive lifecycle disposal, text, and JSON output that
 the built-in providers do not provide. Logging configuration is validated and
 rebuilt for every invocation; no static logger is used.
 
+The Desktop executable uses the same option values, validation, stderr/file
+selection, formats, and Prometheus endpoint. Its Generic Host outlives the
+Avalonia lifetime and is disposed after the shell drains, so background work
+cannot write through a disposed provider. The small configuration record is
+duplicated at each executable edge for now: extracting a shared observability
+project during active CLI/TUI/Desktop composition work would couple their
+different defaults and lifecycle adapters without removing domain logic. A
+shared package becomes worthwhile only if another long-running process needs
+the exact same edge policy.
+
 Accepted levels are `debug`, `info`, `warn`/`warning`, and `error`; formats are
 `text` and `json`. Invalid values and unusable log paths are typed invalid-input
 errors rather than silently falling back. Environment parity uses
@@ -56,6 +66,9 @@ errors rather than silently falling back. Environment parity uses
   error mappings.
 - Consecutive metrics-enabled invocations can bind port 9090, proving exporter
   lifecycle isolation.
+- Desktop headless tests prove text/JSON level filtering, exclusive file reopen,
+  typed invalid destinations, environment defaults, and sequential exporter
+  rebinding under its longer-lived host.
 
 ## Sources
 

@@ -101,5 +101,9 @@ dotnet run --project src/Mixology.Desktop -- --db data/mixology.db --actor owner
 ```
 
 It shares no view models with the TUI. Avalonia-native MVVM state owns UI-thread
-publication, latest-request-wins refresh, a dirty-navigation confirmation seam,
-and drained shutdown; headless tests exercise the real XAML controls.
+publication, latest-request-wins refresh, an owned dirty-navigation dialog, and
+drained shutdown; headless tests exercise the real controls. Desktop accepts
+the CLI-equivalent `--log-level`, `--log-format`, `--log-file`, and `--metrics`
+options plus their `MIXOLOGY_*` environment defaults. The application host owns
+diagnostic file handles and the optional `localhost:9090/metrics` listener for
+the full window lifetime.

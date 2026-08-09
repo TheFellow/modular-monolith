@@ -31,13 +31,20 @@ the TUI. They preserve dirty-editor confirmation, request-generation ownership,
 latest-result-wins publication, duplicate-submission gates, authorization-shaped
 navigation/actions, and draining accepted work before closing storage.
 
-## Foundation status
+## Runtime status
 
-The first slice implements the Generic Host composition root, Dashboard-only
-MVVM shell, UI dispatch, latest-request ownership, lazy workspace caching, and
-the dirty-navigation confirmation seam. A production confirmation dialog,
-logging and metrics option parity, and all seven domain workspaces remain later
-slices; the shell deliberately does not advertise them yet.
+The runtime implements the Generic Host composition root, MVVM shell, UI
+dispatch, latest-request ownership, lazy workspace caching, and an actual owned
+Avalonia modal for dirty navigation. The modal keeps editing by default,
+requires an explicit discard action, and closes without converting cancellation
+into an application error. The production resolver takes its owner from the
+current classic desktop lifetime; headless tests exercise the same real window
+and controls with an explicit owner.
+
+Desktop logging and metrics now have CLI option and environment parity. The
+long-running host owns each Serilog provider, file handle, and Prometheus
+listener, and releases them only after Avalonia and its drained workspaces stop.
+Domain workspace completion is tracked separately from these runtime concerns.
 
 ## Validation
 

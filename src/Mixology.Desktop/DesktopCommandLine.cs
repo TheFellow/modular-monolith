@@ -21,15 +21,43 @@ public static class DesktopCommandLine
             Description = "Actor identity: owner, manager, sommelier, bartender, or anonymous.",
             DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_ACTOR") ?? "owner",
         };
+        Option<string> logLevel = new("--log-level")
+        {
+            Description = "Diagnostic level: debug, info, warn, or error.",
+            DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_LOG_LEVEL") ?? "info",
+        };
+        Option<string> logFormat = new("--log-format")
+        {
+            Description = "Diagnostic format: text or json.",
+            DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_LOG_FORMAT") ?? "text",
+        };
+        Option<string> logFile = new("--log-file")
+        {
+            Description = "Write diagnostics to this file instead of stderr.",
+            DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_LOG_FILE") ?? string.Empty,
+        };
+        Option<bool> metrics = new("--metrics")
+        {
+            Description = "Expose Prometheus metrics on localhost:9090/metrics while the desktop client runs.",
+            DefaultValueFactory = _ => EnvironmentBoolean("MIXOLOGY_METRICS"),
+        };
         root.Options.Add(database);
         root.Options.Add(actor);
+        root.Options.Add(logLevel);
+        root.Options.Add(logFormat);
+        root.Options.Add(logFile);
+        root.Options.Add(metrics);
         root.SetAction(result =>
         {
             try
             {
                 return runtime.Run(DesktopOptions.Create(
                     result.GetValue(database),
-                    result.GetValue(actor)));
+                    result.GetValue(actor),
+                    result.GetValue(logLevel),
+                    result.GetValue(logFormat),
+                    result.GetValue(logFile),
+                    result.GetValue(metrics)));
             }
             catch (Exception exception)
             {
@@ -39,6 +67,17 @@ public static class DesktopCommandLine
             }
         });
         return root;
+    }
+
+    private static bool EnvironmentBoolean(string name)
+    {
+        string? value = Environment.GetEnvironmentVariable(name);
+        return value?.Trim().ToLowerInvariant() switch
+        {
+            null or "" or "0" or "f" or "false" => false,
+            "1" or "t" or "true" => true,
+            _ => throw AppError.Invalid($"environment variable {name} must be true or false"),
+        };
     }
 }
 

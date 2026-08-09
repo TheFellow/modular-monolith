@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Mixology.Application;
 using Mixology.Application.Events;
 using Mixology.Dispatcher;
@@ -14,6 +15,8 @@ using Mixology.Modules.Orders;
 using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 using Mixology.Presentation;
+using OpenTelemetry.Metrics;
+using Serilog;
 
 namespace Mixology.Desktop;
 
@@ -30,7 +33,22 @@ public sealed class DesktopHost : IAsyncDisposable
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(options);
+        options.ValidateLogDestination();
         HostApplicationBuilder builder = MixologyHost.CreateBuilder([]);
+        builder.Logging.ClearProviders();
+        builder.Services.AddSerilog((_, configuration) => options.Configure(configuration));
+        if (options.Metrics)
+        {
+            builder.Services.AddOpenTelemetry().WithMetrics(metrics => metrics
+                .AddMeter("Mixology.Application")
+                .AddPrometheusHttpListener(exporter =>
+                {
+                    exporter.Host = "localhost";
+                    exporter.Port = 9090;
+                    exporter.ScrapeEndpointPath = "/metrics";
+                }));
+        }
+
         builder.Services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
         builder.AddMixology(options.DatabasePath, typeof(MigrationAssemblyMarker).Assembly);
         builder.Services.AddAuditModule();
