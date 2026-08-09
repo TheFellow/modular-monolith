@@ -38,7 +38,15 @@ public sealed class UnitOfWorkMiddleware(MixologyStore store)
         try
         {
             await next(context.WithSession(session)).ConfigureAwait(false);
-            await session.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await session.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                throw PersistenceErrors.TranslateSave(exception, $"persist {context.Activity?.Operation.Action ?? "command"}");
+            }
+
             await session.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch

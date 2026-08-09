@@ -7,6 +7,7 @@ using Mixology.Application.Operations;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Persistence;
+using Mixology.Kernel.Errors;
 using Xunit;
 
 namespace Mixology.Application.Tests;
@@ -101,6 +102,26 @@ public sealed class UnitOfWorkMiddlewareTests
         Assert.True(reached);
     }
 
+    [Fact]
+    public async Task UniqueConstraintBecomesTypedConflict()
+    {
+        await using SqliteConnection connection = new("Data Source=:memory:");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "CREATE TABLE probe (value TEXT UNIQUE); INSERT INTO probe VALUES ('same');";
+        await command.ExecuteNonQueryAsync();
+        command.CommandText = "INSERT INTO probe VALUES ('same');";
+        SqliteException providerError = await Assert.ThrowsAsync<SqliteException>(
+            () => command.ExecuteNonQueryAsync());
+
+        ConflictError error = Assert.IsType<ConflictError>(PersistenceErrors.TranslateSave(
+            new DbUpdateException("save failed", providerError),
+            "persist probe.create"));
+
+        Assert.Contains("unique value", error.Message, StringComparison.Ordinal);
+        Assert.IsType<DbUpdateException>(error.InnerException);
+    }
+
     private static Task<int> InsertAsync(OperationContext context, string value) =>
         context.Session?.Context.Database.ExecuteSqlInterpolatedAsync(
             $"INSERT INTO operation_probe (value) VALUES ({value})",
@@ -180,4 +201,5 @@ public sealed class UnitOfWorkMiddlewareTests
             }
         }
     }
+
 }
