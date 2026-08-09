@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Description>Command-line composition root for Mixology.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Spectre.Console" />
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+  </ItemGroup>
+</Project>
+

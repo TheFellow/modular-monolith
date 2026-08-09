@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Checked filter syntax, owned AST, exact evaluation, and LINQ planning.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
+  </ItemGroup>
+</Project>
+
