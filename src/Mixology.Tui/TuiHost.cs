@@ -17,7 +17,9 @@ using Mixology.Modules.Ingredients.Presentation;
 using Mixology.Modules.Inventory;
 using Mixology.Modules.Inventory.Presentation;
 using Mixology.Modules.Menus;
+using Mixology.Modules.Menus.Presentation;
 using Mixology.Modules.Orders;
+using Mixology.Modules.Orders.Presentation;
 using Mixology.Modules.Tagging;
 using Mixology.Modules.Tagging.Presentation;
 using Mixology.Persistence;
@@ -28,6 +30,8 @@ using Mixology.Presentation.Navigation;
 using Mixology.Tui.Workspaces;
 using Mixology.Tui.Workspaces.Audit;
 using Mixology.Tui.Workspaces.Drinks;
+using Mixology.Tui.Workspaces.Menus;
+using Mixology.Tui.Workspaces.Orders;
 using Mixology.Tui.Workspaces.Tags;
 using OpenTelemetry.Metrics;
 using Serilog;
@@ -154,6 +158,21 @@ public sealed class HostedTuiRuntime(ITuiRunner? runner = null) : ITuiRuntime
                 host.Services.GetRequiredService<InventoryModule>(),
                 host.Services.GetRequiredService<IngredientsModule>(),
                 host.Services.GetRequiredService<InventoryActionProjector>(),
+                host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                options.Actor),
+            [TuiRoutes.Menus.Id] = MenusWorkspace.CreateFactory(
+                host.Services.GetRequiredService<MenusModule>(),
+                host.Services.GetRequiredService<DrinksModule>(),
+                host.Services.GetRequiredService<MenuActionProjector>(),
+                host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                options.Actor),
+            [TuiRoutes.Orders.Id] = OrdersWorkspace.CreateFactory(
+                host.Services.GetRequiredService<OrdersModule>(),
+                host.Services.GetRequiredService<MenusModule>(),
+                host.Services.GetRequiredService<DrinksModule>(),
+                host.Services.GetRequiredService<OrderActionProjector>(),
                 host.Services.GetRequiredService<TaggedMutationCoordinator>(),
                 session,
                 options.Actor),

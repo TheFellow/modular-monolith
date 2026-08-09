@@ -30,6 +30,8 @@ public sealed class TuiCompositionTests
                     TuiRoutes.Drinks.Id,
                     TuiRoutes.Ingredients.Id,
                     TuiRoutes.Inventory.Id,
+                    TuiRoutes.Menus.Id,
+                    TuiRoutes.Orders.Id,
                     TuiRoutes.Audit.Id,
                     TuiRoutes.Tags.Id,
                 ],
