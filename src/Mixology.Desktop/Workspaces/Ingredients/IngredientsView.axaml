@@ -1,0 +1,68 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ingredients="using:Mixology.Desktop.Workspaces.Ingredients"
+             x:Class="Mixology.Desktop.Workspaces.Ingredients.IngredientsView"
+             x:DataType="ingredients:IngredientsViewModel">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24" RowSpacing="12">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+      <StackPanel><TextBlock Text="Ingredients" FontSize="30" FontWeight="SemiBold"/><TextBlock Text="Catalog, substitutions, and tags" Opacity="0.7"/></StackPanel>
+      <Button Grid.Column="1" Content="Create" Command="{Binding BeginCreateCommand}" IsVisible="{Binding IsCreateVisible}" IsEnabled="{Binding CanCreate}" ToolTip.Tip="{Binding CreateDisabledReason}"/>
+      <Button Grid.Column="2" Content="Edit" Command="{Binding BeginEditCommand}" IsVisible="{Binding IsEditVisible}" IsEnabled="{Binding CanEdit}" ToolTip.Tip="{Binding EditDisabledReason}"/>
+      <Button Grid.Column="3" Content="Retire" Command="{Binding BeginRetireCommand}" IsVisible="{Binding IsRetireVisible}" IsEnabled="{Binding CanRetire}" ToolTip.Tip="{Binding RetireDisabledReason}"/>
+    </Grid>
+    <StackPanel Grid.Row="1" Spacing="8">
+      <Grid ColumnDefinitions="*,170,90,Auto,Auto" ColumnSpacing="8">
+        <TextBox PlaceholderText="Server filter expression" Text="{Binding FilterExpression}" AutomationProperties.Name="Ingredient filter"/>
+        <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding CategoryFilter}" PlaceholderText="All categories"/>
+        <NumericUpDown Grid.Column="2" Minimum="1" Maximum="100" Value="{Binding PageSize}"/>
+        <Button Grid.Column="3" Content="Apply" Command="{Binding ApplyFilterCommand}"/>
+        <Button Grid.Column="4" Content="Filter help" Command="{Binding ToggleFilterHelpCommand}"/>
+      </Grid>
+      <Border Padding="12" BorderThickness="1" IsVisible="{Binding ShowFilterHelp}"><TextBlock Text="{x:Static ingredients:IngredientsViewModel.FilterHelp}" TextWrapping="Wrap"/></Border>
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}"/>
+    </StackPanel>
+    <Grid Grid.Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="16">
+      <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" AutomationProperties.Name="Ingredients">
+        <ListBox.ItemTemplate><DataTemplate x:DataType="ingredients:IngredientListItemViewModel"><Grid ColumnDefinitions="2*,*,*" Margin="4"><TextBlock Text="{Binding Name}"/><TextBlock Grid.Column="1" Text="{Binding Category}"/><TextBlock Grid.Column="2" Text="{Binding Unit}"/></Grid></DataTemplate></ListBox.ItemTemplate>
+      </ListBox>
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="10">
+          <StackPanel IsVisible="{Binding !IsEditorVisible}" Spacing="6">
+            <TextBlock Text="{Binding SelectedIngredient.Name}" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding SelectedIngredient.Id, StringFormat='ID: {0}'}"/>
+            <TextBlock Text="{Binding SelectedIngredient.Category, StringFormat='Category: {0}'}"/>
+            <TextBlock Text="{Binding SelectedIngredient.Unit, StringFormat='Unit: {0}'}"/>
+            <TextBlock Text="{Binding SelectedIngredient.Tags, StringFormat='Tags: {0}'}" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding SelectedIngredient.Description}" TextWrapping="Wrap"/>
+          </StackPanel>
+          <StackPanel IsVisible="{Binding IsIngredientEditor}" Spacing="8">
+            <TextBlock Text="Ingredient editor" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Name"/><TextBox Text="{Binding EditorName}"/>
+            <TextBlock Text="Category"/><ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding EditorCategory}"/>
+            <TextBlock Text="Unit"/><ComboBox ItemsSource="{Binding Units}" SelectedItem="{Binding EditorUnit}"/>
+            <TextBlock Text="Description"/><TextBox Text="{Binding EditorDescription}" AcceptsReturn="True" MinHeight="90" TextWrapping="Wrap"/>
+            <CheckBox Content="Replace complete tag collection" IsChecked="{Binding ReplaceTags}" IsVisible="{Binding IsTagsVisible}" IsEnabled="{Binding CanReplaceTags}" ToolTip.Tip="{Binding TagsDisabledReason}"/>
+            <TextBox PlaceholderText="key=value, featured" Text="{Binding EditorTags}" IsEnabled="{Binding ReplaceTags}"/>
+          </StackPanel>
+          <StackPanel IsVisible="{Binding IsRetireEditor}" Spacing="8">
+            <TextBlock Text="Retire ingredient" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Replacement ingredient ID (optional)"/><TextBox Text="{Binding ReplacementIngredientId}"/>
+            <TextBlock Text="Positive replacement ratio"/><TextBox Text="{Binding ReplacementRatio}"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsEditorVisible}">
+            <Button Content="Save" Command="{Binding SubmitCommand}" IsEnabled="{Binding !IsSubmitting}"/>
+            <Button Content="Cancel" Command="{Binding CancelEditorCommand}" IsEnabled="{Binding !IsSubmitting}"/>
+            <TextBlock Text="Unsaved changes" IsVisible="{Binding IsDirty}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+    <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto,Auto,*,Auto" ColumnSpacing="8">
+      <Button Content="Previous" Command="{Binding PreviousPageCommand}" IsEnabled="{Binding HasPreviousPage}"/>
+      <TextBlock Grid.Column="1" Text="{Binding PageNumber, StringFormat='Page {0}'}" VerticalAlignment="Center"/>
+      <Button Grid.Column="2" Content="Next" Command="{Binding NextPageCommand}" IsEnabled="{Binding HasNextPage}"/>
+      <TextBlock Grid.Column="3" Text="{Binding StatusMessage}" Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}" AutomationProperties.LiveSetting="Polite"/>
+      <Button Grid.Column="4" Content="Refresh" Command="{Binding RefreshCommand}"/>
+    </Grid>
+  </Grid>
+</UserControl>
