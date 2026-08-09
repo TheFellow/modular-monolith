@@ -7,6 +7,7 @@
     <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Spectre.Console" />
     <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <ProjectReference Include="../Mixology.Migrations/Mixology.Migrations.csproj" />
     <ProjectReference Include="../Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
   </ItemGroup>

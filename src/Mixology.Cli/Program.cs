@@ -1,4 +1,3 @@
 using Mixology.Cli;
 
-return CliApplication.Build().Parse(args).Invoke();
-
+return await CliApplication.Build().Parse(args).InvokeAsync();
