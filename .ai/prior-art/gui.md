@@ -5,8 +5,10 @@ Date: 2026-08-09
 
 ## Decision
 
-Use Avalonia Desktop 12.1.x with CommunityToolkit.Mvvm 8.4.x when the GUI slice
-begins. Use XAML compiled bindings, generated observable properties/commands,
+Use Avalonia Desktop 12.1.0, Avalonia.Headless.XUnit 12.1.0, and
+CommunityToolkit.Mvvm 8.4.2 when the GUI slice begins. These were the current
+stable releases on 2026-08-09 and all support the repository's `net10.0`
+target. Use XAML compiled bindings, generated observable properties/commands,
 and domain-owned MVVM adapters. A repository-owned GUI toolkit supplies shell,
 list/detail, forms, dialogs, paging, action projection, UI dispatch, stale-work
 guards, and managed shutdown.
@@ -35,8 +37,10 @@ self-contained packaging smoke tests on Windows, macOS, and Linux.
 - [Avalonia headless testing](https://docs.avaloniaui.net/docs/testing/setting-up-the-headless-platform)
 - [Avalonia accessibility](https://docs.avaloniaui.net/docs/app-development/accessibility)
 - [Avalonia repository and MIT license](https://github.com/AvaloniaUI/Avalonia)
+- [Avalonia.Desktop 12.1.0 package](https://www.nuget.org/packages/Avalonia.Desktop/12.1.0)
+- [Avalonia.Headless.XUnit 12.1.0 package](https://www.nuget.org/packages/Avalonia.Headless.XUnit/12.1.0)
 - [Avalonia MVVM guidance](https://docs.avaloniaui.net/docs/how-to/mvvm-how-to)
 - [CommunityToolkit.Mvvm generators](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/generators/overview)
+- [CommunityToolkit.Mvvm 8.4.2 package](https://www.nuget.org/packages/CommunityToolkit.Mvvm/8.4.2)
 - [Official MAUI platforms](https://learn.microsoft.com/en-us/dotnet/maui/supported-platforms?view=net-maui-10.0)
 - [Experimental MAUI backends](https://learn.microsoft.com/en-us/dotnet/maui/developer-tools/platform-backends/?view=net-maui-10.0)
-
