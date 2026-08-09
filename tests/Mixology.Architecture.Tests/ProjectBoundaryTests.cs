@@ -142,6 +142,7 @@ public sealed class ProjectBoundaryTests
             "Mixology.Migrations",
             .. Graph.Projects
                 .Where(project => project.Name.StartsWith("Mixology.Modules.", StringComparison.Ordinal))
+                .Where(project => !project.Name.EndsWith(".Contracts", StringComparison.Ordinal))
                 .Select(project => project.Name),
         ];
 

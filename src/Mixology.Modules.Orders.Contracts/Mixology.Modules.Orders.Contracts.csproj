@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Order models and event contracts shared without coupling to the orders implementation.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
+  </ItemGroup>
+</Project>
