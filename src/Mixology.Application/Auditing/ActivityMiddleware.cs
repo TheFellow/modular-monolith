@@ -34,15 +34,22 @@ public sealed partial class TrackActivityMiddleware(
 
         if (activity.CompletedAt is not null)
         {
-            if (failure is not null)
+            if (failure is null)
+            {
+                return;
+            }
+
+            if (activity.RecordingFailed)
             {
                 failure.Throw();
             }
 
-            return;
+            activity.Fail(context.TouchedEntities, failure.SourceException, timeProvider.GetUtcNow());
         }
-
-        activity.Complete(context.TouchedEntities, failure?.SourceException, timeProvider.GetUtcNow());
+        else
+        {
+            activity.Complete(context.TouchedEntities, failure?.SourceException, timeProvider.GetUtcNow());
+        }
         try
         {
             if (context.Session is { HasTransaction: true })
@@ -111,6 +118,7 @@ public sealed class RecordSuccessfulActivityMiddleware(
         }
         catch (Exception exception)
         {
+            activity.MarkRecordingFailed();
             throw AppError.Internal("record activity", exception);
         }
     }

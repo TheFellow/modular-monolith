@@ -81,6 +81,41 @@ public sealed class ActivityMiddlewareTests
     }
 
     [Fact]
+    public async Task TransactionFailureAfterStagedSuccessIsRecordedAsAFailedAttempt()
+    {
+        await using StoreFixture fixture = await StoreFixture.CreateAsync();
+        RecordingActivityRecorder recorder = new();
+        TimeProvider timeProvider = TimeProvider.System;
+        TrackActivityMiddleware track = new(
+            fixture.Store,
+            recorder,
+            timeProvider,
+            NullLogger<TrackActivityMiddleware>.Instance);
+        RecordSuccessfulActivityMiddleware success = new(recorder, timeProvider);
+        ConflictError expected = AppError.Conflict("unique constraint");
+        OperationChain chain = new(
+        [
+            track.InvokeAsync,
+            async (context, operation, next) =>
+            {
+                await next(context).ConfigureAwait(false);
+                throw expected;
+            },
+            success.InvokeAsync,
+        ]);
+
+        ConflictError actual = await Assert.ThrowsAsync<ConflictError>(() => chain.ExecuteAsync(
+            new OperationContext(Actor.Owner),
+            Operation.Command("Ingredient.create"),
+            _ => Task.CompletedTask));
+
+        Assert.Same(expected, actual);
+        Assert.Equal(2, recorder.Activities.Count);
+        Assert.False(recorder.Activities[^1].Success);
+        Assert.Equal(ErrorKind.Conflict, recorder.Activities[^1].ErrorKind);
+    }
+
+    [Fact]
     public async Task FailureAuditFailureDoesNotMaskTheCommandError()
     {
         await using StoreFixture fixture = await StoreFixture.CreateAsync();

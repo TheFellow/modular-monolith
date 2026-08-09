@@ -24,6 +24,8 @@ public sealed class OperationActivity
     public ErrorKind? ErrorKind { get; private set; }
     public string? Error { get; private set; }
 
+    internal bool RecordingFailed { get; private set; }
+
     internal void Complete(
         IReadOnlyList<EntityUid> touches,
         Exception? exception,
@@ -41,6 +43,21 @@ public sealed class OperationActivity
         ErrorKind = AppError.Find(exception)?.Kind;
         Error = exception?.Message;
     }
+
+    internal void Fail(
+        IReadOnlyList<EntityUid> touches,
+        Exception exception,
+        DateTimeOffset completedAt)
+    {
+        Touches = touches.ToArray();
+        Resource ??= Touches.Count > 0 ? Touches[0] : null;
+        CompletedAt = completedAt;
+        Success = false;
+        ErrorKind = AppError.Find(exception)?.Kind;
+        Error = exception.Message;
+    }
+
+    internal void MarkRecordingFailed() => RecordingFailed = true;
 }
 
 public interface IActivityRecorder
