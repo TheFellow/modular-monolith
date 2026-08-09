@@ -55,8 +55,8 @@ public sealed class MenuOrderControlTests
         public Task<MenuModel> GetAsync(MenuId id, CancellationToken cancellationToken) => throw new NotSupportedException();
         public Task<IReadOnlyList<ActionState>> ProjectAsync(MenuModel? selected, CancellationToken cancellationToken) => Task.FromResult<IReadOnlyList<ActionState>>([]);
         public Task<IReadOnlyList<Drink>> DrinksAsync(CancellationToken cancellationToken) => Task.FromResult<IReadOnlyList<Drink>>([]);
-        public Task<MenuModel> CreateAsync(CreateMenuRequest request, TagCollection tags, CancellationToken cancellationToken) => throw new NotSupportedException();
-        public Task<MenuModel> UpdateAsync(UpdateMenuRequest request, TagCollection tags, CancellationToken cancellationToken) => throw new NotSupportedException();
+        public Task<MenuModel> CreateAsync(CreateMenuRequest request, TagCollection? tags, CancellationToken cancellationToken) => throw new NotSupportedException();
+        public Task<MenuModel> UpdateAsync(UpdateMenuRequest request, TagCollection? tags, CancellationToken cancellationToken) => throw new NotSupportedException();
         public Task<MenuModel> DeleteAsync(MenuId id, CancellationToken cancellationToken) => throw new NotSupportedException();
         public Task<MenuModel> AddDrinkAsync(AddMenuItemRequest request, CancellationToken cancellationToken) => throw new NotSupportedException();
         public Task<MenuModel> RemoveDrinkAsync(RemoveMenuItemRequest request, CancellationToken cancellationToken) => throw new NotSupportedException();

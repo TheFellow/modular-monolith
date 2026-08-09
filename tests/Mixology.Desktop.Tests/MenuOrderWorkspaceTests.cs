@@ -176,8 +176,8 @@ public sealed class MenuOrderWorkspaceTests
             new(MenuActionProjector.ReadinessAction, true, true),
         ]);
         public Task<IReadOnlyList<Drink>> DrinksAsync(CancellationToken cancellationToken) => Task.FromResult<IReadOnlyList<Drink>>([]);
-        public Task<Menu> CreateAsync(CreateMenuRequest request, TagCollection tags, CancellationToken cancellationToken) => Task.FromResult(CreateMenu(request.Name) with { Tags = tags });
-        public Task<Menu> UpdateAsync(UpdateMenuRequest request, TagCollection tags, CancellationToken cancellationToken) => Task.FromResult(menus.Single(value => value.Id == request.Id) with { Name = request.Name, Tags = tags });
+        public Task<Menu> CreateAsync(CreateMenuRequest request, TagCollection? tags, CancellationToken cancellationToken) => Task.FromResult(CreateMenu(request.Name) with { Tags = tags ?? TagCollection.Empty });
+        public Task<Menu> UpdateAsync(UpdateMenuRequest request, TagCollection? tags, CancellationToken cancellationToken) => Task.FromResult(menus.Single(value => value.Id == request.Id) with { Name = request.Name, Tags = tags ?? TagCollection.Empty });
         public Task<Menu> DeleteAsync(MenuId id, CancellationToken cancellationToken) => GetAsync(id, cancellationToken);
         public Task<Menu> AddDrinkAsync(AddMenuItemRequest request, CancellationToken cancellationToken) => GetAsync(request.MenuId, cancellationToken);
         public Task<Menu> RemoveDrinkAsync(RemoveMenuItemRequest request, CancellationToken cancellationToken) => GetAsync(request.MenuId, cancellationToken);

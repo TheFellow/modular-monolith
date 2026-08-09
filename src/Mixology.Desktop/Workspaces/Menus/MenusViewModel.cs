@@ -107,6 +107,8 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     public bool CanCreate => Enabled(MenuActionProjector.CreateAction);
     public bool CanEdit => Enabled(MenuActionProjector.EditAction);
     public bool CanDelete => Enabled(MenuActionProjector.DeleteAction);
+    public bool CanTags => Enabled(MenuActionProjector.TagsAction);
+    public bool CanEditTags => Mode == MenuDesktopMode.Create || CanTags;
     public bool CanAddDrink => Enabled(MenuActionProjector.AddDrinkAction);
     public bool CanRemoveDrink => Enabled(MenuActionProjector.RemoveDrinkAction);
     public bool CanPublish => Enabled(MenuActionProjector.PublishAction);
@@ -323,7 +325,9 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     {
         try
         {
-            TagCollection parsedTags = TagCollection.Parse(Tags);
+            TagCollection? parsedTags = Mode == MenuDesktopMode.Edit && !CanTags
+                ? null
+                : TagCollection.Parse(Tags);
             await RunMutationAsync(async token => Mode switch
             {
                 MenuDesktopMode.Create => await operations.CreateAsync(new(Name, Description), parsedTags, token).ConfigureAwait(false),
@@ -476,8 +480,8 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     private static Exception Safe(Exception exception, string operation) => AppError.Find(exception) is not null || AppError.IsCancellation(exception) ? exception : AppError.Internal(operation, exception);
     private void PublishError(Exception exception) { Error = exception; IsLoading = IsSubmitting = false; StatusMessage = AppError.Find(exception)?.UserMessage ?? "internal error"; NotifyPaging(); }
     private void NotifyPaging() { NextPageCommand.NotifyCanExecuteChanged(); PreviousPageCommand.NotifyCanExecuteChanged(); }
-    private void NotifyMode() { OnPropertyChanged(nameof(IsBrowse)); OnPropertyChanged(nameof(IsDetail)); OnPropertyChanged(nameof(IsForm)); OnPropertyChanged(nameof(IsDeleteConfirmation)); }
-    private void NotifyActions() { OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanDelete)); OnPropertyChanged(nameof(CanAddDrink)); OnPropertyChanged(nameof(CanRemoveDrink)); OnPropertyChanged(nameof(CanPublish)); OnPropertyChanged(nameof(CanDraft)); OnPropertyChanged(nameof(CanAnalyze)); }
+    private void NotifyMode() { OnPropertyChanged(nameof(IsBrowse)); OnPropertyChanged(nameof(IsDetail)); OnPropertyChanged(nameof(IsForm)); OnPropertyChanged(nameof(IsDeleteConfirmation)); OnPropertyChanged(nameof(CanEditTags)); }
+    private void NotifyActions() { OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanDelete)); OnPropertyChanged(nameof(CanTags)); OnPropertyChanged(nameof(CanEditTags)); OnPropertyChanged(nameof(CanAddDrink)); OnPropertyChanged(nameof(CanRemoveDrink)); OnPropertyChanged(nameof(CanPublish)); OnPropertyChanged(nameof(CanDraft)); OnPropertyChanged(nameof(CanAnalyze)); }
 
     private sealed record MenuLoadOutcome(Page<Menu>? Page, IReadOnlyList<Drink> Drinks, IReadOnlyList<ActionState> Actions, Exception? Error, MenuMutationOutcome? Detail = null);
     private sealed record MenuMutationOutcome(Menu? Menu, IReadOnlyList<ActionState> Actions, ReadinessReport? Readiness, MenuAnalysis? Analysis, bool Deleted, Exception? Error)

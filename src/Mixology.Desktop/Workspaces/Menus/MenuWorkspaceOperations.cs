@@ -21,8 +21,8 @@ public interface IMenuDesktopOperations
     Task<Menu> GetAsync(MenuId id, CancellationToken cancellationToken);
     Task<IReadOnlyList<ActionState>> ProjectAsync(Menu? selected, CancellationToken cancellationToken);
     Task<IReadOnlyList<Drink>> DrinksAsync(CancellationToken cancellationToken);
-    Task<Menu> CreateAsync(CreateMenuRequest request, TagCollection tags, CancellationToken cancellationToken);
-    Task<Menu> UpdateAsync(UpdateMenuRequest request, TagCollection tags, CancellationToken cancellationToken);
+    Task<Menu> CreateAsync(CreateMenuRequest request, TagCollection? tags, CancellationToken cancellationToken);
+    Task<Menu> UpdateAsync(UpdateMenuRequest request, TagCollection? tags, CancellationToken cancellationToken);
     Task<Menu> DeleteAsync(MenuId id, CancellationToken cancellationToken);
     Task<Menu> AddDrinkAsync(AddMenuItemRequest request, CancellationToken cancellationToken);
     Task<Menu> RemoveDrinkAsync(RemoveMenuItemRequest request, CancellationToken cancellationToken);
@@ -69,7 +69,7 @@ internal sealed class ModuleMenuDesktopOperations(
 
     public Task<Menu> CreateAsync(
         CreateMenuRequest request,
-        TagCollection tags,
+        TagCollection? tags,
         CancellationToken cancellationToken) => taggedMutations.RunAsync(
             session,
             (active, token) => menus.CreateAsync(active, request, token),
@@ -80,7 +80,7 @@ internal sealed class ModuleMenuDesktopOperations(
 
     public Task<Menu> UpdateAsync(
         UpdateMenuRequest request,
-        TagCollection tags,
+        TagCollection? tags,
         CancellationToken cancellationToken) => taggedMutations.RunAsync(
             session,
             (active, token) => menus.UpdateAsync(active, request, token),
