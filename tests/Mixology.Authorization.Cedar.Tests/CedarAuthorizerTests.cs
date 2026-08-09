@@ -1,4 +1,5 @@
 using Cedar.Types;
+using Microsoft.Extensions.DependencyInjection;
 using Mixology.Application.Authentication;
 using Mixology.Authorization.Cedar;
 using Mixology.Kernel.Errors;
@@ -44,6 +45,20 @@ public sealed class CedarAuthorizerTests
                 Resource));
     }
 
+    [Fact]
+    public async Task ServiceRegistrationAddsTheGlobalOwnerPermit()
+    {
+        ServiceCollection services = new();
+        services.AddSingleton<ICedarAuthorizationModule, PublicReadModule>();
+        services.AddCedarAuthorization();
+        await using ServiceProvider provider = services.BuildServiceProvider();
+        IEntityAuthorizer authorizer = provider.GetRequiredService<IEntityAuthorizer>();
+
+        await authorizer.AuthorizeAsync(Actor.Owner, Read, Resource);
+        await Assert.ThrowsAsync<PermissionError>(async () =>
+            await authorizer.AuthorizeAsync(Actor.Manager, Read, Resource));
+    }
+
     private sealed class TestModule : ICedarAuthorizationModule
     {
         public string SchemaName => "test.cedarschema";
@@ -75,5 +90,15 @@ public sealed class CedarAuthorizerTests
                 );
                 """),
         ];
+    }
+
+    private sealed class PublicReadModule : ICedarAuthorizationModule
+    {
+        private readonly TestModule inner = new();
+
+        public string SchemaName => inner.SchemaName;
+        public string SchemaText => inner.SchemaText;
+        public IReadOnlyCollection<string> ResourceTypes => inner.ResourceTypes;
+        public IReadOnlyList<CedarPolicyDocument> Policies => [];
     }
 }
