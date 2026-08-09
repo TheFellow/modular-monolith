@@ -3,6 +3,7 @@
     <Project Path="src/Mixology.Kernel/Mixology.Kernel.csproj" />
     <Project Path="src/Mixology.Migrations/Mixology.Migrations.csproj" />
     <Project Path="src/Mixology.Application/Mixology.Application.csproj" />
+    <Project Path="src/Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
     <Project Path="src/Mixology.Filtering/Mixology.Filtering.csproj" />
     <Project Path="src/Mixology.Persistence/Mixology.Persistence.csproj" />
     <Project Path="src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
@@ -11,6 +12,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Mixology.Application.Tests/Mixology.Application.Tests.csproj" />
+    <Project Path="tests/Mixology.Authorization.Cedar.Tests/Mixology.Authorization.Cedar.Tests.csproj" />
     <Project Path="tests/Mixology.Cli.Tests/Mixology.Cli.Tests.csproj" />
     <Project Path="tests/Mixology.Filtering.Tests/Mixology.Filtering.Tests.csproj" />
     <Project Path="tests/Mixology.Dispatcher.Tests/Mixology.Dispatcher.Tests.csproj" />
