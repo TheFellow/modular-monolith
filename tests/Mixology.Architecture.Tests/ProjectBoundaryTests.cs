@@ -184,6 +184,25 @@ public sealed class ProjectBoundaryTests
     }
 
     [Fact]
+    public void ToolkitsRemainIndependentOfApplicationsModulesAndOtherToolkits()
+    {
+        ProjectInfo[] toolkits = Graph.Projects
+            .Where(project => project.Name.StartsWith("Mixology.Toolkits.", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.NotEmpty(toolkits);
+        foreach (ProjectInfo toolkit in toolkits)
+        {
+            Assert.False(toolkit.IsExecutable);
+            Assert.Empty(toolkit.MixologyReferences);
+            Assert.DoesNotContain(
+                Graph.Projects,
+                project => project.Name != toolkit.Name && project.Name.StartsWith("Mixology.Toolkits.", StringComparison.Ordinal) &&
+                    project.MixologyReferences.Contains(toolkit.Name));
+        }
+    }
+
+    [Fact]
     public void ModulePersistenceDetailsStayBehindTheirModuleBoundary()
     {
         Assembly[] modules =
