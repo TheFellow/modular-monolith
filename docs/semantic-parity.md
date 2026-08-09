@@ -55,6 +55,9 @@ requires production-shaped tests, not only a matching type or method name.
   typed status errors, stale refresh rejection, and deterministic shutdown
 - [x] TUI workspace, forms, dialogs, keys, paging, async, authorization, and
   CLI/TUI restart parity
+- [x] Avalonia Generic Host, authorization-filtered lazy shell, Dashboard MVVM,
+  stale-result rejection, dirty-navigation seam, drained shutdown, and headless
+  controls
 - [ ] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
 - [ ] Real cross-process writes are observable through every other surface
 - [ ] Self-contained Windows, macOS, and Linux publish smoke tests

@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Reusable, application-independent desktop interaction mechanics.</Description>
+  </PropertyGroup>
+</Project>

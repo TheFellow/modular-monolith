@@ -8,6 +8,7 @@
     <Project Path="src/Mixology.Persistence/Mixology.Persistence.csproj" />
     <Project Path="src/Mixology.Presentation/Mixology.Presentation.csproj" />
     <Project Path="src/Mixology.Toolkits.Tui/Mixology.Toolkits.Tui.csproj" />
+    <Project Path="src/Mixology.Toolkits.Desktop/Mixology.Toolkits.Desktop.csproj" />
     <Project Path="src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <Project Path="src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <Project Path="src/Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
@@ -21,6 +22,7 @@
     <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
     <Project Path="src/Mixology.Seed/Mixology.Seed.csproj" />
     <Project Path="src/Mixology.Tui/Mixology.Tui.csproj" />
+    <Project Path="src/Mixology.Desktop/Mixology.Desktop.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Mixology.Architecture.Tests/Mixology.Architecture.Tests.csproj" />
@@ -41,7 +43,9 @@
     <Project Path="tests/Mixology.Presentation.Tests/Mixology.Presentation.Tests.csproj" />
     <Project Path="tests/Mixology.Seed.Tests/Mixology.Seed.Tests.csproj" />
     <Project Path="tests/Mixology.Toolkits.Tui.Tests/Mixology.Toolkits.Tui.Tests.csproj" />
+    <Project Path="tests/Mixology.Toolkits.Desktop.Tests/Mixology.Toolkits.Desktop.Tests.csproj" />
     <Project Path="tests/Mixology.Tui.Tests/Mixology.Tui.Tests.csproj" />
+    <Project Path="tests/Mixology.Desktop.Tests/Mixology.Desktop.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Mixology.DispatchGenerator/Mixology.DispatchGenerator.csproj" />

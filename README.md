@@ -90,3 +90,16 @@ browse/detail rendering, forms, contextual filter help, cursor paging, stable
 selection, stale-response rejection, and cancellation-aware shutdown. The CLI
 and TUI share the same SQLite file, so writes are visible after either process
 reopens the store.
+
+## Desktop dashboard
+
+The Avalonia desktop composition root currently exposes the live Dashboard and
+only implemented, authorization-visible navigation:
+
+```sh
+dotnet run --project src/Mixology.Desktop -- --db data/mixology.db --actor owner
+```
+
+It shares no view models with the TUI. Avalonia-native MVVM state owns UI-thread
+publication, latest-request-wins refresh, a dirty-navigation confirmation seam,
+and drained shutdown; headless tests exercise the real XAML controls.

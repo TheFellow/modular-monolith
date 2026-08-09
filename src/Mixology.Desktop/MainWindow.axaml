@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:desktop="using:Mixology.Desktop"
+        xmlns:navigation="using:Mixology.Desktop.Navigation"
+        xmlns:dashboard="using:Mixology.Desktop.Workspaces.Dashboard"
+        x:Class="Mixology.Desktop.MainWindow"
+        x:DataType="desktop:ShellViewModel"
+        Title="Mixology"
+        Width="1080"
+        Height="720"
+        MinWidth="720"
+        MinHeight="480">
+  <Window.DataTemplates>
+    <DataTemplate DataType="{x:Type dashboard:DashboardViewModel}">
+      <dashboard:DashboardView />
+    </DataTemplate>
+  </Window.DataTemplates>
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="220,*">
+    <Border Grid.Row="0" Grid.ColumnSpan="2" Padding="20,14" Background="{DynamicResource AccentBrush}">
+      <TextBlock Text="Mixology" FontSize="24" FontWeight="SemiBold" />
+    </Border>
+    <Border Grid.Row="1" Grid.Column="0" Padding="12" BorderThickness="0,0,1,0"
+            BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Workspaces" FontWeight="SemiBold" Margin="8,0,0,4" />
+        <ItemsControl ItemsSource="{Binding Navigation}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="navigation:DesktopNavigationItemViewModel">
+              <Button Content="{Binding Label}"
+                      Command="{Binding OpenCommand}"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      AutomationProperties.Name="{Binding Label}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </Border>
+    <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding ActiveWorkspace}" />
+    <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="12,8"
+            BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+      <TextBlock Text="{Binding StatusMessage}" AutomationProperties.LiveSetting="Polite" />
+    </Border>
+  </Grid>
+</Window>

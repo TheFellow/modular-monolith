@@ -132,6 +132,7 @@ public sealed class ProjectBoundaryTests
             Graph["Mixology.Cli"],
             Graph["Mixology.Seed"],
             Graph["Mixology.Tui"],
+            Graph["Mixology.Desktop"],
         ];
 
         foreach (ProjectInfo composition in compositions)
@@ -164,6 +165,13 @@ public sealed class ProjectBoundaryTests
         Assert.Contains("Mixology.Toolkits.Tui", tui.MixologyReferences);
         Assert.DoesNotContain("Mixology.Cli", tui.MixologyReferences);
         Assert.DoesNotContain("Mixology.Seed", tui.MixologyReferences);
+
+        ProjectInfo desktop = Graph["Mixology.Desktop"];
+        Assert.Contains("Mixology.Presentation", desktop.MixologyReferences);
+        Assert.Contains("Mixology.Toolkits.Desktop", desktop.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Cli", desktop.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Seed", desktop.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Tui", desktop.MixologyReferences);
     }
 
     [Fact]
