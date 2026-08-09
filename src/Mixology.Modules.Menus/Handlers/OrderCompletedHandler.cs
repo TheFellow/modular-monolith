@@ -5,9 +5,9 @@ using Mixology.Modules.Orders.Events;
 
 namespace Mixology.Modules.Menus.Handlers;
 
-public sealed class OrderCompletedHandler(IMenuOperations operations) : IDomainEventHandler<OrderCompleted>
+public sealed class OrderCompletedHandler(IMenuOperations operations) : IFinalizingDomainEventHandler<OrderCompleted>
 {
-    public Task HandleAsync(EventHandlerContext context, OrderCompleted domainEvent)
+    public Task FinalizeAsync(EventHandlerContext context, OrderCompleted domainEvent)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(domainEvent);

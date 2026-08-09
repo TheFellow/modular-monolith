@@ -13,6 +13,16 @@ public interface IPreparingDomainEventHandler<in TEvent> : IDomainEventHandler<T
     Task PrepareAsync(EventHandlerContext context, TEvent domainEvent);
 }
 
+/// <summary>
+/// Runs after every mutating handler for the event has succeeded and its changes have been
+/// flushed inside the shared transaction. Finalizers are for derived projections that must
+/// observe the complete post-event state and must not be sensitive to handler ordering.
+/// </summary>
+public interface IFinalizingDomainEventHandler<in TEvent>
+{
+    Task FinalizeAsync(EventHandlerContext context, TEvent domainEvent);
+}
+
 public interface IDomainEventDispatcher
 {
     Task DispatchAsync(EventHandlerContext context, object domainEvent);
@@ -39,7 +49,13 @@ public sealed class DispatchEventsMiddleware(IDomainEventDispatcher dispatcher)
         }
 
         EventHandlerContext handlerContext = new(context);
-        foreach (object domainEvent in context.Events.ToArray())
+        object[] domainEvents = context.Events.ToArray();
+        if (domainEvents.Length != 0 && context.Session is not null)
+        {
+            await handlerContext.FlushAsync("persist command before domain event dispatch").ConfigureAwait(false);
+        }
+
+        foreach (object domainEvent in domainEvents)
         {
             try
             {

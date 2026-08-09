@@ -6,7 +6,7 @@ namespace Mixology.Dispatcher.Tests;
 public sealed class DispatcherGeneratorTests
 {
     [Fact]
-    public void GenerationIsSortedAndRunsEveryPreparationBeforeHandling()
+    public void GenerationIsSortedAndRunsPrepareHandleFlushFinalizePhases()
     {
         const string manifest = """
             {
@@ -19,7 +19,9 @@ public sealed class DispatcherGeneratorTests
                   "handlers": [
                     { "type": "Example.Handlers.ZebraHandler", "prepare": true },
                     { "type": "Example.Handlers.BetaHandler", "prepare": true },
-                    { "type": "Example.Handlers.AlphaHandler", "prepare": false }
+                    { "type": "Example.Handlers.AlphaHandler", "prepare": false },
+                    { "type": "Example.Handlers.Finalizer", "prepare": false, "finalize": true },
+                    { "type": "Example.Handlers.PreparedFinalizer", "prepare": true, "finalize": true }
                   ]
                 },
                 {
@@ -50,8 +52,51 @@ public sealed class DispatcherGeneratorTests
         Assert.True(
             zebraRoute.LastIndexOf(".PrepareAsync", StringComparison.Ordinal)
                 < zebraRoute.IndexOf(".HandleAsync", StringComparison.Ordinal));
+        Assert.True(
+            zebraRoute.LastIndexOf(".HandleAsync", StringComparison.Ordinal)
+                < zebraRoute.IndexOf("context.FlushAsync", StringComparison.Ordinal));
+        Assert.True(
+            zebraRoute.IndexOf("context.FlushAsync", StringComparison.Ordinal)
+                < zebraRoute.IndexOf(".FinalizeAsync", StringComparison.Ordinal));
+        Assert.DoesNotContain("handler2.HandleAsync", zebraRoute, StringComparison.Ordinal);
+        Assert.DoesNotContain("handler3.HandleAsync", zebraRoute, StringComparison.Ordinal);
         Assert.Equal(generated, DispatcherGenerator.Generate(manifest));
         Assert.DoesNotContain('\r', generated);
+    }
+
+    [Fact]
+    public void HandlerDeclarationOrderCannotChangeGeneratedPhaseOrder()
+    {
+        const string first = """
+            {
+              "version": 1,
+              "namespace": "Example.Generated",
+              "className": "ExampleDispatcher",
+              "routes": [{
+                "event": "Example.Events.Changed",
+                "handlers": [
+                  { "type": "Example.Handlers.Project", "finalize": true },
+                  { "type": "Example.Handlers.Mutate", "prepare": false }
+                ]
+              }]
+            }
+            """;
+        const string reversed = """
+            {
+              "version": 1,
+              "namespace": "Example.Generated",
+              "className": "ExampleDispatcher",
+              "routes": [{
+                "event": "Example.Events.Changed",
+                "handlers": [
+                  { "type": "Example.Handlers.Mutate", "prepare": false },
+                  { "type": "Example.Handlers.Project", "finalize": true }
+                ]
+              }]
+            }
+            """;
+
+        Assert.Equal(DispatcherGenerator.Generate(first), DispatcherGenerator.Generate(reversed));
     }
 
     [Fact]

@@ -17,9 +17,12 @@
     <ProjectReference Include="../../src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <ProjectReference Include="../../src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
+    <ProjectReference Include="../../src/Mixology.Modules.Inventory.Contracts/Mixology.Modules.Inventory.Contracts.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Orders/Mixology.Modules.Orders.csproj" />
+    <ProjectReference Include="../../src/Mixology.Modules.Orders.Contracts/Mixology.Modules.Orders.Contracts.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
+    <ProjectReference Include="../../src/Mixology.Migrations/Mixology.Migrations.csproj" />
     <ProjectReference Include="../../tools/Mixology.DispatchGenerator/Mixology.DispatchGenerator.csproj" />
   </ItemGroup>
 </Project>

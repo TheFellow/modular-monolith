@@ -11,7 +11,7 @@ using Mixology.Modules.Menus.Ports;
 namespace Mixology.Modules.Menus.Handlers;
 
 public sealed class IngredientDeletedHandler(DrinkQueries drinks, IMenuOperations operations)
-    : IPreparingDomainEventHandler<IngredientDeleted>
+    : IPreparingDomainEventHandler<IngredientDeleted>, IFinalizingDomainEventHandler<IngredientDeleted>
 {
     private PreparedMenu[] prepared = [];
 
@@ -38,7 +38,14 @@ public sealed class IngredientDeletedHandler(DrinkQueries drinks, IMenuOperation
                 .ToHashSet(StringComparer.Ordinal))).ToArray();
     }
 
-    public async Task HandleAsync(EventHandlerContext context, IngredientDeleted domainEvent)
+    public Task HandleAsync(EventHandlerContext context, IngredientDeleted domainEvent)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(domainEvent);
+        return Task.CompletedTask;
+    }
+
+    public async Task FinalizeAsync(EventHandlerContext context, IngredientDeleted domainEvent)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(domainEvent);

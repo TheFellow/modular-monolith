@@ -30,7 +30,8 @@
         },
         {
           "type": "Mixology.Modules.Menus.Handlers.IngredientDeletedHandler",
-          "prepare": true
+          "prepare": true,
+          "finalize": true
         },
         {
           "type": "Mixology.Modules.Inventory.Handlers.IngredientDeletedHandler",
@@ -86,7 +87,8 @@
         },
         {
           "type": "Mixology.Modules.Menus.Handlers.OrderPlacedHandler",
-          "prepare": false
+          "prepare": false,
+          "finalize": true
         }
       ]
     },
@@ -99,7 +101,8 @@
         },
         {
           "type": "Mixology.Modules.Menus.Handlers.OrderCompletedHandler",
-          "prepare": false
+          "prepare": false,
+          "finalize": true
         }
       ]
     },
@@ -112,7 +115,8 @@
         },
         {
           "type": "Mixology.Modules.Menus.Handlers.OrderCancelledHandler",
-          "prepare": false
+          "prepare": false,
+          "finalize": true
         }
       ]
     }

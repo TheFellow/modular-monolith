@@ -88,4 +88,17 @@ public sealed class EventHandlerContext
     public StoreSession Session => operation.Session
         ?? throw new InvalidOperationException("Event handler requires an active store session.");
     public void Touch(EntityUid entity) => operation.Touch(entity);
+
+    public async Task FlushAsync(string operationName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationName);
+        try
+        {
+            await Session.Context.SaveChangesAsync(CancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            throw PersistenceErrors.TranslateSave(exception, operationName);
+        }
+    }
 }

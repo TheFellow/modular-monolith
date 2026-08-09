@@ -489,6 +489,8 @@ public sealed class MenuEventHandlerTests
                     }
 
                     await handler.HandleAsync(context, deleted);
+                    await context.FlushAsync("persist test event handlers");
+                    await handler.FinalizeAsync(context, deleted);
                     break;
                 case IngredientUpdated updated:
                     await new Mixology.Modules.Menus.Handlers.IngredientUpdatedHandler(drinks)
@@ -501,13 +503,16 @@ public sealed class MenuEventHandlerTests
                     await new MenuPublishedHandler(operations).HandleAsync(context, published);
                     break;
                 case OrderPlaced placed:
-                    await new OrderPlacedHandler(operations).HandleAsync(context, placed);
+                    await context.FlushAsync("persist test event handlers");
+                    await new OrderPlacedHandler(operations).FinalizeAsync(context, placed);
                     break;
                 case OrderCompleted completed:
-                    await new OrderCompletedHandler(operations).HandleAsync(context, completed);
+                    await context.FlushAsync("persist test event handlers");
+                    await new OrderCompletedHandler(operations).FinalizeAsync(context, completed);
                     break;
                 case OrderCancelled cancelled:
-                    await new OrderCancelledHandler(operations).HandleAsync(context, cancelled);
+                    await context.FlushAsync("persist test event handlers");
+                    await new OrderCancelledHandler(operations).FinalizeAsync(context, cancelled);
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected event {domainEvent.GetType().Name}.");

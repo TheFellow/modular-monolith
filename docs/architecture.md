@@ -20,8 +20,10 @@ logging, lifetime, and the explicit composition root.
 Reciprocal workflows communicate through public queries and generated event
 routing. Event handlers are leaf operations: their restricted context can use
 the current transaction and touch audit resources, but cannot publish another
-event. Every handler is constructed fresh; all preparation hooks run before any
-mutation hook so correctness does not depend on handler order.
+event. Every handler is constructed fresh. Generated dispatch runs preparation,
+mutation, a transactional EF flush, then derived-state finalization. Finalizers
+therefore observe the complete post-event state without depending on handler
+order, while any later failure still rolls the entire transaction back.
 
 ## Operation boundary
 

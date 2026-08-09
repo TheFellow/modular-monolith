@@ -75,7 +75,10 @@ public static class DispatcherGenerator
                         $"Duplicate handler {handler.Type} for event {route.Event}.");
                 }
 
-                validatedHandlers.Add(new ValidatedHandler(handler.Type!, handler.Prepare));
+                validatedHandlers.Add(new ValidatedHandler(
+                    handler.Type!,
+                    handler.Prepare,
+                    handler.Finalize));
             }
 
             validatedHandlers.Sort(static (left, right) =>
@@ -237,17 +240,29 @@ public static class DispatcherGenerator
         {
             ValidatedHandler handler = route.Handlers[index];
             source.Append("        ");
-            if (handler.Prepare)
+            if (handler.Prepare && handler.Finalize)
             {
-                source.Append("IPreparingDomainEventHandler");
+                source.Append("global::").Append(handler.Type)
+                    .Append(" handler").Append(index).AppendLine(" =");
             }
             else
             {
-                source.Append("IDomainEventHandler");
-            }
+                if (handler.Prepare)
+                {
+                    source.Append("IPreparingDomainEventHandler");
+                }
+                else if (handler.Finalize)
+                {
+                    source.Append("IFinalizingDomainEventHandler");
+                }
+                else
+                {
+                    source.Append("IDomainEventHandler");
+                }
 
-            source.Append("<global::").Append(route.Event).Append("> handler").Append(index)
-                .AppendLine(" =");
+                source.Append("<global::").Append(route.Event).Append("> handler").Append(index)
+                    .AppendLine(" =");
+            }
             source.Append("            ActivatorUtilities.CreateInstance<global::")
                 .Append(handler.Type).AppendLine(">(scope.ServiceProvider);");
         }
@@ -263,8 +278,26 @@ public static class DispatcherGenerator
 
         for (int index = 0; index < route.Handlers.Count; index++)
         {
+            if (route.Handlers[index].Finalize)
+            {
+                continue;
+            }
+
             source.Append("        await handler").Append(index)
                 .AppendLine(".HandleAsync(context, domainEvent).ConfigureAwait(false);");
+        }
+
+        if (route.Handlers.Any(static handler => handler.Finalize))
+        {
+            source.AppendLine("        await context.FlushAsync(\"persist domain event handlers\").ConfigureAwait(false);");
+            foreach ((ValidatedHandler handler, int index) in route.Handlers.Select(static (item, index) => (item, index)))
+            {
+                if (handler.Finalize)
+                {
+                    source.Append("        await handler").Append(index)
+                        .AppendLine(".FinalizeAsync(context, domainEvent).ConfigureAwait(false);");
+                }
+            }
         }
 
         source.AppendLine("    }");
@@ -277,7 +310,7 @@ public static class DispatcherGenerator
 
     private sealed record ValidatedRoute(string Event, IReadOnlyList<ValidatedHandler> Handlers);
 
-    private sealed record ValidatedHandler(string Type, bool Prepare);
+    private sealed record ValidatedHandler(string Type, bool Prepare, bool Finalize);
 
     private sealed class DispatcherManifest
     {
@@ -310,5 +343,8 @@ public static class DispatcherGenerator
 
         [JsonPropertyName("prepare")]
         public bool Prepare { get; init; }
+
+        [JsonPropertyName("finalize")]
+        public bool Finalize { get; init; }
     }
 }
