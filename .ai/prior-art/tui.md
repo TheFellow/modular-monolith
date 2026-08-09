@@ -1,17 +1,19 @@
 # Terminal user interface
 
-Status: Accepted  
+Status: Accepted
 Date: 2026-08-09
 
 ## Decision
 
-Use Terminal.Gui v2, pinned to a stable version when the TUI slice begins,
+Use Terminal.Gui v2, pinned to stable version 2.4.17 as of 2026-08-09,
 behind a small Mixology toolkit. Spectre.Console remains a CLI renderer because
 its prompts and live displays are not composable into the persistent nested
 forms, dialogs, focus ownership, and navigation required here.
 
-The port will be semantic, not a Bubble Tea API imitation. Terminal.Gui's
-instance application, views, commands, and events own native TUI state. Domain
+The port will be semantic, not a Bubble Tea API imitation. Each process creates
+and disposes its own `IApplication` and driver through `Application.Create()`;
+the obsolete static singleton is forbidden. Terminal.Gui's views, commands,
+and events own native TUI state. Domain
 view models retain serialized publication, request generations, stale-response
 rejection, local-before-global Escape handling, contextual help, and pure
 rendering. They do not share GUI view models.
@@ -23,9 +25,10 @@ stale work, and deterministic shutdown.
 
 ## Sources
 
-- [Terminal.Gui repository and MIT license](https://github.com/tui-cs/Terminal.Gui)
-- [Terminal.Gui drivers](https://tui-cs.github.io/Terminal.Gui/api/Terminal.Gui.Drivers.html)
+- [Terminal.Gui repository and MIT license](https://github.com/gui-cs/Terminal.Gui)
+- [Terminal.Gui 2.4.17 package metadata](https://www.nuget.org/packages/Terminal.Gui/2.4.17)
+- [Instance application architecture and lifecycle](https://tui-cs.github.io/Terminal.Gui/docs/application)
+- [Terminal.Gui layout](https://tui-cs.github.io/Terminal.Gui/docs/layout)
 - [Keyboard testing](https://tui-cs.github.io/Terminal.Gui/docs/keyboard.html)
 - [Spectre prompt limitations](https://spectreconsole.net/console/how-to/prompting-for-user-input/)
 - [Spectre live-display limitations](https://spectreconsole.net/console/live/live-display/)
-
