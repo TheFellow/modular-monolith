@@ -144,7 +144,8 @@ public sealed class IngredientsModule(
                     {
                         replacementRow = await RequireActiveRowAsync(context, replacementId).ConfigureAwait(false);
                     }
-                    catch (NotFoundError exception)
+                    catch (Exception exception) when (
+                        AppError.IsNotFound(exception) && !AppError.IsCancellation(exception))
                     {
                         throw AppError.Invalid(
                             $"replacement ingredient {replacementId} must exist and be active",
@@ -305,7 +306,8 @@ public sealed class IngredientsModule(
             {
                 await AuthorizeAsync(context, IngredientAuthorization.List, ingredient).ConfigureAwait(false);
             }
-            catch (PermissionError)
+            catch (Exception exception) when (
+                AppError.IsPermission(exception) && !AppError.IsCancellation(exception))
             {
                 continue;
             }
@@ -361,7 +363,8 @@ public sealed class IngredientsModule(
             await using StoreSession read = await store.OpenSessionAsync(cancellationToken).ConfigureAwait(false);
             return await query(read.Context).ConfigureAwait(false);
         }
-        catch (Exception exception) when (exception is not AppError and not OperationCanceledException)
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal("read ingredients", exception);
         }

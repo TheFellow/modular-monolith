@@ -18,7 +18,8 @@ public sealed class CedarAuthorizer : IEntityAuthorizer
         {
             validators = BuildCatalog(modules);
         }
-        catch (Exception exception) when (exception is not AppError)
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal("assemble Cedar authorization catalog", exception);
         }
@@ -67,11 +68,11 @@ public sealed class CedarAuthorizer : IEntityAuthorizer
             cancellationToken.ThrowIfCancellationRequested();
             return ValueTask.CompletedTask;
         }
-        catch (OperationCanceledException)
+        catch (Exception exception) when (AppError.IsCancellation(exception))
         {
             throw;
         }
-        catch (AppError)
+        catch (Exception exception) when (AppError.Find(exception) is not null)
         {
             throw;
         }

@@ -196,7 +196,8 @@ public sealed class AuditModule(
             await using StoreSession read = await store.OpenSessionAsync(cancellationToken).ConfigureAwait(false);
             return await query(read.Context).ConfigureAwait(false);
         }
-        catch (Exception exception) when (exception is not AppError and not OperationCanceledException)
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal("read audit entries", exception);
         }

@@ -210,7 +210,8 @@ public sealed class DrinksModule(
                         await AuthorizeAsync(context, DrinkAuthorization.List, drink).ConfigureAwait(false);
                         visible.Add(drink);
                     }
-                    catch (PermissionError)
+                    catch (Exception exception) when (
+                        AppError.IsPermission(exception) && !AppError.IsCancellation(exception))
                     {
                     }
                 }
@@ -306,7 +307,8 @@ public sealed class DrinksModule(
             {
                 await AuthorizeAsync(context, DrinkAuthorization.List, drink).ConfigureAwait(false);
             }
-            catch (PermissionError)
+            catch (Exception exception) when (
+                AppError.IsPermission(exception) && !AppError.IsCancellation(exception))
             {
                 continue;
             }
@@ -339,11 +341,17 @@ public sealed class DrinksModule(
                 await ingredients.RequireActiveAsync(session, recipeIngredient.IngredientId, context.CancellationToken)
                     .ConfigureAwait(false);
             }
-            catch (NotFoundError exception) when (!recipeIngredient.Optional)
+            catch (Exception exception) when (
+                AppError.IsNotFound(exception) &&
+                !AppError.IsCancellation(exception) &&
+                !recipeIngredient.Optional)
             {
                 throw AppError.Invalid($"ingredient {recipeIngredient.IngredientId} not found", exception);
             }
-            catch (NotFoundError) when (recipeIngredient.Optional)
+            catch (Exception exception) when (
+                AppError.IsNotFound(exception) &&
+                !AppError.IsCancellation(exception) &&
+                recipeIngredient.Optional)
             {
             }
 
@@ -354,7 +362,8 @@ public sealed class DrinksModule(
                     await ingredients.RequireActiveAsync(session, substitute, context.CancellationToken)
                         .ConfigureAwait(false);
                 }
-                catch (NotFoundError exception)
+                catch (Exception exception) when (
+                    AppError.IsNotFound(exception) && !AppError.IsCancellation(exception))
                 {
                     throw AppError.Invalid($"substitute ingredient {substitute} not found", exception);
                 }
@@ -384,7 +393,8 @@ public sealed class DrinksModule(
             await using StoreSession read = await store.OpenSessionAsync(cancellationToken).ConfigureAwait(false);
             return await query(read.Context).ConfigureAwait(false);
         }
-        catch (Exception exception) when (exception is not AppError and not OperationCanceledException)
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal("read drinks", exception);
         }
