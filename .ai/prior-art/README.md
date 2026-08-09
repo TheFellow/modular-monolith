@@ -19,3 +19,4 @@ inputs, not package shopping notes.
 - [Sample-data seed](seed.md)
 - [Action projection](actions.md)
 - [Dashboard and navigation projection](dashboard.md)
+- [Atomic tagged mutations](tagged-mutations.md)

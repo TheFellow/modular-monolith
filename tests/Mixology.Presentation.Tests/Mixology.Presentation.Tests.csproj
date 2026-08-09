@@ -15,5 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <ProjectReference Include="../../src/Mixology.Presentation/Mixology.Presentation.csproj" />
+    <ProjectReference Include="../../src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
+    <ProjectReference Include="../../src/Mixology.Migrations/Mixology.Migrations.csproj" />
   </ItemGroup>
 </Project>
