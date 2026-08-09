@@ -1,4 +1,6 @@
+using Mixology.Application.Authentication;
 using Mixology.Application.Operations;
+using Mixology.Kernel.Entities;
 using Xunit;
 
 namespace Mixology.Application.Tests;
@@ -23,7 +25,7 @@ public sealed class OperationChainTests
         };
         OperationChain chain = new([first, second]);
 
-        await chain.ExecuteAsync(new OperationContext("owner"), Operation.Command("create"), _ =>
+        await chain.ExecuteAsync(new OperationContext(Actor.Owner), Operation.Command("create"), _ =>
         {
             calls.Add("handler");
             return Task.CompletedTask;
@@ -37,7 +39,7 @@ public sealed class OperationChainTests
     [Fact]
     public async Task EveryExecutionGetsFreshMutableState()
     {
-        OperationContext baseContext = new("owner");
+        OperationContext baseContext = new(Actor.Owner);
         OperationChain chain = new([]);
         List<int> initialEventCounts = [];
 
@@ -53,5 +55,27 @@ public sealed class OperationChainTests
 
         Assert.Equal([0, 0], initialEventCounts);
         Assert.Empty(baseContext.Events);
+    }
+
+    [Fact]
+    public async Task TouchesAreDeduplicatedWithoutLosingInsertionOrder()
+    {
+        EntityUid first = new("Mixology::Ingredient", "ing-first");
+        EntityUid second = new("Mixology::Drink", "drk-second");
+        OperationContext? observed = null;
+        OperationChain chain = new([]);
+
+        await chain.ExecuteAsync(new OperationContext(default), Operation.Command("test"), context =>
+        {
+            observed = context;
+            context.Touch(first);
+            context.Touch(second);
+            context.Touch(first);
+            return Task.CompletedTask;
+        });
+
+        Assert.NotNull(observed);
+        Assert.Equal(Actor.Anonymous, observed.Principal);
+        Assert.Equal([first, second], observed.TouchedEntities);
     }
 }

@@ -12,13 +12,9 @@ public sealed class UnitOfWorkMiddleware(MixologyStore store)
             return;
         }
 
-        if (context.Session is { HasTransaction: true } callerSession)
+        if (context.Session is { HasTransaction: true })
         {
-            await callerSession.SerializedAsync(async (_, _) =>
-            {
-                await next(context).ConfigureAwait(false);
-                return true;
-            }, context.CancellationToken).ConfigureAwait(false);
+            await next(context).ConfigureAwait(false);
             return;
         }
 
@@ -37,22 +33,18 @@ public sealed class UnitOfWorkMiddleware(MixologyStore store)
         StoreSession session,
         OperationDelegate next)
     {
-        await session.SerializedAsync(async (_, cancellationToken) =>
+        CancellationToken cancellationToken = context.CancellationToken;
+        await session.BeginWriteAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            await session.BeginWriteAsync(cancellationToken).ConfigureAwait(false);
-            try
-            {
-                await next(context.WithSession(session)).ConfigureAwait(false);
-                await session.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                await session.CommitAsync(cancellationToken).ConfigureAwait(false);
-            }
-            catch
-            {
-                await session.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
-                throw;
-            }
-
-            return true;
-        }, context.CancellationToken).ConfigureAwait(false);
+            await next(context.WithSession(session)).ConfigureAwait(false);
+            await session.Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await session.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            await session.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            throw;
+        }
     }
 }

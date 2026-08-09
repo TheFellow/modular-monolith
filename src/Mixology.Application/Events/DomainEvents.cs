@@ -1,4 +1,5 @@
 using Mixology.Application.Operations;
+using Mixology.Kernel.Errors;
 
 namespace Mixology.Application.Events;
 
@@ -14,7 +15,17 @@ public interface IPreparingDomainEventHandler<in TEvent> : IDomainEventHandler<T
 
 public interface IDomainEventDispatcher
 {
-    Task DispatchAsync(OperationContext context, object domainEvent);
+    Task DispatchAsync(EventHandlerContext context, object domainEvent);
+}
+
+public sealed class NullDomainEventDispatcher : IDomainEventDispatcher
+{
+    public Task DispatchAsync(EventHandlerContext context, object domainEvent)
+    {
+        _ = context;
+        _ = domainEvent;
+        return Task.CompletedTask;
+    }
 }
 
 public sealed class DispatchEventsMiddleware(IDomainEventDispatcher dispatcher)
@@ -27,9 +38,17 @@ public sealed class DispatchEventsMiddleware(IDomainEventDispatcher dispatcher)
             return;
         }
 
-        foreach (object domainEvent in context.Events)
+        EventHandlerContext handlerContext = new(context);
+        foreach (object domainEvent in context.Events.ToArray())
         {
-            await dispatcher.DispatchAsync(context, domainEvent).ConfigureAwait(false);
+            try
+            {
+                await dispatcher.DispatchAsync(handlerContext, domainEvent).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                throw AppError.Internal($"dispatch event {domainEvent.GetType().FullName}", exception);
+            }
         }
     }
 }

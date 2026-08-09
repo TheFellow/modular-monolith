@@ -2,6 +2,7 @@ using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Mixology.Application.Authentication;
 using Mixology.Application.Operations;
 using Mixology.Persistence;
 using Xunit;
@@ -17,7 +18,7 @@ public sealed class UnitOfWorkMiddlewareTests
         UnitOfWorkMiddleware middleware = new(fixture.Store);
 
         await middleware.InvokeAsync(
-            new OperationContext("owner"),
+            new OperationContext(Actor.Owner),
             Operation.Command("probe.create"),
             context => InsertAsync(context, "committed"));
 
@@ -31,7 +32,7 @@ public sealed class UnitOfWorkMiddlewareTests
         UnitOfWorkMiddleware middleware = new(fixture.Store);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => middleware.InvokeAsync(
-            new OperationContext("owner"),
+            new OperationContext(Actor.Owner),
             Operation.Command("probe.create"),
             async context =>
             {
@@ -51,7 +52,7 @@ public sealed class UnitOfWorkMiddlewareTests
         UnitOfWorkMiddleware middleware = new(fixture.Store);
 
         await middleware.InvokeAsync(
-            new OperationContext("owner", session),
+            new OperationContext(Actor.Owner, session),
             Operation.Command("probe.create"),
             context => InsertAsync(context, "caller owned"));
 
@@ -68,7 +69,7 @@ public sealed class UnitOfWorkMiddlewareTests
         UnitOfWorkMiddleware middleware = new(fixture.Store);
 
         await middleware.InvokeAsync(
-            new OperationContext("owner", session),
+            new OperationContext(Actor.Owner, session),
             Operation.Command("probe.create"),
             context => InsertAsync(context, "supplied"));
 
@@ -86,7 +87,7 @@ public sealed class UnitOfWorkMiddlewareTests
         bool reached = false;
 
         await middleware.InvokeAsync(
-            new OperationContext("anonymous"),
+            new OperationContext(Actor.Anonymous),
             Operation.Query("probe.list"),
             context =>
             {
@@ -122,7 +123,7 @@ public sealed class UnitOfWorkMiddlewareTests
         }
     }
 
-    private sealed class StoreFixture : IAsyncDisposable
+    internal sealed class StoreFixture : IAsyncDisposable
     {
         private readonly string root;
         private readonly ServiceProvider services;
@@ -132,16 +133,21 @@ public sealed class UnitOfWorkMiddlewareTests
             this.root = root;
             this.services = services;
             Store = services.GetRequiredService<MixologyStore>();
+            Services = services;
         }
 
         public MixologyStore Store { get; }
+
+        public IServiceProvider Services { get; }
 
         public static async Task<StoreFixture> CreateAsync()
         {
             string root = Path.Combine(Path.GetTempPath(), "mixology-application-tests", Guid.NewGuid().ToString("N"));
             string databasePath = Path.Combine(root, "mixology.db");
             ServiceCollection collection = new();
+            collection.AddLogging();
             collection.AddMixologyPersistence(databasePath);
+            collection.AddMixologyApplication();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,
