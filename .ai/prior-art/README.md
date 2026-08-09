@@ -15,3 +15,4 @@ inputs, not package shopping notes.
 - [Desktop GUI](gui.md)
 - [Authorization](authorization.md)
 - [Dispatcher code generation](code-generation.md)
+- [Action projection](actions.md)
