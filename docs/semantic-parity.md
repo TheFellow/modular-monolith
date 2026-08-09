@@ -43,7 +43,8 @@ requires production-shaped tests, not only a matching type or method name.
 
 - [x] CLI Ingredients, Drinks, Inventory, and Audit command/output/JSON/restart behavior
 - [x] CLI Menus parity
-- [ ] CLI Orders, Tags, seed, logging, and metrics parity
+- [x] CLI Orders parity
+- [ ] CLI Tags, seed, logging, and metrics parity
 - [ ] TUI workspace, forms, dialogs, keys, paging, async, and authorization parity
 - [ ] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
 - [ ] Real cross-process writes are observable through every other surface

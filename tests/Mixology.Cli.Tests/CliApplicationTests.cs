@@ -147,7 +147,7 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
-    public async Task DrinksAndInventoryPersistAcrossIndependentCliInvocations()
+    public async Task CatalogMenuAndOrderPersistAcrossIndependentCliInvocations()
     {
         string root = Path.Combine(Path.GetTempPath(), "mixology-cli-catalog", Guid.NewGuid().ToString("N"));
         string database = Path.Combine(root, "mixology.db");
@@ -157,6 +157,8 @@ public sealed class CliApplicationTests
         StringWriter listOutput = new();
         StringWriter menuOutput = new();
         StringWriter menuShowOutput = new();
+        StringWriter orderOutput = new();
+        StringWriter orderGetOutput = new();
         StringWriter error = new();
 
         try
@@ -232,6 +234,19 @@ public sealed class CliApplicationTests
                 "--actor", "anonymous",
                 "menus", "show", "--id", menuId, "--json",
             ]).InvokeAsync();
+            int orderExit = await CliApplication.Build(orderOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "orders", "place", "--menu-id", menuId, $"{drinkId}:1",
+            ]).InvokeAsync();
+            string orderId = orderOutput.ToString().Trim();
+            int getOrderExit = await CliApplication.Build(orderGetOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "sommelier",
+                "orders", "get", "--id", orderId, "--json",
+            ]).InvokeAsync();
             int listExit = await CliApplication.Build(listOutput, error).Parse(
             [
                 "--db", database,
@@ -246,11 +261,14 @@ public sealed class CliApplicationTests
             Assert.Equal(0, addDrinkExit);
             Assert.Equal(0, publishExit);
             Assert.Equal(0, showMenuExit);
+            Assert.Equal(0, orderExit);
+            Assert.Equal(0, getOrderExit);
             Assert.Equal(0, listExit);
             Assert.StartsWith("ing-", ingredientId, StringComparison.Ordinal);
             Assert.Equal(ingredientId, inventoryOutput.ToString().Trim());
             Assert.StartsWith("drk-", drinkOutput.ToString().Trim(), StringComparison.Ordinal);
             Assert.StartsWith("mnu-", menuId, StringComparison.Ordinal);
+            Assert.StartsWith("ord-", orderId, StringComparison.Ordinal);
             Assert.Empty(error.ToString());
             using JsonDocument document = JsonDocument.Parse(listOutput.ToString());
             JsonElement drink = Assert.Single(document.RootElement.GetProperty("items").EnumerateArray());
@@ -264,6 +282,12 @@ public sealed class CliApplicationTests
             Assert.Equal(
                 drinkId,
                 menuDocument.RootElement.GetProperty("items")[0].GetProperty("drinkId").GetString());
+            using JsonDocument orderDocument = JsonDocument.Parse(orderGetOutput.ToString());
+            Assert.Equal(menuId, orderDocument.RootElement.GetProperty("menuId").GetString());
+            Assert.Equal(
+                ingredientId,
+                orderDocument.RootElement.GetProperty("ingredientUsage")[0]
+                    .GetProperty("ingredientId").GetString());
         }
         finally
         {

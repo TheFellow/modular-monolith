@@ -25,6 +25,8 @@ using Mixology.Modules.Menus;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Requests;
 using Mixology.Modules.Orders;
+using Mixology.Modules.Orders.Models;
+using Mixology.Modules.Orders.Requests;
 using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 
@@ -91,6 +93,14 @@ public static class CliApplication
             output,
             error,
             input);
+        OrdersCommandContext ordersContext = new(
+            async (parseResult, cancellationToken) => await HostedOrdersCommandSession.OpenAsync(
+                parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
+                Actor.Parse(parseResult.GetValue(actor)),
+                cancellationToken).ConfigureAwait(false),
+            output,
+            error,
+            input);
 
         Command status = new("status", "Initialize storage and report foundation readiness.");
         status.SetAction(async (parseResult, cancellationToken) =>
@@ -115,6 +125,7 @@ public static class CliApplication
         root.Subcommands.Add(IngredientsCommands.Build(ingredientsContext));
         root.Subcommands.Add(InventoryCommands.Build(inventoryContext));
         root.Subcommands.Add(MenusCommands.Build(menusContext));
+        root.Subcommands.Add(OrdersCommands.Build(ordersContext));
         root.Subcommands.Add(AuditCommands.Build(auditContext));
         return root;
     }
@@ -358,6 +369,45 @@ public static class CliApplication
 
         public Task<Menu> DraftAsync(MenuId id, CancellationToken cancellationToken) =>
             menus.DraftAsync(session, id, cancellationToken);
+
+        public async ValueTask DisposeAsync()
+        {
+            await host.StopAsync(CancellationToken.None).ConfigureAwait(false);
+            host.Dispose();
+        }
+    }
+
+    private sealed class HostedOrdersCommandSession(
+        IHost host,
+        OrdersModule orders,
+        MixologySession session) : IOrdersCommandSession
+    {
+        public static async ValueTask<IOrdersCommandSession> OpenAsync(
+            string databasePath,
+            Actor actor,
+            CancellationToken cancellationToken)
+        {
+            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            return new HostedOrdersCommandSession(
+                host,
+                host.Services.GetRequiredService<OrdersModule>(),
+                host.Services.GetRequiredService<MixologySessionFactory>().Create(actor));
+        }
+
+        public Task<Page<Order>> ListAsync(ListOrdersRequest request, CancellationToken cancellationToken) =>
+            orders.ListAsync(session, request, cancellationToken);
+
+        public Task<Order> GetAsync(OrderId id, CancellationToken cancellationToken) =>
+            orders.GetAsync(session, id, cancellationToken);
+
+        public Task<Order> PlaceAsync(PlaceOrderRequest request, CancellationToken cancellationToken) =>
+            orders.PlaceAsync(session, request, cancellationToken);
+
+        public Task<Order> CompleteAsync(OrderId id, CancellationToken cancellationToken) =>
+            orders.CompleteAsync(session, id, cancellationToken);
+
+        public Task<Order> CancelAsync(OrderId id, CancellationToken cancellationToken) =>
+            orders.CancelAsync(session, id, cancellationToken);
 
         public async ValueTask DisposeAsync()
         {
