@@ -147,6 +147,95 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task DrinksAndInventoryPersistAcrossIndependentCliInvocations()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "mixology-cli-catalog", Guid.NewGuid().ToString("N"));
+        string database = Path.Combine(root, "mixology.db");
+        StringWriter ingredientOutput = new();
+        StringWriter inventoryOutput = new();
+        StringWriter drinkOutput = new();
+        StringWriter listOutput = new();
+        StringWriter error = new();
+
+        try
+        {
+            int ingredientExit = await CliApplication.Build(ingredientOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "ingredients", "create", "CLI Gin",
+                "--category", "spirit",
+                "--unit", "oz",
+            ]).InvokeAsync();
+            string ingredientId = ingredientOutput.ToString().Trim();
+            int inventoryExit = await CliApplication.Build(inventoryOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "inventory", "set",
+                "--ingredient-id", ingredientId,
+                "--quantity", "12",
+                "--unit", "oz",
+                "--cost-per-unit", "USD 1.25",
+            ]).InvokeAsync();
+            string drinkJson = $$"""
+                {
+                  "name": "CLI Gimlet",
+                  "category": "cocktail",
+                  "glass": "coupe",
+                  "recipe": {
+                    "ingredients": [{
+                      "ingredient_id": "{{ingredientId}}",
+                      "amount": 2,
+                      "unit": "oz"
+                    }],
+                    "steps": ["Stir"]
+                  }
+                }
+                """;
+            int drinkExit = await CliApplication.Build(
+                drinkOutput,
+                error,
+                new StringReader(drinkJson)).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "drinks", "create", "--stdin",
+            ]).InvokeAsync();
+            int listExit = await CliApplication.Build(listOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "anonymous",
+                "drinks", "list", "--json",
+            ]).InvokeAsync();
+
+            Assert.Equal(0, ingredientExit);
+            Assert.Equal(0, inventoryExit);
+            Assert.Equal(0, drinkExit);
+            Assert.Equal(0, listExit);
+            Assert.StartsWith("ing-", ingredientId, StringComparison.Ordinal);
+            Assert.Equal(ingredientId, inventoryOutput.ToString().Trim());
+            Assert.StartsWith("drk-", drinkOutput.ToString().Trim(), StringComparison.Ordinal);
+            Assert.Empty(error.ToString());
+            using JsonDocument document = JsonDocument.Parse(listOutput.ToString());
+            JsonElement drink = Assert.Single(document.RootElement.GetProperty("items").EnumerateArray());
+            Assert.Equal("CLI Gimlet", drink.GetProperty("name").GetString());
+            Assert.Equal(
+                ingredientId,
+                drink.GetProperty("recipe").GetProperty("ingredients")[0]
+                    .GetProperty("ingredient_id").GetString());
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task AuditCliObservesACommandFromAnEarlierInvocation()
     {
         string root = Path.Combine(Path.GetTempPath(), "mixology-cli-audit", Guid.NewGuid().ToString("N"));
