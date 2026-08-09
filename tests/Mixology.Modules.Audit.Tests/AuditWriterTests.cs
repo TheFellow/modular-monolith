@@ -9,6 +9,7 @@ using Mixology.Kernel.Entities;
 using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Ingredients;
 using Mixology.Persistence;
 using Xunit;
 
@@ -81,6 +82,7 @@ public sealed class AuditWriterTests
                 typeof(MigrationAssemblyMarker).Assembly);
             collection.AddMixologyApplication();
             collection.AddAuditModule();
+            collection.AddIngredientsModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

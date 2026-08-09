@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Ingredients;
 using Xunit;
 
 namespace Mixology.Persistence.Tests;
@@ -150,6 +151,7 @@ public sealed class MixologyStoreTests
             ServiceCollection collection = new();
             collection.AddMixologyPersistence(DatabasePath, typeof(MigrationAssemblyMarker).Assembly);
             collection.AddAuditModule();
+            collection.AddIngredientsModule();
             services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

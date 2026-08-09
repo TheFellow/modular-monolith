@@ -8,6 +8,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <ProjectReference Include="../Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
     <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
   </ItemGroup>
 </Project>

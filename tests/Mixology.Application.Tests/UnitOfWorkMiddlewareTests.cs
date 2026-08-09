@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Mixology.Application.Authentication;
 using Mixology.Application.Operations;
+using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Ingredients;
 using Mixology.Persistence;
-using Mixology.Kernel.Errors;
 using Xunit;
 
 namespace Mixology.Application.Tests;
@@ -172,6 +173,7 @@ public sealed class UnitOfWorkMiddlewareTests
             collection.AddMixologyPersistence(databasePath, typeof(MigrationAssemblyMarker).Assembly);
             collection.AddMixologyApplication();
             collection.AddAuditModule();
+            collection.AddIngredientsModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

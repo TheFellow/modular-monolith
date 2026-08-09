@@ -8,6 +8,7 @@ using Mixology.Dispatcher;
 using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Ingredients;
 using Mixology.Persistence;
 
 namespace Mixology.Cli;
@@ -44,6 +45,7 @@ public static class CliApplication
                 builder.Services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
                 builder.AddMixology(databasePath, typeof(MigrationAssemblyMarker).Assembly);
                 builder.Services.AddAuditModule();
+                builder.Services.AddIngredientsModule();
                 using IHost host = builder.Build();
                 await host.Services.GetRequiredService<MixologyStore>()
                     .InitializeAsync(cancellationToken)
