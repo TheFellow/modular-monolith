@@ -10,5 +10,6 @@
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="coverlet.collector" />
     <ProjectReference Include="../../src/Mixology.Desktop/Mixology.Desktop.csproj" />
+    <ProjectReference Include="../../src/Mixology.Cli/Mixology.Cli.csproj" />
   </ItemGroup>
 </Project>
