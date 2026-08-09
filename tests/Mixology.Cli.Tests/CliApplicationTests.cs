@@ -145,4 +145,49 @@ public sealed class CliApplicationTests
             }
         }
     }
+
+    [Fact]
+    public async Task AuditCliObservesACommandFromAnEarlierInvocation()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "mixology-cli-audit", Guid.NewGuid().ToString("N"));
+        string database = Path.Combine(root, "mixology.db");
+        StringWriter auditOutput = new();
+        StringWriter auditError = new();
+
+        try
+        {
+            int created = await CliApplication.Build(TextWriter.Null, TextWriter.Null).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "ingredients", "create", "Gin",
+                "--category", "spirit",
+                "--unit", "oz",
+            ]).InvokeAsync();
+            int audited = await CliApplication.Build(auditOutput, auditError).Parse(
+            [
+                "--db", database,
+                "--actor", "owner",
+                "audit", "list",
+                "--json",
+            ]).InvokeAsync();
+
+            Assert.Equal(0, created);
+            Assert.Equal(0, audited);
+            Assert.Empty(auditError.ToString());
+            using JsonDocument document = JsonDocument.Parse(auditOutput.ToString());
+            JsonElement entry = Assert.Single(document.RootElement.GetProperty("items").EnumerateArray());
+            Assert.Equal("Mixology::Actor::\"manager\"", entry.GetProperty("principal").GetString());
+            Assert.Contains("Ingredient::Action", entry.GetProperty("action").GetString(), StringComparison.Ordinal);
+            Assert.True(entry.GetProperty("success").GetBoolean());
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
 }

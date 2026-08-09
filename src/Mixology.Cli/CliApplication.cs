@@ -10,6 +10,8 @@ using Mixology.Kernel.Errors;
 using Mixology.Kernel.Paging;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Audit.Models;
+using Mixology.Modules.Audit.Requests;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
@@ -44,6 +46,13 @@ public static class CliApplication
                 cancellationToken).ConfigureAwait(false),
             output,
             error);
+        AuditCommandContext auditContext = new(
+            async (parseResult, cancellationToken) => await HostedAuditCommandSession.OpenAsync(
+                parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
+                Actor.Parse(parseResult.GetValue(actor)),
+                cancellationToken).ConfigureAwait(false),
+            output,
+            error);
 
         Command status = new("status", "Initialize storage and report foundation readiness.");
         status.SetAction(async (parseResult, cancellationToken) =>
@@ -65,6 +74,7 @@ public static class CliApplication
 
         root.Subcommands.Add(status);
         root.Subcommands.Add(IngredientsCommands.Build(ingredientsContext));
+        root.Subcommands.Add(AuditCommands.Build(auditContext));
         return root;
     }
 
@@ -130,6 +140,35 @@ public static class CliApplication
             RetireIngredientRequest request,
             CancellationToken cancellationToken) =>
             ingredients.RetireAsync(session, request, cancellationToken);
+
+        public async ValueTask DisposeAsync()
+        {
+            await host.StopAsync(CancellationToken.None).ConfigureAwait(false);
+            host.Dispose();
+        }
+    }
+
+    private sealed class HostedAuditCommandSession(
+        IHost host,
+        AuditModule audit,
+        MixologySession session) : IAuditCommandSession
+    {
+        public static async ValueTask<IAuditCommandSession> OpenAsync(
+            string databasePath,
+            Actor actor,
+            CancellationToken cancellationToken)
+        {
+            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            return new HostedAuditCommandSession(
+                host,
+                host.Services.GetRequiredService<AuditModule>(),
+                host.Services.GetRequiredService<MixologySessionFactory>().Create(actor));
+        }
+
+        public Task<Page<AuditEntry>> ListAsync(
+            ListAuditEntriesRequest request,
+            CancellationToken cancellationToken) =>
+            audit.ListAsync(session, request, cancellationToken);
 
         public async ValueTask DisposeAsync()
         {
