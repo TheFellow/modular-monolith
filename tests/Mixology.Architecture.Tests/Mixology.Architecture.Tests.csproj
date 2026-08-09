@@ -16,6 +16,7 @@
     </PackageReference>
     <ProjectReference Include="../../src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
+    <ProjectReference Include="../../src/Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
   </ItemGroup>
 </Project>

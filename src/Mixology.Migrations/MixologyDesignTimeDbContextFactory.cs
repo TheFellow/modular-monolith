@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Persistence;
@@ -19,6 +20,7 @@ public sealed class MixologyDesignTimeDbContextFactory : IDesignTimeDbContextFac
             typeof(MigrationAssemblyMarker).Assembly);
         services.AddAuditModule();
         services.AddIngredientsModule();
+        services.AddDrinksModule();
         services.AddInventoryModule();
         ServiceProvider provider = services.BuildServiceProvider();
         return provider.GetRequiredService<IDbContextFactory<MixologyDbContext>>().CreateDbContext();

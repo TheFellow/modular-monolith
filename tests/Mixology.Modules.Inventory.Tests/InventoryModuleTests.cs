@@ -11,6 +11,7 @@ using Mixology.Kernel.Measurement;
 using Mixology.Kernel.Money;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory.Events;
 using Mixology.Modules.Inventory.Models;
@@ -138,6 +139,7 @@ public sealed class InventoryModuleTests
             collection.AddMixologyApplication();
             collection.AddAuditModule();
             collection.AddIngredientsModule();
+            collection.AddDrinksModule();
             collection.AddInventoryModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {

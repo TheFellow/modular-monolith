@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Xunit;
@@ -154,6 +155,7 @@ public sealed class MixologyStoreTests
             collection.AddAuditModule();
             collection.AddIngredientsModule();
             collection.AddInventoryModule();
+            collection.AddDrinksModule();
             services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

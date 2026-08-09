@@ -8,6 +8,7 @@ using Mixology.Kernel.Errors;
 using Mixology.Kernel.Measurement;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
 using Mixology.Modules.Inventory;
@@ -145,6 +146,7 @@ public sealed class IngredientsModuleTests
             collection.AddAuditModule();
             collection.AddIngredientsModule();
             collection.AddInventoryModule();
+            collection.AddDrinksModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

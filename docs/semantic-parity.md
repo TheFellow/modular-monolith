@@ -19,8 +19,9 @@ requires production-shaped tests, not only a matching type or method name.
 ## Domains
 
 - [x] Ingredients CRUD, filters, retirement, and permanent-replacement intent
-- [ ] Drinks recipes, review state, substitution, and lifecycle
-- [ ] Inventory on-hand/reserved/available stock and adjustment reasons
+- [x] Drinks CRUD, recipes, typed filters, authorization, and lifecycle
+- [ ] Drinks retirement reactions, review state, and substitution rewrites
+- [x] Inventory on-hand/reserved/available stock and adjustment reasons
 - [ ] Menus curation, publication, availability, analytics, and readiness
 - [ ] Orders placement, reservation, completion, cancellation, and blocking
 - [x] Append-only audit history, actor queries, and touched resources

@@ -1,6 +1,8 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Persistence.Model;
@@ -36,7 +38,7 @@ public sealed class ProjectBoundaryTests
     }
 
     [Fact]
-    public void ModulesRemainIndependentOfExecutablesAndSiblingModules()
+    public void ModuleDependenciesRemainAcyclicAndIndependentOfExecutables()
     {
         ProjectInfo[] modules = Graph.Projects
             .Where(project => project.Name.StartsWith("Mixology.Modules.", StringComparison.Ordinal))
@@ -52,9 +54,70 @@ public sealed class ProjectBoundaryTests
         foreach (ProjectInfo module in modules)
         {
             Assert.DoesNotContain(module.MixologyReferences, executables.Contains);
-            Assert.DoesNotContain(
-                module.MixologyReferences,
-                reference => reference.StartsWith("Mixology.Modules.", StringComparison.Ordinal));
+        }
+
+        Dictionary<string, ProjectInfo> modulesByName = modules.ToDictionary(
+            static module => module.Name,
+            StringComparer.Ordinal);
+        HashSet<string> visiting = new(StringComparer.Ordinal);
+        HashSet<string> visited = new(StringComparer.Ordinal);
+        foreach (ProjectInfo module in modules)
+        {
+            Visit(module.Name);
+        }
+
+        void Visit(string name)
+        {
+            if (visited.Contains(name))
+            {
+                return;
+            }
+
+            Assert.True(visiting.Add(name), $"cyclic module dependency through {name}");
+            foreach (string dependency in modulesByName[name].MixologyReferences.Where(modulesByName.ContainsKey))
+            {
+                Visit(dependency);
+            }
+
+            _ = visiting.Remove(name);
+            _ = visited.Add(name);
+        }
+    }
+
+    [Fact]
+    public void CrossDomainCodeOnlyConsumesOwnerModelsQueriesAndEvents()
+    {
+        Regex reference = new(
+            @"Mixology\.Modules\.(?<owner>[A-Za-z0-9_]+)(?<suffix>(?:\.[A-Za-z0-9_]+)*)",
+            RegexOptions.CultureInvariant);
+
+        foreach (ProjectInfo module in Graph.Projects.Where(
+                     project => project.Name.StartsWith("Mixology.Modules.", StringComparison.Ordinal)))
+        {
+            string owner = module.Name["Mixology.Modules.".Length..];
+            string directory = Path.GetDirectoryName(module.ProjectPath)!;
+            foreach (string file in Directory.EnumerateFiles(directory, "*.cs", SearchOption.AllDirectories)
+                         .Where(static file =>
+                             !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal) &&
+                             !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)))
+            {
+                foreach (Match match in reference.Matches(File.ReadAllText(file)))
+                {
+                    string referencedOwner = match.Groups["owner"].Value;
+                    if (string.Equals(owner, referencedOwner, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    string suffix = match.Groups["suffix"].Value;
+                    Assert.True(
+                        suffix.StartsWith(".Models", StringComparison.Ordinal) ||
+                        suffix.StartsWith(".Queries", StringComparison.Ordinal) ||
+                        suffix.StartsWith(".Events", StringComparison.Ordinal),
+                        $"{Path.GetRelativePath(directory, file)} reaches into {referencedOwner}{suffix}; " +
+                        "cross-domain code may consume only owner Models, Queries, or Events");
+                }
+            }
         }
     }
 
@@ -92,6 +155,7 @@ public sealed class ProjectBoundaryTests
         [
             typeof(AuditServiceCollectionExtensions).Assembly,
             typeof(IngredientsModule).Assembly,
+            typeof(DrinksModule).Assembly,
             typeof(InventoryModule).Assembly,
         ];
 

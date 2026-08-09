@@ -7,6 +7,7 @@ using Mixology.Application.Operations;
 using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Persistence;
@@ -205,6 +206,7 @@ public sealed class UnitOfWorkMiddlewareTests
             collection.AddMixologyApplication();
             collection.AddAuditModule();
             collection.AddIngredientsModule();
+            collection.AddDrinksModule();
             collection.AddInventoryModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {

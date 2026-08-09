@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Mixology.Authorization.Cedar;
 using Mixology.Modules.Ingredients.Authorization;
 using Mixology.Modules.Ingredients.Persistence;
+using Mixology.Modules.Ingredients.Queries;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Ingredients;
@@ -17,6 +18,7 @@ public static class IngredientServiceCollectionExtensions
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IModuleModelConfiguration, IngredientModelConfiguration>());
         services.TryAddSingleton<IngredientsModule>();
+        services.TryAddSingleton<IngredientQueries>();
         return services;
     }
 }

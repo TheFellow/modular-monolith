@@ -10,6 +10,7 @@ using Mixology.Kernel.Paging;
 using Mixology.Migrations;
 using Mixology.Modules.Audit.Models;
 using Mixology.Modules.Audit.Requests;
+using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Persistence;
@@ -156,6 +157,7 @@ public sealed class AuditModuleTests
             collection.AddMixologyApplication();
             collection.AddAuditModule();
             collection.AddIngredientsModule();
+            collection.AddDrinksModule();
             collection.AddInventoryModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
