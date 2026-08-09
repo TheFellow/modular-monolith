@@ -15,6 +15,7 @@ using Mixology.Modules.Audit.Requests;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
+using Mixology.Modules.Inventory;
 using Mixology.Persistence;
 
 namespace Mixology.Cli;
@@ -85,6 +86,7 @@ public static class CliApplication
         builder.AddMixology(databasePath, typeof(MigrationAssemblyMarker).Assembly);
         builder.Services.AddAuditModule();
         builder.Services.AddIngredientsModule();
+        builder.Services.AddInventoryModule();
         IHost host = builder.Build();
         try
         {

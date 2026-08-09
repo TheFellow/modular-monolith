@@ -8,6 +8,7 @@ using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Ingredients;
+using Mixology.Modules.Inventory;
 using Mixology.Persistence;
 using Xunit;
 
@@ -174,6 +175,7 @@ public sealed class UnitOfWorkMiddlewareTests
             collection.AddMixologyApplication();
             collection.AddAuditModule();
             collection.AddIngredientsModule();
+            collection.AddInventoryModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Inventory stock, reservation, valuation, and adjustment contracts.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
+    <ProjectReference Include="../Mixology.Filtering/Mixology.Filtering.csproj" />
+    <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
+    <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
+  </ItemGroup>
+</Project>

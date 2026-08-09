@@ -6,6 +6,7 @@ using Mixology.Kernel.Errors;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Ingredients;
+using Mixology.Modules.Inventory;
 using Xunit;
 
 namespace Mixology.Persistence.Tests;
@@ -152,6 +153,7 @@ public sealed class MixologyStoreTests
             collection.AddMixologyPersistence(DatabasePath, typeof(MigrationAssemblyMarker).Assembly);
             collection.AddAuditModule();
             collection.AddIngredientsModule();
+            collection.AddInventoryModule();
             services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

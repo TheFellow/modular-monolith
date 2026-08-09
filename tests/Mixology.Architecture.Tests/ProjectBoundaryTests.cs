@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Ingredients;
+using Mixology.Modules.Inventory;
 using Mixology.Persistence.Model;
 using Xunit;
 
@@ -91,6 +92,7 @@ public sealed class ProjectBoundaryTests
         [
             typeof(AuditServiceCollectionExtensions).Assembly,
             typeof(IngredientsModule).Assembly,
+            typeof(InventoryModule).Assembly,
         ];
 
         foreach (Assembly module in modules)
