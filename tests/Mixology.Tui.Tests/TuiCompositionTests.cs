@@ -3,6 +3,7 @@ using Mixology.Presentation.Navigation;
 using Mixology.Toolkits.Tui;
 using Mixology.Tui.Workspaces;
 using Serilog.Events;
+using Terminal.Gui.Input;
 using Xunit;
 
 namespace Mixology.Tui.Tests;
@@ -10,7 +11,7 @@ namespace Mixology.Tui.Tests;
 public sealed class TuiCompositionTests
 {
     [Fact]
-    public async Task HostedRuntimeMigratesRealStoreAndRendersOnlyImplementedDashboardRoute()
+    public async Task HostedRuntimeMigratesRealStoreAndAdvertisesOnlyImplementedRoutes()
     {
         string root = Path.Combine(Path.GetTempPath(), "mixology-tui-host", Guid.NewGuid().ToString("N"));
         string database = Path.Combine(root, "mixology.db");
@@ -23,7 +24,9 @@ public sealed class TuiCompositionTests
             await new HostedTuiRuntime(runner).RunAsync(options);
 
             Assert.True(File.Exists(database));
-            Assert.Equal([TuiRoutes.Dashboard.Id], runner.Routes);
+            Assert.Equal(
+                [TuiRoutes.Dashboard.Id, TuiRoutes.Ingredients.Id, TuiRoutes.Inventory.Id],
+                runner.Routes);
             Assert.Contains("Mixology > Dashboard", runner.Screen, StringComparison.Ordinal);
             Assert.Contains("Drinks", runner.Screen, StringComparison.Ordinal);
             Assert.Contains("Recent Activity", runner.Screen, StringComparison.Ordinal);
@@ -37,6 +40,14 @@ public sealed class TuiCompositionTests
                 Directory.Delete(root, recursive: true);
             }
         }
+    }
+
+    [Fact]
+    public void TerminalKeyAdapterPreservesControlSubmissionAndQuit()
+    {
+        Assert.Equal('\u0013', MixologyWindow.MapInput(new Key('s').WithCtrl));
+        Assert.Equal('q', MixologyWindow.MapInput(new Key('c').WithCtrl));
+        Assert.Equal('s', MixologyWindow.MapInput(new Key('s')));
     }
 
     [Fact]

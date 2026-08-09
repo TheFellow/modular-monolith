@@ -11,13 +11,16 @@ using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
+using Mixology.Modules.Ingredients.Presentation;
 using Mixology.Modules.Inventory;
+using Mixology.Modules.Inventory.Presentation;
 using Mixology.Modules.Menus;
 using Mixology.Modules.Orders;
 using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 using Mixology.Presentation;
 using Mixology.Presentation.Dashboard;
+using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
 using Mixology.Tui.Workspaces;
 using OpenTelemetry.Metrics;
@@ -128,6 +131,19 @@ public sealed class HostedTuiRuntime(ITuiRunner? runner = null) : ITuiRuntime
         {
             [TuiRoutes.Dashboard.Id] = () => new DashboardWorkspace(
                 token => dashboard.LoadAsync(session, token)),
+            [TuiRoutes.Ingredients.Id] = IngredientsWorkspace.CreateFactory(
+                host.Services.GetRequiredService<IngredientsModule>(),
+                host.Services.GetRequiredService<IngredientActionProjector>(),
+                host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                options.Actor),
+            [TuiRoutes.Inventory.Id] = InventoryWorkspace.CreateFactory(
+                host.Services.GetRequiredService<InventoryModule>(),
+                host.Services.GetRequiredService<IngredientsModule>(),
+                host.Services.GetRequiredService<InventoryActionProjector>(),
+                host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                options.Actor),
         };
         await using TuiShell shell = new(navigation, workspaces);
         await shell.StartAsync(cancellationToken).ConfigureAwait(false);

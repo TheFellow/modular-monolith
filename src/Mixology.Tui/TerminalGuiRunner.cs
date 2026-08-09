@@ -77,28 +77,48 @@ public sealed class MixologyWindow : Window
             return;
         }
 
-        char value = key.AsRune.Value is >= char.MinValue and <= char.MaxValue
-            ? (char)key.AsRune.Value
-            : '\0';
-        if (value == '\0')
+        char? value = MapInput(key);
+        if (value is null)
         {
             return;
         }
 
-        if (key.IsCtrl && char.ToLowerInvariant(value) == 'c')
-        {
-            value = 'q';
-        }
-
         Run(async () =>
         {
-            bool handled = await shell.HandleAsync(value).ConfigureAwait(false);
+            bool handled = await shell.HandleAsync(value.Value).ConfigureAwait(false);
             if (handled && shell.StopRequested)
             {
                 application.Invoke(() => application.RequestStop(this));
             }
         });
         key.Handled = true;
+    }
+
+    public static char? MapInput(Key key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        Key unmodified = key.IsCtrl ? key.NoCtrl : key;
+        int rune = unmodified.AsRune.Value;
+        if (rune is < char.MinValue or > char.MaxValue)
+        {
+            return null;
+        }
+
+        char value = (char)rune;
+        if (!key.IsCtrl)
+        {
+            return value == '\0' ? null : value;
+        }
+
+        char letter = char.ToLowerInvariant(value);
+        if (letter == 'c')
+        {
+            return 'q';
+        }
+
+        return letter is >= 'a' and <= 'z'
+            ? (char)(letter - 'a' + 1)
+            : null;
     }
 
     private void OnSubViewsLaidOut(object? sender, LayoutEventArgs eventArgs)
