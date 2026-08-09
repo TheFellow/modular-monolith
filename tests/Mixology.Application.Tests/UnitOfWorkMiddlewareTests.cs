@@ -124,6 +124,36 @@ public sealed class UnitOfWorkMiddlewareTests
         Assert.IsType<DbUpdateException>(error.InnerException);
     }
 
+    [Fact]
+    public void PersistenceTranslationPreservesWrappedTypedFailures()
+    {
+        InvalidError expected = AppError.Invalid("invalid ingredient");
+        Exception wrapped = new DbUpdateException(
+            "save failed",
+            new InvalidOperationException("provider callback failed", expected));
+
+        Exception actual = PersistenceErrors.TranslateSave(wrapped, "persist probe.create");
+
+        Assert.Same(wrapped, actual);
+        Assert.Same(expected, AppError.Find<InvalidError>(actual));
+        Assert.False(AppError.IsInternal(actual));
+    }
+
+    [Fact]
+    public void PersistenceTranslationPreservesWrappedCancellation()
+    {
+        TaskCanceledException cancellation = new("cancelled");
+        Exception wrapped = new DbUpdateException(
+            "save failed",
+            new AggregateException(new IOException("other"), cancellation));
+
+        Exception actual = PersistenceErrors.TranslateSave(wrapped, "persist probe.create");
+
+        Assert.Same(wrapped, actual);
+        Assert.Same(cancellation, AppError.Find<OperationCanceledException>(actual));
+        Assert.Null(AppError.Find(actual));
+    }
+
     private static Task<int> InsertAsync(OperationContext context, string value) =>
         context.Session?.Context.Database.ExecuteSqlInterpolatedAsync(
             $"INSERT INTO operation_probe (value) VALUES ({value})",

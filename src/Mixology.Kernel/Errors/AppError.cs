@@ -28,23 +28,31 @@ public abstract class AppError : Exception
 
     public ErrorSpec Spec => ErrorCatalog.For(Kind);
 
+    public int HttpStatus => Spec.HttpStatus;
+
+    public int GrpcStatus => Spec.GrpcStatus;
+
+    public int CliExitCode => Spec.CliExitCode;
+
+    public TerminalErrorStyle TerminalStyle => Spec.TerminalStyle;
+
     public string UserMessage => UserMessageOverride ?? (Kind == ErrorKind.Internal ? Spec.DefaultMessage : Message);
 
     protected string? UserMessageOverride { get; }
 
     public abstract AppError WithUserMessage(string message);
 
-    public static InvalidError Invalid(string detail, Exception? cause = null) => new(detail, cause);
+    public static InvalidError Invalid(string? detail = null, Exception? cause = null) => new(detail, cause);
 
-    public static NotFoundError NotFound(string detail, Exception? cause = null) => new(detail, cause);
+    public static NotFoundError NotFound(string? detail = null, Exception? cause = null) => new(detail, cause);
 
-    public static PermissionError Permission(string detail, Exception? cause = null) => new(detail, cause);
+    public static PermissionError Permission(string? detail = null, Exception? cause = null) => new(detail, cause);
 
-    public static ConflictError Conflict(string detail, Exception? cause = null) => new(detail, cause);
+    public static ConflictError Conflict(string? detail = null, Exception? cause = null) => new(detail, cause);
 
-    public static FailedPreconditionError FailedPrecondition(string detail, Exception? cause = null) => new(detail, cause);
+    public static FailedPreconditionError FailedPrecondition(string? detail = null, Exception? cause = null) => new(detail, cause);
 
-    public static InternalError Internal(string detail, Exception? cause = null) => new(detail, cause);
+    public static InternalError Internal(string? detail = null, Exception? cause = null) => new(detail, cause);
 
     public static bool Is(Exception? exception, ErrorKind kind)
     {

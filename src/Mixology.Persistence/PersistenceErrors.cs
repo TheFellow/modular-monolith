@@ -14,7 +14,7 @@ public static class PersistenceErrors
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        if (exception is OperationCanceledException or AppError)
+        if (AppError.Find(exception) is not null || AppError.IsCancellation(exception))
         {
             return exception;
         }

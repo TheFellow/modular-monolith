@@ -36,6 +36,28 @@ public sealed class AppErrorTests
         Assert.Equal(style, spec.TerminalStyle);
     }
 
+    [Theory]
+    [MemberData(nameof(Mappings))]
+    public void TypedErrorsExposeTheirTransportMappings(
+        ErrorKind kind,
+        string name,
+        string defaultMessage,
+        int httpStatus,
+        int grpcStatus,
+        int exitCode,
+        TerminalErrorStyle style)
+    {
+        _ = name;
+        AppError error = Create(kind);
+
+        Assert.Equal(defaultMessage, error.Message);
+        Assert.Equal(kind, error.Kind);
+        Assert.Equal(httpStatus, error.HttpStatus);
+        Assert.Equal(grpcStatus, error.GrpcStatus);
+        Assert.Equal(exitCode, error.CliExitCode);
+        Assert.Equal(style, error.TerminalStyle);
+    }
+
     [Fact]
     public void CatalogIsCompleteImmutableAndFallsBackToInternal()
     {
@@ -143,4 +165,15 @@ public sealed class AppErrorTests
         Assert.False(AppError.IsCancellation(AppError.Internal("failed")));
         Assert.False(AppError.IsCancellation(null));
     }
+
+    private static AppError Create(ErrorKind kind) => kind switch
+    {
+        ErrorKind.Invalid => AppError.Invalid(),
+        ErrorKind.NotFound => AppError.NotFound(),
+        ErrorKind.Permission => AppError.Permission(),
+        ErrorKind.Conflict => AppError.Conflict(),
+        ErrorKind.FailedPrecondition => AppError.FailedPrecondition(),
+        ErrorKind.Internal => AppError.Internal(),
+        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
+    };
 }
