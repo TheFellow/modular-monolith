@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Margarita",
+    "category": "cocktail",
+    "glass": "coupe",
+    "description": "The classic tequila sour with lime and orange liqueur",
+    "tags": ["featured", "style=sour"],
+    "recipe": {
+      "ingredients": [
+        { "key": "tequila", "amount": 2.0, "unit": "oz" },
+        { "key": "lime_juice", "amount": 1.0, "unit": "oz" },
+        { "key": "triple_sec", "amount": 0.75, "unit": "oz" }
+      ],
+      "steps": [
+        "Add all ingredients to a shaker with ice",
+        "Shake vigorously for 10-15 seconds",
+        "Strain into a chilled coupe glass with salted rim"
+      ],
+      "garnish": "lime wheel"
+    }
+  },
+  {
+    "name": "Daiquiri",
+    "category": "cocktail",
+    "glass": "coupe",
+    "description": "A perfectly balanced rum sour",
+    "tags": ["audience=sommelier", "style=sour"],
+    "recipe": {
+      "ingredients": [
+        { "key": "rum_white", "amount": 2.0, "unit": "oz" },
+        { "key": "lime_juice", "amount": 1.0, "unit": "oz" },
+        { "key": "simple_syrup", "amount": 0.75, "unit": "oz" }
+      ],
+      "steps": [
+        "Add all ingredients to a shaker with ice",
+        "Shake until well chilled",
+        "Strain into a chilled coupe glass"
+      ],
+      "garnish": "lime wheel"
+    }
+  },
+  {
+    "name": "Gin & Tonic",
+    "category": "highball",
+    "glass": "highball",
+    "description": "The quintessential refresher",
+    "tags": ["easy-drinking", "service=high-volume"],
+    "recipe": {
+      "ingredients": [
+        { "key": "gin", "amount": 2.0, "unit": "oz" },
+        { "key": "tonic_water", "amount": 4.0, "unit": "oz" }
+      ],
+      "steps": [
+        "Fill a highball glass with ice",
+        "Add gin",
+        "Top with tonic water",
+        "Gently stir to combine"
+      ],
+      "garnish": "lime wheel"
+    }
+  },
+  {
+    "name": "Old Fashioned",
+    "category": "cocktail",
+    "glass": "rocks",
+    "description": "The original cocktail - whiskey, sugar, bitters",
+    "tags": ["spirit-forward", "style=classic"],
+    "recipe": {
+      "ingredients": [
+        { "key": "bourbon", "amount": 2.0, "unit": "oz" },
+        { "key": "simple_syrup", "amount": 0.25, "unit": "oz" },
+        { "key": "angostura", "amount": 2, "unit": "dash" }
+      ],
+      "steps": [
+        "Add simple syrup and bitters to a rocks glass",
+        "Add bourbon and stir",
+        "Add a large ice cube",
+        "Express orange peel over the drink and drop in"
+      ],
+      "garnish": "orange peel, cherry"
+    }
+  },
+  {
+    "name": "Negroni",
+    "category": "cocktail",
+    "glass": "rocks",
+    "description": "Equal parts bitter perfection",
+    "tags": ["audience=sommelier", "bitter", "featured"],
+    "recipe": {
+      "ingredients": [
+        { "key": "gin", "amount": 1.0, "unit": "oz" },
+        { "key": "campari", "amount": 1.0, "unit": "oz" },
+        { "key": "triple_sec", "amount": 1.0, "unit": "oz" }
+      ],
+      "steps": [
+        "Add all ingredients to a mixing glass with ice",
+        "Stir until well chilled",
+        "Strain into a rocks glass over a large ice cube"
+      ],
+      "garnish": "orange peel"
+    }
+  },
+  {
+    "name": "Mojito",
+    "category": "cocktail",
+    "glass": "highball",
+    "description": "Cuban classic with rum and fresh mint",
+    "tags": ["refreshing", "season=summer"],
+    "recipe": {
+      "ingredients": [
+        { "key": "rum_white", "amount": 2.0, "unit": "oz" },
+        { "key": "lime_juice", "amount": 1.0, "unit": "oz" },
+        { "key": "simple_syrup", "amount": 0.75, "unit": "oz" },
+        { "key": "mint", "amount": 8, "unit": "piece" },
+        { "key": "soda_water", "amount": 2.0, "unit": "oz" }
+      ],
+      "steps": [
+        "Gently muddle mint with simple syrup in a shaker",
+        "Add rum, lime juice, and ice",
+        "Shake briefly",
+        "Strain into a highball glass with ice",
+        "Top with soda water"
+      ],
+      "garnish": "mint sprig"
+    }
+  }
+]

@@ -16,4 +16,5 @@ inputs, not package shopping notes.
 - [Authorization](authorization.md)
 - [Dispatcher code generation](code-generation.md)
 - [Observability](observability.md)
+- [Sample-data seed](seed.md)
 - [Action projection](actions.md)

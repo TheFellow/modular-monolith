@@ -125,30 +125,33 @@ public sealed class ProjectBoundaryTests
     }
 
     [Fact]
-    public void CliIsTheCompositionEdge()
+    public void CliAndSeedAreCompositionEdges()
     {
-        ProjectInfo cli = Graph["Mixology.Cli"];
-        Assert.True(cli.IsExecutable);
+        ProjectInfo[] compositions = [Graph["Mixology.Cli"], Graph["Mixology.Seed"]];
 
-        foreach (ProjectInfo project in Graph.Projects.Where(project => project.Name != cli.Name))
+        foreach (ProjectInfo composition in compositions)
         {
-            Assert.DoesNotContain(cli.Name, project.MixologyReferences);
-        }
+            Assert.True(composition.IsExecutable);
+            foreach (ProjectInfo project in Graph.Projects.Where(project => project.Name != composition.Name))
+            {
+                Assert.DoesNotContain(composition.Name, project.MixologyReferences);
+            }
 
-        string[] requiredCompositionReferences =
-        [
-            "Mixology.Application",
-            "Mixology.Dispatcher",
-            "Mixology.Migrations",
-            .. Graph.Projects
-                .Where(project => project.Name.StartsWith("Mixology.Modules.", StringComparison.Ordinal))
-                .Where(project => !project.Name.EndsWith(".Contracts", StringComparison.Ordinal))
-                .Select(project => project.Name),
-        ];
+            string[] requiredCompositionReferences =
+            [
+                "Mixology.Application",
+                "Mixology.Dispatcher",
+                "Mixology.Migrations",
+                .. Graph.Projects
+                    .Where(project => project.Name.StartsWith("Mixology.Modules.", StringComparison.Ordinal))
+                    .Where(project => !project.Name.EndsWith(".Contracts", StringComparison.Ordinal))
+                    .Select(project => project.Name),
+            ];
 
-        foreach (string required in requiredCompositionReferences)
-        {
-            Assert.Contains(required, cli.MixologyReferences);
+            foreach (string required in requiredCompositionReferences)
+            {
+                Assert.Contains(required, composition.MixologyReferences);
+            }
         }
     }
 

@@ -55,3 +55,18 @@ Public module roots are facades. Models, queries, and events are deliberate
 cross-domain contracts. Commands, persistence rows, and handlers stay internal.
 Presentation projects consume public application behavior and never another
 surface's implementation.
+
+## Canonical sample data
+
+The standalone seed process creates the reference set of 18 ingredients and
+inventory records, six classic drinks, and one published menu through the same
+authorized, audited module APIs used by the other surfaces:
+
+```sh
+dotnet run --project src/Mixology.Seed
+```
+
+It writes to `data/mixology.db` by default. Set `MIXOLOGY_DB` to select another
+path. Like the Go reference, the seed is deliberately non-idempotent and
+command-atomic: running it against an already seeded store exits with an error,
+while work committed before any later failure remains in the database.
