@@ -8,6 +8,7 @@ using Mixology.Dispatcher;
 using Mixology.Kernel.Entities;
 using Mixology.Kernel.Errors;
 using Mixology.Kernel.Paging;
+using Mixology.Kernel.Tags;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Audit.Models;
@@ -28,6 +29,7 @@ using Mixology.Modules.Orders;
 using Mixology.Modules.Orders.Models;
 using Mixology.Modules.Orders.Requests;
 using Mixology.Modules.Tagging;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Cli;
@@ -101,6 +103,13 @@ public static class CliApplication
             output,
             error,
             input);
+        TagsCommandContext tagsContext = new(
+            async (parseResult, cancellationToken) => await HostedTagsCommandSession.OpenAsync(
+                parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
+                Actor.Parse(parseResult.GetValue(actor)),
+                cancellationToken).ConfigureAwait(false),
+            output,
+            error);
 
         Command status = new("status", "Initialize storage and report foundation readiness.");
         status.SetAction(async (parseResult, cancellationToken) =>
@@ -127,6 +136,7 @@ public static class CliApplication
         root.Subcommands.Add(MenusCommands.Build(menusContext));
         root.Subcommands.Add(OrdersCommands.Build(ordersContext));
         root.Subcommands.Add(AuditCommands.Build(auditContext));
+        root.Subcommands.Add(TagsCommands.Build(tagsContext));
         return root;
     }
 
@@ -408,6 +418,54 @@ public static class CliApplication
 
         public Task<Order> CancelAsync(OrderId id, CancellationToken cancellationToken) =>
             orders.CancelAsync(session, id, cancellationToken);
+
+        public async ValueTask DisposeAsync()
+        {
+            await host.StopAsync(CancellationToken.None).ConfigureAwait(false);
+            host.Dispose();
+        }
+    }
+
+    private sealed class HostedTagsCommandSession(
+        IHost host,
+        TaggingModule tagging,
+        MixologySession session) : ITagsCommandSession
+    {
+        public static async ValueTask<ITagsCommandSession> OpenAsync(
+            string databasePath,
+            Actor actor,
+            CancellationToken cancellationToken)
+        {
+            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            return new HostedTagsCommandSession(
+                host,
+                host.Services.GetRequiredService<TaggingModule>(),
+                host.Services.GetRequiredService<MixologySessionFactory>().Create(actor));
+        }
+
+        public Task<IReadOnlyList<TagReference>> ShowAsync(
+            Tag value,
+            bool exact,
+            CancellationToken cancellationToken) =>
+            tagging.ShowAsync(session, value, exact, cancellationToken);
+
+        public Task<IReadOnlyList<TagSummary>> SummaryAsync(CancellationToken cancellationToken) =>
+            tagging.SummaryAsync(session, cancellationToken);
+
+        public Task<TagMutationResult> UpsertAsync(
+            EntityUid target,
+            Tag value,
+            CancellationToken cancellationToken) =>
+            tagging.UpsertAsync(session, target, value, cancellationToken);
+
+        public Task<TagMutationResult> RemoveAsync(
+            EntityUid target,
+            string key,
+            CancellationToken cancellationToken) =>
+            tagging.RemoveAsync(session, target, key, cancellationToken);
+
+        public Task<TagCollection> ListAsync(EntityUid target, CancellationToken cancellationToken) =>
+            tagging.ListAsync(session, target, cancellationToken);
 
         public async ValueTask DisposeAsync()
         {

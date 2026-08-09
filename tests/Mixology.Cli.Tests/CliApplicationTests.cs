@@ -159,6 +159,7 @@ public sealed class CliApplicationTests
         StringWriter menuShowOutput = new();
         StringWriter orderOutput = new();
         StringWriter orderGetOutput = new();
+        StringWriter tagOutput = new();
         StringWriter error = new();
 
         try
@@ -247,6 +248,18 @@ public sealed class CliApplicationTests
                 "--actor", "sommelier",
                 "orders", "get", "--id", orderId, "--json",
             ]).InvokeAsync();
+            int addTagExit = await CliApplication.Build(TextWriter.Null, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "tags", "add", ingredientId, "source=cli",
+            ]).InvokeAsync();
+            int listTagExit = await CliApplication.Build(tagOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "anonymous",
+                "tags", "list", "--json", ingredientId,
+            ]).InvokeAsync();
             int listExit = await CliApplication.Build(listOutput, error).Parse(
             [
                 "--db", database,
@@ -263,6 +276,8 @@ public sealed class CliApplicationTests
             Assert.Equal(0, showMenuExit);
             Assert.Equal(0, orderExit);
             Assert.Equal(0, getOrderExit);
+            Assert.Equal(0, addTagExit);
+            Assert.Equal(0, listTagExit);
             Assert.Equal(0, listExit);
             Assert.StartsWith("ing-", ingredientId, StringComparison.Ordinal);
             Assert.Equal(ingredientId, inventoryOutput.ToString().Trim());
@@ -288,6 +303,10 @@ public sealed class CliApplicationTests
                 ingredientId,
                 orderDocument.RootElement.GetProperty("ingredientUsage")[0]
                     .GetProperty("ingredientId").GetString());
+            using JsonDocument tagDocument = JsonDocument.Parse(tagOutput.ToString());
+            Assert.Equal(
+                "source=cli",
+                tagDocument.RootElement.GetProperty("tags")[0].GetString());
         }
         finally
         {
