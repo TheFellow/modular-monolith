@@ -23,7 +23,8 @@ public static class ErrorCatalog
             [ErrorKind.Internal] = new(ErrorKind.Internal, "Internal", "internal error", 500, 13, ExitInternal, TerminalErrorStyle.Error),
         };
 
-    public static IReadOnlyList<ErrorKind> AllKinds { get; } = Enum.GetValues<ErrorKind>();
+    public static IReadOnlyList<ErrorKind> AllKinds { get; } =
+        Array.AsReadOnly(Enum.GetValues<ErrorKind>());
 
     public static ErrorSpec For(ErrorKind kind) =>
         Specs.GetValueOrDefault(kind, Specs[ErrorKind.Internal]);

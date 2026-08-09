@@ -2,26 +2,26 @@ namespace Mixology.Kernel.Errors;
 
 public abstract class AppError : Exception
 {
-    protected AppError(ErrorKind kind)
+    private protected AppError(ErrorKind kind)
         : this(kind, null, null, null)
     {
     }
 
-    protected AppError(ErrorKind kind, string? detail)
+    private protected AppError(ErrorKind kind, string? detail)
         : this(kind, detail, null, null)
     {
     }
 
-    protected AppError(ErrorKind kind, string? detail, Exception? innerException)
+    private protected AppError(ErrorKind kind, string? detail, Exception? innerException)
         : this(kind, detail, null, innerException)
     {
     }
 
-    protected AppError(ErrorKind kind, string? detail, string? userMessage, Exception? innerException)
-        : base(string.IsNullOrWhiteSpace(detail) ? ErrorCatalog.For(kind).DefaultMessage : detail, innerException)
+    private protected AppError(ErrorKind kind, string? detail, string? userMessage, Exception? innerException)
+        : base(string.IsNullOrEmpty(detail) ? ErrorCatalog.For(kind).DefaultMessage : detail, innerException)
     {
         Kind = kind;
-        UserMessageOverride = userMessage;
+        UserMessageOverride = string.IsNullOrEmpty(userMessage) ? null : userMessage;
     }
 
     public ErrorKind Kind { get; }
@@ -46,77 +46,78 @@ public abstract class AppError : Exception
 
     public static InternalError Internal(string detail, Exception? cause = null) => new(detail, cause);
 
-    public static bool Is(Exception exception, ErrorKind kind) =>
-        Find(exception)?.Kind == kind;
-
-    public static bool IsInvalid(Exception exception) => Find<InvalidError>(exception) is not null;
-
-    public static bool IsNotFound(Exception exception) => Find<NotFoundError>(exception) is not null;
-
-    public static bool IsPermission(Exception exception) => Find<PermissionError>(exception) is not null;
-
-    public static bool IsConflict(Exception exception) => Find<ConflictError>(exception) is not null;
-
-    public static bool IsFailedPrecondition(Exception exception) => Find<FailedPreconditionError>(exception) is not null;
-
-    public static bool IsInternal(Exception exception) => Find<InternalError>(exception) is not null;
-
-    public static TError? Find<TError>(Exception? exception)
-        where TError : AppError
+    public static bool Is(Exception? exception, ErrorKind kind)
     {
-        if (exception is null)
+        foreach (Exception candidate in Traverse(exception))
         {
-            return null;
-        }
-
-        if (exception is TError match)
-        {
-            return match;
-        }
-
-        if (exception is AggregateException aggregate)
-        {
-            foreach (Exception inner in aggregate.InnerExceptions)
+            if (candidate is AppError error && error.Kind == kind)
             {
-                TError? nested = Find<TError>(inner);
-                if (nested is not null)
-                {
-                    return nested;
-                }
+                return true;
             }
-
-            return null;
         }
 
-        return Find<TError>(exception.InnerException);
+        return false;
     }
 
-    public static AppError? Find(Exception? exception)
+    public static bool IsInvalid(Exception? exception) => Find<InvalidError>(exception) is not null;
+
+    public static bool IsNotFound(Exception? exception) => Find<NotFoundError>(exception) is not null;
+
+    public static bool IsPermission(Exception? exception) => Find<PermissionError>(exception) is not null;
+
+    public static bool IsConflict(Exception? exception) => Find<ConflictError>(exception) is not null;
+
+    public static bool IsFailedPrecondition(Exception? exception) => Find<FailedPreconditionError>(exception) is not null;
+
+    public static bool IsInternal(Exception? exception) => Find<InternalError>(exception) is not null;
+
+    public static bool IsCancellation(Exception? exception) =>
+        Find<OperationCanceledException>(exception) is not null;
+
+    public static TException? Find<TException>(Exception? exception)
+        where TException : Exception
+    {
+        foreach (Exception candidate in Traverse(exception))
+        {
+            if (candidate is TException match)
+            {
+                return match;
+            }
+        }
+
+        return null;
+    }
+
+    public static AppError? Find(Exception? exception) => Find<AppError>(exception);
+
+    private static IEnumerable<Exception> Traverse(Exception? exception)
     {
         if (exception is null)
         {
-            return null;
+            yield break;
         }
 
-        if (exception is AppError error)
-        {
-            return error;
-        }
+        Stack<Exception> pending = new();
+        pending.Push(exception);
 
-        if (exception is AggregateException aggregate)
+        while (pending.TryPop(out Exception? current))
         {
-            foreach (Exception inner in aggregate.InnerExceptions)
+            yield return current;
+
+            if (current is AggregateException aggregate)
             {
-                AppError? nested = Find(inner);
-                if (nested is not null)
+                for (int index = aggregate.InnerExceptions.Count - 1; index >= 0; index--)
                 {
-                    return nested;
+                    pending.Push(aggregate.InnerExceptions[index]);
                 }
+
+                continue;
             }
 
-            return null;
+            if (current.InnerException is not null)
+            {
+                pending.Push(current.InnerException);
+            }
         }
-
-        return Find(exception.InnerException);
     }
 }
