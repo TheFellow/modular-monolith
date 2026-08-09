@@ -44,7 +44,12 @@ and controls with an explicit owner.
 Desktop logging and metrics now have CLI option and environment parity. The
 long-running host owns each Serilog provider, file handle, and Prometheus
 listener, and releases them only after Avalonia and its drained workspaces stop.
-Domain workspace completion is tracked separately from these runtime concerns.
+The completed shell lazily mounts Dashboard, Drinks, Ingredients, Inventory,
+Menus, Orders, Audit, and Tags after intersecting the implemented factory map
+with the actor's Cedar-projected navigation. Each domain owns a separate MVVM
+adapter and compiled XAML view; no terminal view model crosses into Avalonia.
+Bidirectional CLI/TUI/Desktop tests reopen the same SQLite file between surface
+lifetimes and prove that no UI keeps a private source of truth.
 
 ## Validation
 

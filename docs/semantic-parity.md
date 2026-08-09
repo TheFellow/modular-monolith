@@ -60,6 +60,6 @@ requires production-shaped tests, not only a matching type or method name.
   controls
 - [x] Desktop owned dirty-navigation modal and CLI-equivalent logging, metrics,
   environment, typed-validation, and host-lifetime behavior
-- [ ] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
-- [ ] Real cross-process writes are observable through every other surface
+- [x] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
+- [x] Real cross-process writes are observable through every other surface
 - [ ] Self-contained Windows, macOS, and Linux publish smoke tests

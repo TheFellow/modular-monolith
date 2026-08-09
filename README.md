@@ -91,10 +91,11 @@ selection, stale-response rejection, and cancellation-aware shutdown. The CLI
 and TUI share the same SQLite file, so writes are visible after either process
 reopens the store.
 
-## Desktop dashboard
+## Desktop client
 
-The Avalonia desktop composition root currently exposes the live Dashboard and
-only implemented, authorization-visible navigation:
+The Avalonia desktop composition root exposes Dashboard, Drinks, Ingredients,
+Inventory, Menus, Orders, Audit, and Tags through authorization-visible
+navigation:
 
 ```sh
 dotnet run --project src/Mixology.Desktop -- --db data/mixology.db --actor owner
@@ -106,4 +107,5 @@ drained shutdown; headless tests exercise the real controls. Desktop accepts
 the CLI-equivalent `--log-level`, `--log-format`, `--log-file`, and `--metrics`
 options plus their `MIXOLOGY_*` environment defaults. The application host owns
 diagnostic file handles and the optional `localhost:9090/metrics` listener for
-the full window lifetime.
+the full window lifetime. Production-shaped tests mutate through CLI, TUI, and
+Desktop in both directions against one durable SQLite store.

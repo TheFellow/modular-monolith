@@ -10,6 +10,8 @@ using Mixology.Desktop.Workspaces.Ingredients;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Presentation;
 using Mixology.Presentation.Mutations;
+using Mixology.Tui;
+using Mixology.Tui.Workspaces;
 using Xunit;
 
 namespace Mixology.Desktop.Tests;
@@ -98,6 +100,97 @@ public sealed class DesktopCrossSurfaceTests
         Assert.Contains(workspace.Items, static item => item.Name == "Fresh Desktop Vermouth");
     }
 
+    [Fact]
+    public async Task TuiWorkspaceMutationIsObservedByFreshDesktopWorkspace()
+    {
+        await using TemporaryStore store = new("tui-to-desktop");
+        await using (TuiHost host = await TuiHost.OpenAsync(
+                         store.TuiOptions("manager"),
+                         TestContext.Current.CancellationToken))
+        {
+            MixologySession session = host.Services.GetRequiredService<MixologySessionFactory>()
+                .Create(Actor.Manager);
+            Func<ITuiWorkspace> factory = IngredientsWorkspace.CreateFactory(
+                host.Services.GetRequiredService<IngredientsModule>(),
+                host.Services.GetRequiredService<IngredientActionProjector>(),
+                host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                Actor.Manager);
+            await using IngredientsWorkspace workspace = Assert.IsType<IngredientsWorkspace>(factory());
+            await workspace.ActivateAsync(TestContext.Current.CancellationToken);
+            await workspace.DrainAsync();
+            Assert.True(workspace.Handle('c'));
+            workspace.SetField("Name", "TUI to Desktop Gin");
+            workspace.SetField("Category", "spirit");
+            workspace.SetField("Unit", "oz");
+            Assert.True(workspace.Handle(IngredientsWorkspace.SubmitKey));
+            await workspace.DrainAsync();
+            Assert.Null(workspace.Status);
+        }
+
+        await using DesktopHost desktop = await DesktopHost.OpenAsync(
+            DesktopOptions.Create(store.Database, "anonymous"),
+            TestContext.Current.CancellationToken);
+        MixologySession desktopSession = desktop.Services.GetRequiredService<MixologySessionFactory>()
+            .Create(Actor.Anonymous);
+        Func<IDesktopWorkspace> desktopFactory = IngredientsViewModel.CreateFactory(
+            desktop.Services.GetRequiredService<IngredientsModule>(),
+            desktop.Services.GetRequiredService<IngredientActionProjector>(),
+            desktop.Services.GetRequiredService<TaggedMutationCoordinator>(),
+            desktopSession,
+            Actor.Anonymous);
+        await using IngredientsViewModel viewModel = Assert.IsType<IngredientsViewModel>(desktopFactory());
+
+        await viewModel.ActivateAsync(TestContext.Current.CancellationToken);
+
+        Assert.Contains(viewModel.Items, static item => item.Name == "TUI to Desktop Gin");
+    }
+
+    [Fact]
+    public async Task DesktopWorkspaceMutationIsObservedByFreshTuiWorkspace()
+    {
+        await using TemporaryStore store = new("desktop-to-tui");
+        await using (DesktopHost desktop = await DesktopHost.OpenAsync(
+                         DesktopOptions.Create(store.Database, "manager"),
+                         TestContext.Current.CancellationToken))
+        {
+            MixologySession session = desktop.Services.GetRequiredService<MixologySessionFactory>()
+                .Create(Actor.Manager);
+            Func<IDesktopWorkspace> factory = IngredientsViewModel.CreateFactory(
+                desktop.Services.GetRequiredService<IngredientsModule>(),
+                desktop.Services.GetRequiredService<IngredientActionProjector>(),
+                desktop.Services.GetRequiredService<TaggedMutationCoordinator>(),
+                session,
+                Actor.Manager);
+            await using IngredientsViewModel viewModel = Assert.IsType<IngredientsViewModel>(factory());
+            await viewModel.ActivateAsync(TestContext.Current.CancellationToken);
+            viewModel.BeginCreateCommand.Execute(null);
+            viewModel.EditorName = "Desktop to TUI Vermouth";
+            viewModel.EditorCategory = "other";
+            viewModel.EditorUnit = "oz";
+            await viewModel.SubmitAsync(TestContext.Current.CancellationToken);
+            Assert.Null(viewModel.Error);
+        }
+
+        await using TuiHost host = await TuiHost.OpenAsync(
+            store.TuiOptions("anonymous"),
+            TestContext.Current.CancellationToken);
+        MixologySession tuiSession = host.Services.GetRequiredService<MixologySessionFactory>()
+            .Create(Actor.Anonymous);
+        Func<ITuiWorkspace> tuiFactory = IngredientsWorkspace.CreateFactory(
+            host.Services.GetRequiredService<IngredientsModule>(),
+            host.Services.GetRequiredService<IngredientActionProjector>(),
+            host.Services.GetRequiredService<TaggedMutationCoordinator>(),
+            tuiSession,
+            Actor.Anonymous);
+        await using IngredientsWorkspace workspace = Assert.IsType<IngredientsWorkspace>(tuiFactory());
+
+        await workspace.ActivateAsync(TestContext.Current.CancellationToken);
+        await workspace.DrainAsync();
+
+        Assert.Contains(workspace.Rows, static item => item.Name == "Desktop to TUI Vermouth");
+    }
+
     private static async Task<ProcessResult> RunCliAsync(params string[] arguments)
     {
         ProcessStartInfo start = new("dotnet")
@@ -157,6 +250,14 @@ public sealed class DesktopCrossSurfaceTests
 
         public string Database { get; }
         public string CliLog { get; }
+
+        public TuiOptions TuiOptions(string actor) => Mixology.Tui.TuiOptions.Create(
+            Database,
+            actor,
+            "error",
+            "text",
+            Path.Combine(root, $"mixology-tui-{actor}.log"),
+            metrics: false);
 
         public ValueTask DisposeAsync()
         {
