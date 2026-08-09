@@ -8,23 +8,22 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Prefixed, strongly typed IDs for drinks, ingredients, inventory, menus,
   orders, and audit entries
 - [x] Typed application errors with safe messages and CLI/HTTP/gRPC mappings
-- [x] Cursor paging primitives and complete traversal; authorized page filling
-  remains part of the query pipeline slice
+- [x] Cursor paging primitives, complete traversal, and permission-aware page filling
 - [x] Money, currency, volume/discrete measurement, tags, and quality values
 - [x] Checked filter grammar, canonical AST, exact evaluator, and safe EF pushdowns
 - [x] Shared SQLite store, initial migration, explicit session transaction, and rollback
-- [ ] Fresh operation contexts, middleware order, telemetry, and auditing
-- [ ] Cedar policies/entities through `cedar-dotnet`
-- [ ] Generated two-phase, non-cascading event dispatcher
+- [x] Fresh operation contexts, middleware order, telemetry, and atomic auditing
+- [x] Cedar policies/entities through the pinned `cedar-dotnet` source adapter
+- [x] Generated two-phase, non-cascading event dispatcher infrastructure
 
 ## Domains
 
-- [ ] Ingredients CRUD, retirement, and permanent replacement
+- [x] Ingredients CRUD, filters, retirement, and permanent-replacement intent
 - [ ] Drinks recipes, review state, substitution, and lifecycle
 - [ ] Inventory on-hand/reserved/available stock and adjustment reasons
 - [ ] Menus curation, publication, availability, analytics, and readiness
 - [ ] Orders placement, reservation, completion, cancellation, and blocking
-- [ ] Append-only audit history, actor queries, and touched resources
+- [x] Append-only audit history, actor queries, and touched resources
 - [ ] Polymorphic tags, registered target loaders, atomic tagged mutations, ABAC
 
 ## Stateful workflows

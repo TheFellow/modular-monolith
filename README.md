@@ -31,7 +31,7 @@ style warnings as errors. C# 14 is deliberate: native C# discriminated unions ar
 not available in the pinned stable toolchain, so closed unions use explicit
 record hierarchies and exhaustive pattern matching.
 
-## Planned repository shape
+## Repository shape
 
 ```text
 src/
