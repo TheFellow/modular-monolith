@@ -22,8 +22,8 @@ public sealed class OrderActionProjector(IEntityAuthorizer authorizer)
     {
         ActionControl[] collection =
         [
-            new(ListAction, ActionPermission.Public),
-            new(PlaceAction, Require(principal, OrderAuthorization.Place, PlaceResource())),
+            new(ListAction, Require(principal, OrderAuthorization.List, CollectionResource())),
+            new(PlaceAction, Require(principal, OrderAuthorization.Place, CollectionResource())),
         ];
         if (selected is null)
         {
@@ -51,7 +51,7 @@ public sealed class OrderActionProjector(IEntityAuthorizer authorizer)
     private ActionPermission Require(Actor principal, EntityUid action, Cedar.Types.Entity resource) =>
         ActionPermission.Require(token => authorizer.AuthorizeAsync(principal, action, resource, token));
 
-    private static Cedar.Types.Entity PlaceResource() => new(
+    private static Cedar.Types.Entity CollectionResource() => new(
         new EntityUid(OrderAuthorization.ResourceType, string.Empty).ToCedarUid(),
         new Cedar.Types.EntityUidSet(),
         new Cedar.Types.CedarRecord(new Dictionary<Cedar.Types.CedarString, Cedar.Types.ICedarData>

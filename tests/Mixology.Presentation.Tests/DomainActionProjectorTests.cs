@@ -64,6 +64,19 @@ public sealed class DomainActionProjectorTests
         Assert.Equal("Resolve menu readiness blockers before publishing.", publish.DisabledReason);
     }
 
+    [Fact]
+    public async Task OrderListCapabilityIsAuthorizedInsteadOfPublic()
+    {
+        RecordingAuthorizer authorizer = new(action =>
+            action == OrderAuthorization.List ? AppError.Permission("list denied") : null);
+        OrderActionProjector projector = new(authorizer);
+
+        IReadOnlyList<ActionState> states = await projector.ProjectAsync(Actor.Anonymous);
+
+        Assert.False(states.Single(state => state.Id == OrderActionProjector.ListAction).Visible);
+        Assert.True(states.Single(state => state.Id == OrderActionProjector.PlaceAction).Visible);
+    }
+
     [Theory]
     [InlineData("pending", true, true)]
     [InlineData("blocked", false, true)]
