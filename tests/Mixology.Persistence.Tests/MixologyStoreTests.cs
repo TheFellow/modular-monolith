@@ -110,7 +110,7 @@ public sealed class MixologyStoreTests
         await fixture.Store.InitializeAsync();
         await using StoreSession session = await fixture.Store.OpenSessionAsync();
 
-        AppError error = await Assert.ThrowsAsync<AppError>(() => session.CommitAsync());
+        InternalError error = await Assert.ThrowsAsync<InternalError>(() => session.CommitAsync());
 
         Assert.Equal(ErrorKind.Internal, error.Kind);
     }

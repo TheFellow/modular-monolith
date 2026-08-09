@@ -26,7 +26,7 @@ public sealed class TagTests
     [InlineData("bad\nkey=value")]
     public void ParseRejectsInvalidTags(string source)
     {
-        Assert.Throws<AppError>(() => Tag.Parse(source));
+        Assert.Throws<InvalidError>(() => Tag.Parse(source));
     }
 
     [Fact]
@@ -60,14 +60,14 @@ public sealed class TagTests
     [InlineData("featured,")]
     public void CollectionRejectsInvalidInput(string source)
     {
-        Assert.Throws<AppError>(() => TagCollection.Parse(source));
+        Assert.Throws<InvalidError>(() => TagCollection.Parse(source));
     }
 
     [Fact]
     public void LimitsCountUnicodeScalars()
     {
-        Assert.Throws<AppError>(() => Tag.Create(new string('k', Tag.MaxKeyLength + 1)));
-        Assert.Throws<AppError>(() => Tag.Create("key", new string('v', Tag.MaxValueLength + 1)));
+        Assert.Throws<InvalidError>(() => Tag.Create(new string('k', Tag.MaxKeyLength + 1)));
+        Assert.Throws<InvalidError>(() => Tag.Create("key", new string('v', Tag.MaxValueLength + 1)));
         Assert.Equal(Tag.MaxKeyLength, Tag.Create(string.Concat(Enumerable.Repeat("😀", Tag.MaxKeyLength))).Key.EnumerateRunes().Count());
     }
 }

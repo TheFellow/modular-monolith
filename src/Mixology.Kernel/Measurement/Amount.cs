@@ -51,7 +51,7 @@ public sealed record VolumeAmount(Quantity Quantity) : Amount
 
     public override string ToString() => Quantity.ToString();
 
-    private AppError Mismatch(Amount? other) => other is null
+    private InvalidError Mismatch(Amount? other) => other is null
         ? AppError.Invalid("amount is empty")
         : AppError.Invalid($"unit mismatch: {Unit} vs {other.Unit}");
 }
@@ -82,7 +82,7 @@ public sealed record DiscreteAmount(DiscreteQuantity Quantity) : Amount
 
     public override string ToString() => Quantity.ToString();
 
-    private AppError Mismatch(Amount? other) => other is null
+    private InvalidError Mismatch(Amount? other) => other is null
         ? AppError.Invalid("amount is empty")
         : AppError.Invalid($"unit mismatch: {Unit} vs {other.Unit}");
 }

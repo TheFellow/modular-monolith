@@ -49,7 +49,7 @@ public sealed class MeasurementTests
         Amount dash = Amount.Create(1d, Unit.Dash);
         Amount piece = Amount.Create(1d, Unit.Piece);
 
-        AppError error = Assert.Throws<AppError>(() => dash.Add(piece));
+        InvalidError error = Assert.Throws<InvalidError>(() => dash.Add(piece));
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }
 
@@ -70,7 +70,6 @@ public sealed class MeasurementTests
     [InlineData("unknown")]
     public void UnitRejectsInvalidValue(string source)
     {
-        Assert.Throws<AppError>(() => Unit.Parse(source));
+        Assert.Throws<InvalidError>(() => Unit.Parse(source));
     }
 }
-

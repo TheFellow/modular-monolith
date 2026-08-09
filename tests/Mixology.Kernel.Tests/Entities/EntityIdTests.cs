@@ -34,7 +34,7 @@ public sealed class EntityIdTests
     {
         string ingredient = IngredientId.New().Value;
 
-        AppError error = Assert.Throws<AppError>(() => DrinkId.Parse(ingredient));
+        InvalidError error = Assert.Throws<InvalidError>(() => DrinkId.Parse(ingredient));
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }
 
@@ -47,7 +47,7 @@ public sealed class EntityIdTests
     [InlineData("drk-zzzzzzzzzzzzzzzzzzzzzzzzzzz")]
     public void PrefixInferenceRejectsInvalidIds(string value)
     {
-        AppError error = Assert.Throws<AppError>(() => EntityIds.Parse(value));
+        InvalidError error = Assert.Throws<InvalidError>(() => EntityIds.Parse(value));
 
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }
@@ -63,4 +63,3 @@ public sealed class EntityIdTests
         Assert.Equal(EntityIds.DrinkType, id.EntityUid.Type);
     }
 }
-

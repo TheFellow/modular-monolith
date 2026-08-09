@@ -189,5 +189,5 @@ internal sealed class FilterTypeChecker<T>(FilterSchema<T> schema)
         }
     }
 
-    private static AppError Invalid(string message) => AppError.Invalid($"invalid filter: {message}");
+    private static InvalidError Invalid(string message) => AppError.Invalid($"invalid filter: {message}");
 }

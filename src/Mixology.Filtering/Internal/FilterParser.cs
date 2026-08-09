@@ -236,5 +236,5 @@ internal sealed class FilterParser(string source)
     }
 
     private void Advance() => current = lexer.Next();
-    private AppError Invalid(string message) => AppError.Invalid($"invalid filter at {current.Position}: {message}");
+    private InvalidError Invalid(string message) => AppError.Invalid($"invalid filter at {current.Position}: {message}");
 }

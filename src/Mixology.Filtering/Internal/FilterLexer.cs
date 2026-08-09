@@ -159,5 +159,5 @@ internal sealed class FilterLexer(string source)
 
     private static bool IsIdentifierStart(char value) => char.IsLetter(value) || value == '_';
     private static bool IsIdentifierPart(char value) => char.IsLetterOrDigit(value) || value == '_';
-    private static AppError Invalid(string message, int at) => AppError.Invalid($"invalid filter at {at}: {message}");
+    private static InvalidError Invalid(string message, int at) => AppError.Invalid($"invalid filter at {at}: {message}");
 }

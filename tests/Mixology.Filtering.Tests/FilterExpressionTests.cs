@@ -65,7 +65,7 @@ public sealed class FilterExpressionTests
     [InlineData("Age > duration(\"soon\")")]
     public void InvalidExpressionsFailBeforeEvaluation(string source)
     {
-        AppError error = Assert.Throws<AppError>(() => Filter.Parse(Schema, source));
+        InvalidError error = Assert.Throws<InvalidError>(() => Filter.Parse(Schema, source));
 
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }

@@ -147,7 +147,6 @@ public readonly record struct Price
     private static bool LooksLikeCurrencyCode(string value) =>
         value.Length == 3 && value.All(char.IsLetter);
 
-    private static AppError InvalidPrice(string raw) =>
+    private static InvalidError InvalidPrice(string raw) =>
         AppError.Invalid($"invalid price \"{raw}\" (expected \"$1.23\" or \"USD 1.23\" or \"1.23 USD\")");
 }
-

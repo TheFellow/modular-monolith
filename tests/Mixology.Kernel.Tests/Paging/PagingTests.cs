@@ -26,7 +26,7 @@ public sealed class PagingTests
     [Fact]
     public void RequestRejectsNonPositiveLimit()
     {
-        AppError error = Assert.Throws<AppError>(() => new PageRequest(default, 0).Validate());
+        InvalidError error = Assert.Throws<InvalidError>(() => new PageRequest(default, 0).Validate());
 
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }

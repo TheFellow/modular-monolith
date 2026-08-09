@@ -61,5 +61,31 @@ public sealed class AppErrorTests
 
         Assert.Same(cause, error.InnerException);
     }
-}
 
+    [Fact]
+    public void EveryKindHasAPreciseRuntimeType()
+    {
+        Assert.IsType<InvalidError>(AppError.Invalid("invalid"));
+        Assert.IsType<NotFoundError>(AppError.NotFound("missing"));
+        Assert.IsType<PermissionError>(AppError.Permission("denied"));
+        Assert.IsType<ConflictError>(AppError.Conflict("duplicate"));
+        Assert.IsType<FailedPreconditionError>(AppError.FailedPrecondition("not ready"));
+        Assert.IsType<InternalError>(AppError.Internal("broken"));
+        Assert.IsType<InternalError>(AppError.Internal("broken").WithUserMessage("try again"));
+    }
+
+    [Fact]
+    public void TypedClassificationTraversesWrappedAndJoinedErrors()
+    {
+        NotFoundError missing = AppError.NotFound("ingredient missing").WithUserMessage("not here");
+        AggregateException joined = new(
+            new IOException("unrelated"),
+            new InvalidOperationException("outer", missing));
+
+        Assert.True(AppError.IsNotFound(joined));
+        Assert.False(AppError.IsPermission(joined));
+        Assert.Same(missing, AppError.Find<NotFoundError>(joined));
+        Assert.Same(missing, AppError.Find(joined));
+        Assert.Equal("not here", missing.UserMessage);
+    }
+}

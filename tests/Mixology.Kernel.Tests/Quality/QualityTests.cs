@@ -17,7 +17,7 @@ public sealed class QualityTests
     [Fact]
     public void UnknownValueIsInvalid()
     {
-        AppError error = Assert.Throws<AppError>(() => QualityValue.Parse("bad"));
+        InvalidError error = Assert.Throws<InvalidError>(() => QualityValue.Parse("bad"));
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }
 }

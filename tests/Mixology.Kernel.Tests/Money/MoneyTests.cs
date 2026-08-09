@@ -18,7 +18,7 @@ public sealed class MoneyTests
     [Fact]
     public void CurrencyRejectsUnknownCode()
     {
-        AppError error = Assert.Throws<AppError>(() => Currency.Parse("unknown"));
+        InvalidError error = Assert.Throws<InvalidError>(() => Currency.Parse("unknown"));
         Assert.Equal(ErrorKind.Invalid, error.Kind);
     }
 
@@ -51,7 +51,7 @@ public sealed class MoneyTests
     [InlineData("XYZ 1.23")]
     public void PriceRejectsMalformedValues(string source)
     {
-        Assert.Throws<AppError>(() => Price.Parse(source));
+        Assert.Throws<InvalidError>(() => Price.Parse(source));
     }
 
     [Theory]
@@ -71,7 +71,7 @@ public sealed class MoneyTests
 
         Assert.Equal(250, oneDollar.Multiply(2.5m).Cents());
         Assert.Equal(200, oneDollar.Add(oneDollar).Cents());
-        Assert.Throws<AppError>(() => oneDollar.Add(Price.FromCents(100, Currency.Eur)));
+        Assert.Throws<InvalidError>(() => oneDollar.Add(Price.FromCents(100, Currency.Eur)));
     }
 
     [Fact]
@@ -80,4 +80,3 @@ public sealed class MoneyTests
         Assert.Equal(334, Price.FromCents(100, Currency.Usd).SuggestedPrice(0.70d).Cents());
     }
 }
-
