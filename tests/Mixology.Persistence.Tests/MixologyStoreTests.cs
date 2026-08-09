@@ -3,6 +3,8 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Mixology.Kernel.Errors;
+using Mixology.Migrations;
+using Mixology.Modules.Audit;
 using Xunit;
 
 namespace Mixology.Persistence.Tests;
@@ -20,7 +22,10 @@ public sealed class MixologyStoreTests
         Assert.True(File.Exists(fixture.DatabasePath));
         await using StoreSession session = await fixture.Store.OpenSessionAsync();
         Assert.Equal(1L, await ScalarAsync<long>(session.Context, "SELECT COUNT(*) FROM store_metadata"));
-        Assert.Equal(1L, await ScalarAsync<long>(session.Context, "SELECT COUNT(*) FROM __EFMigrationsHistory"));
+        string[] discovered = session.Context.Database.GetMigrations().ToArray();
+        string[] applied = (await session.Context.Database.GetAppliedMigrationsAsync()).ToArray();
+        Assert.NotEmpty(discovered);
+        Assert.Equal(discovered, applied);
         Assert.Equal("wal", await ScalarAsync<string>(session.Context, "PRAGMA journal_mode"));
         Assert.Equal(1L, await ScalarAsync<long>(session.Context, "PRAGMA foreign_keys"));
     }
@@ -143,7 +148,8 @@ public sealed class MixologyStoreTests
             root = Path.Combine(Path.GetTempPath(), "mixology-tests", Guid.NewGuid().ToString("N"));
             DatabasePath = Path.Combine(root, "nested", "mixology.db");
             ServiceCollection collection = new();
-            collection.AddMixologyPersistence(DatabasePath);
+            collection.AddMixologyPersistence(DatabasePath, typeof(MigrationAssemblyMarker).Assembly);
+            collection.AddAuditModule();
             services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

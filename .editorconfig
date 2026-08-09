@@ -23,9 +23,11 @@ dotnet_diagnostic.CA1711.severity = none
 dotnet_diagnostic.CA1720.severity = none
 dotnet_diagnostic.CA1822.severity = suggestion
 
+[**/Migrations/*.cs]
+generated_code = true
+
 [*.{csproj,props,targets,slnx,xml}]
 indent_size = 2
 
 [*.{yml,yaml}]
 indent_size = 2
-

@@ -16,10 +16,9 @@ public sealed record StoreSettings
     {
         DataSource = DatabasePath,
         Mode = SqliteOpenMode.ReadWriteCreate,
-        Cache = SqliteCacheMode.Shared,
+        Cache = SqliteCacheMode.Default,
         ForeignKeys = true,
         DefaultTimeout = 5,
         Pooling = true,
     }.ToString();
 }
-

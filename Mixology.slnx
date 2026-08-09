@@ -1,10 +1,12 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Mixology.Kernel/Mixology.Kernel.csproj" />
+    <Project Path="src/Mixology.Migrations/Mixology.Migrations.csproj" />
     <Project Path="src/Mixology.Application/Mixology.Application.csproj" />
     <Project Path="src/Mixology.Filtering/Mixology.Filtering.csproj" />
     <Project Path="src/Mixology.Persistence/Mixology.Persistence.csproj" />
     <Project Path="src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
+    <Project Path="src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -12,6 +14,7 @@
     <Project Path="tests/Mixology.Cli.Tests/Mixology.Cli.Tests.csproj" />
     <Project Path="tests/Mixology.Filtering.Tests/Mixology.Filtering.Tests.csproj" />
     <Project Path="tests/Mixology.Dispatcher.Tests/Mixology.Dispatcher.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Audit.Tests/Mixology.Modules.Audit.Tests.csproj" />
     <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
     <Project Path="tests/Mixology.Persistence.Tests/Mixology.Persistence.Tests.csproj" />
   </Folder>

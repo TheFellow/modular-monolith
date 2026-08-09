@@ -14,7 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <ProjectReference Include="../../src/Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../../src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <ProjectReference Include="../../src/Mixology.Migrations/Mixology.Migrations.csproj" />
   </ItemGroup>
 </Project>

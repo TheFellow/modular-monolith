@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -30,9 +31,10 @@ public static class ApplicationServiceCollectionExtensions
 
     public static IHostApplicationBuilder AddMixology(
         this IHostApplicationBuilder builder,
-        string databasePath)
+        string databasePath,
+        Assembly migrationsAssembly)
     {
-        builder.Services.AddMixologyPersistence(databasePath);
+        builder.Services.AddMixologyPersistence(databasePath, migrationsAssembly);
         builder.Services.AddMixologyApplication();
         return builder;
     }

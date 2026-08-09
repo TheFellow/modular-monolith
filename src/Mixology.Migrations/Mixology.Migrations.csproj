@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>EF Core migrations and design-time model composition for Mixology.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <ProjectReference Include="../Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
+    <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
+  </ItemGroup>
+</Project>

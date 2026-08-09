@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Mixology.Persistence.Migrations;
+namespace Mixology.Migrations.Migrations;
 
 /// <inheritdoc />
 public partial class InitialStore : Migration

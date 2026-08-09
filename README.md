@@ -23,7 +23,7 @@ dotnet format Mixology.slnx --verify-no-changes --no-restore
 dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
   --manifest src/Mixology.Dispatcher/dispatcher.routes.json \
   --output src/Mixology.Dispatcher/Generated/DomainEventDispatcher.g.cs --check
-dotnet ef migrations has-pending-model-changes --project src/Mixology.Persistence --no-build
+dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations --no-build
 ```
 
 The repository pins the .NET 10 SDK and treats compiler, analyzer, and configured
@@ -39,6 +39,7 @@ src/
   Mixology.Application/            host composition and sessions
   Mixology.Filtering/              checked filter AST and LINQ translation
   Mixology.Persistence/            EF Core and SQLite unit of work
+  Mixology.Migrations/             design-time model and checked-in migrations
   Mixology.Authorization.Cedar/    cedar-dotnet adapter
   Mixology.Modules.*/              seven bounded contexts
   Mixology.Dispatcher/             generated event routing

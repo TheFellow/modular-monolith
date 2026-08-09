@@ -8,7 +8,7 @@ using Mixology.Persistence;
 
 #nullable disable
 
-namespace Mixology.Persistence.Migrations
+namespace Mixology.Migrations.Migrations
 {
     [DbContext(typeof(MixologyDbContext))]
     [Migration("20260809200033_InitialStore")]
