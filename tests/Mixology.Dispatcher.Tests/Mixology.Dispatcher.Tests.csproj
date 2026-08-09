@@ -14,9 +14,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <ProjectReference Include="../../src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <ProjectReference Include="../../src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
+    <ProjectReference Include="../../src/Mixology.Modules.Orders/Mixology.Modules.Orders.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
     <ProjectReference Include="../../tools/Mixology.DispatchGenerator/Mixology.DispatchGenerator.csproj" />
   </ItemGroup>

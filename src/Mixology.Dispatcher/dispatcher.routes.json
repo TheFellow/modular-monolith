@@ -31,6 +31,14 @@
         {
           "type": "Mixology.Modules.Menus.Handlers.IngredientDeletedHandler",
           "prepare": true
+        },
+        {
+          "type": "Mixology.Modules.Inventory.Handlers.IngredientDeletedHandler",
+          "prepare": false
+        },
+        {
+          "type": "Mixology.Modules.Orders.Handlers.IngredientDeletedHandler",
+          "prepare": false
         }
       ]
     },
@@ -53,6 +61,10 @@
         {
           "type": "Mixology.Modules.Menus.Handlers.StockAdjustedHandler",
           "prepare": false
+        },
+        {
+          "type": "Mixology.Modules.Orders.Handlers.StockAdjustedHandler",
+          "prepare": false
         }
       ]
     },
@@ -61,6 +73,45 @@
       "handlers": [
         {
           "type": "Mixology.Modules.Menus.Handlers.MenuPublishedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Orders.Events.OrderPlaced",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Inventory.Handlers.OrderPlacedHandler",
+          "prepare": false
+        },
+        {
+          "type": "Mixology.Modules.Menus.Handlers.OrderPlacedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Orders.Events.OrderCompleted",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Inventory.Handlers.OrderCompletedHandler",
+          "prepare": false
+        },
+        {
+          "type": "Mixology.Modules.Menus.Handlers.OrderCompletedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Orders.Events.OrderCancelled",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Inventory.Handlers.OrderCancelledHandler",
+          "prepare": false
+        },
+        {
+          "type": "Mixology.Modules.Menus.Handlers.OrderCancelledHandler",
           "prepare": false
         }
       ]

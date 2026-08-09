@@ -30,9 +30,9 @@ requires production-shaped tests, not only a matching type or method name.
 ## Stateful workflows
 
 - [x] Placement captures an immutable ingredient-usage snapshot with substitution planning
-- [ ] Placement reserves that snapshot atomically
-- [ ] Completion consumes reservations; cancellation releases them
-- [ ] Shortage blocks every affected pending order; restock unblocks it
+- [x] Placement reserves that snapshot atomically
+- [x] Completion consumes reservations; cancellation releases them
+- [x] Shortage blocks every affected pending order; restock unblocks it
 - [x] Retirement rewrites only compatible explicit replacements
 - [x] Required retired references cause review; optional references disappear
 - [x] Accepted order ingredient names and amounts remain historical truth

@@ -29,6 +29,9 @@ using Mixology.Modules.Menus.Handlers;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Ports;
 using Mixology.Modules.Menus.Requests;
+using Mixology.Modules.Orders;
+using Mixology.Modules.Orders.Events;
+using Mixology.Modules.Orders.Models;
 using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 using Xunit;
@@ -195,6 +198,48 @@ public sealed class MenuEventHandlerTests
     }
 
     [Fact]
+    public async Task OrderLifecycleRecalculatesPublishedMenusAndEmptyCompletionIsANoop()
+    {
+        await using Fixture fixture = await Fixture.CreateAsync();
+        Ingredient ingredient = await fixture.IngredientAsync("Ingredient");
+        Drink drink = await fixture.DrinkAsync("Drink", ingredient.Id);
+        Menu menu = await fixture.MenuAsync("Menu", drink.Id);
+        await fixture.SetStateAsync(menu.Id, MenuStatus.Published, Availability.Available);
+        Order order = new(
+            OrderId.New(),
+            menu.Id,
+            [new OrderItem(drink.Id, 1, string.Empty)],
+            [new IngredientUsage(ingredient.Id, ingredient.Name, Amount.Create(1d, Unit.Ounce))],
+            [],
+            OrderStatus.Pending,
+            fixture.Now,
+            null,
+            string.Empty,
+            null,
+            TagCollection.Empty);
+
+        fixture.Availability.Set(drink.Id, Availability.Unavailable);
+        DispatchResult placed = await fixture.DispatchAsync(new OrderPlaced(order));
+        Assert.Equal(Availability.Unavailable, Item(await fixture.GetAsync(menu.Id), drink.Id).Availability);
+        Assert.Equal([menu.EntityUid], placed.Touches);
+
+        fixture.Availability.Set(drink.Id, Availability.Available);
+        DispatchResult cancelled = await fixture.DispatchAsync(new OrderCancelled(order));
+        Assert.Equal(Availability.Available, Item(await fixture.GetAsync(menu.Id), drink.Id).Availability);
+        Assert.Equal([menu.EntityUid], cancelled.Touches);
+
+        fixture.Availability.Set(drink.Id, Availability.Unavailable);
+        DispatchResult empty = await fixture.DispatchAsync(new OrderCompleted(order with { IngredientUsage = [] }));
+        Assert.Equal(Availability.Available, Item(await fixture.GetAsync(menu.Id), drink.Id).Availability);
+        Assert.Empty(empty.Touches);
+
+        DispatchResult completed = await fixture.DispatchAsync(new OrderCompleted(order));
+        Assert.Equal(Availability.Unavailable, Item(await fixture.GetAsync(menu.Id), drink.Id).Availability);
+        Assert.Equal([menu.EntityUid], completed.Touches);
+        Assert.All(new[] { placed, cancelled, empty, completed }, result => Assert.Equal(1, result.EventCount));
+    }
+
+    [Fact]
     public async Task PersistenceFailuresRetainTypedHandlerContext()
     {
         await using Fixture fixture = await Fixture.CreateAsync();
@@ -282,12 +327,13 @@ public sealed class MenuEventHandlerTests
                 Path.Combine(root, "mixology.db"),
                 typeof(MigrationAssemblyMarker).Assembly);
             collection.AddMixologyApplication();
-            collection.AddTaggingModule();
             collection.AddAuditModule();
             collection.AddIngredientsModule();
-            collection.AddInventoryModule();
             collection.AddDrinksModule();
+            collection.AddInventoryModule();
             collection.AddMenusModule();
+            collection.AddOrdersModule();
+            collection.AddTaggingModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,
@@ -453,6 +499,15 @@ public sealed class MenuEventHandlerTests
                     break;
                 case MenuPublished published:
                     await new MenuPublishedHandler(operations).HandleAsync(context, published);
+                    break;
+                case OrderPlaced placed:
+                    await new OrderPlacedHandler(operations).HandleAsync(context, placed);
+                    break;
+                case OrderCompleted completed:
+                    await new OrderCompletedHandler(operations).HandleAsync(context, completed);
+                    break;
+                case OrderCancelled cancelled:
+                    await new OrderCancelledHandler(operations).HandleAsync(context, cancelled);
                     break;
                 default:
                     throw new InvalidOperationException($"Unexpected event {domainEvent.GetType().Name}.");

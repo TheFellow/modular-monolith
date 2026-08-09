@@ -50,6 +50,14 @@ internal static class MenuEventPersistence
             "load prepared menus");
     }
 
+    public static Task<MenuRow[]> LoadPublishedAsync(EventHandlerContext context) =>
+        LoadAsync(
+            context,
+            static query => query,
+            publishedOnly: true,
+            tracking: true,
+            "load published menus");
+
     private static async Task<MenuRow[]> LoadAsync(
         EventHandlerContext context,
         Func<IQueryable<MenuRow>, IQueryable<MenuRow>> filter,

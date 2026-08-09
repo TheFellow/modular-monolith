@@ -159,6 +159,10 @@ public sealed class CliApplicationTests
         StringWriter menuShowOutput = new();
         StringWriter orderOutput = new();
         StringWriter orderGetOutput = new();
+        StringWriter reservedInventoryOutput = new();
+        StringWriter releasedInventoryOutput = new();
+        StringWriter completedInventoryOutput = new();
+        StringWriter secondOrderOutput = new();
         StringWriter tagOutput = new();
         StringWriter error = new();
 
@@ -248,6 +252,43 @@ public sealed class CliApplicationTests
                 "--actor", "sommelier",
                 "orders", "get", "--id", orderId, "--json",
             ]).InvokeAsync();
+            int reservedInventoryExit = await CliApplication.Build(reservedInventoryOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "inventory", "get", "--ingredient-id", ingredientId, "--json",
+            ]).InvokeAsync();
+            int cancelExit = await CliApplication.Build(TextWriter.Null, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "orders", "cancel", "--id", orderId,
+            ]).InvokeAsync();
+            int releasedInventoryExit = await CliApplication.Build(releasedInventoryOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "inventory", "get", "--ingredient-id", ingredientId, "--json",
+            ]).InvokeAsync();
+            int secondOrderExit = await CliApplication.Build(secondOrderOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "orders", "place", "--menu-id", menuId, $"{drinkId}:1",
+            ]).InvokeAsync();
+            string secondOrderId = secondOrderOutput.ToString().Trim();
+            int completeExit = await CliApplication.Build(TextWriter.Null, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "orders", "complete", "--id", secondOrderId,
+            ]).InvokeAsync();
+            int completedInventoryExit = await CliApplication.Build(completedInventoryOutput, error).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "inventory", "get", "--ingredient-id", ingredientId, "--json",
+            ]).InvokeAsync();
             int addTagExit = await CliApplication.Build(TextWriter.Null, error).Parse(
             [
                 "--db", database,
@@ -276,6 +317,12 @@ public sealed class CliApplicationTests
             Assert.Equal(0, showMenuExit);
             Assert.Equal(0, orderExit);
             Assert.Equal(0, getOrderExit);
+            Assert.Equal(0, reservedInventoryExit);
+            Assert.Equal(0, cancelExit);
+            Assert.Equal(0, releasedInventoryExit);
+            Assert.Equal(0, secondOrderExit);
+            Assert.Equal(0, completeExit);
+            Assert.Equal(0, completedInventoryExit);
             Assert.Equal(0, addTagExit);
             Assert.Equal(0, listTagExit);
             Assert.Equal(0, listExit);
@@ -303,6 +350,16 @@ public sealed class CliApplicationTests
                 ingredientId,
                 orderDocument.RootElement.GetProperty("ingredientUsage")[0]
                     .GetProperty("ingredientId").GetString());
+            using JsonDocument reservedDocument = JsonDocument.Parse(reservedInventoryOutput.ToString());
+            Assert.Equal(12d, reservedDocument.RootElement.GetProperty("quantity").GetDouble());
+            Assert.Equal(2d, reservedDocument.RootElement.GetProperty("reserved").GetDouble());
+            Assert.Equal(10d, reservedDocument.RootElement.GetProperty("available").GetDouble());
+            using JsonDocument releasedDocument = JsonDocument.Parse(releasedInventoryOutput.ToString());
+            Assert.Equal(12d, releasedDocument.RootElement.GetProperty("quantity").GetDouble());
+            Assert.Equal(0d, releasedDocument.RootElement.GetProperty("reserved").GetDouble());
+            using JsonDocument completedDocument = JsonDocument.Parse(completedInventoryOutput.ToString());
+            Assert.Equal(10d, completedDocument.RootElement.GetProperty("quantity").GetDouble());
+            Assert.Equal(0d, completedDocument.RootElement.GetProperty("reserved").GetDouble());
             using JsonDocument tagDocument = JsonDocument.Parse(tagOutput.ToString());
             Assert.Equal(
                 "source=cli",

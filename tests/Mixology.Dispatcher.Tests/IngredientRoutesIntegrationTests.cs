@@ -11,6 +11,7 @@ using Mixology.Application.Operations;
 using Mixology.Kernel.Entities;
 using Mixology.Kernel.Errors;
 using Mixology.Kernel.Measurement;
+using Mixology.Modules.Audit;
 using Mixology.Modules.Drinks;
 using Mixology.Modules.Drinks.Models;
 using Mixology.Modules.Drinks.Requests;
@@ -20,6 +21,7 @@ using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
 using Mixology.Modules.Inventory;
 using Mixology.Modules.Menus;
+using Mixology.Modules.Orders;
 using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 
@@ -138,10 +140,12 @@ public sealed class IngredientRoutesIntegrationTests
             collection.AddLogging();
             collection.AddMixologyPersistence(Path.Combine(root, "mixology.db"), typeof(Fixture).Assembly);
             collection.AddMixologyApplication();
+            collection.AddAuditModule();
             collection.AddIngredientsModule();
             collection.AddDrinksModule();
             collection.AddInventoryModule();
             collection.AddMenusModule();
+            collection.AddOrdersModule();
             collection.AddTaggingModule();
             collection.Replace(ServiceDescriptor.Singleton<IActivityRecorder, NoopActivityRecorder>());
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions

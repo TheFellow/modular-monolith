@@ -46,6 +46,15 @@ public sealed class DomainEventDispatcher : IDomainEventDispatcher
             case global::Mixology.Modules.Menus.Events.MenuPublished typedEvent:
                 await DispatchRoute5Async(context, typedEvent).ConfigureAwait(false);
                 return;
+            case global::Mixology.Modules.Orders.Events.OrderCancelled typedEvent:
+                await DispatchRoute6Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Orders.Events.OrderCompleted typedEvent:
+                await DispatchRoute7Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Orders.Events.OrderPlaced typedEvent:
+                await DispatchRoute8Async(context, typedEvent).ConfigureAwait(false);
+                return;
             default:
                 logger.LogDebug("Unhandled domain event {EventType}", domainEvent.GetType().FullName);
                 return;
@@ -73,12 +82,18 @@ public sealed class DomainEventDispatcher : IDomainEventDispatcher
         await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
         IPreparingDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler0 =
             ActivatorUtilities.CreateInstance<global::Mixology.Modules.Drinks.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
-        IPreparingDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler1 =
+        IDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Inventory.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
+        IPreparingDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler2 =
             ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
+        IDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler3 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Orders.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
         await handler0.PrepareAsync(context, domainEvent).ConfigureAwait(false);
-        await handler1.PrepareAsync(context, domainEvent).ConfigureAwait(false);
+        await handler2.PrepareAsync(context, domainEvent).ConfigureAwait(false);
         await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
         await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler2.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler3.HandleAsync(context, domainEvent).ConfigureAwait(false);
     }
 
     private async Task DispatchRoute3Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientUpdated domainEvent)
@@ -97,7 +112,10 @@ public sealed class DomainEventDispatcher : IDomainEventDispatcher
         await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
         IDomainEventHandler<global::Mixology.Modules.Inventory.Events.StockAdjusted> handler0 =
             ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.StockAdjustedHandler>(scope.ServiceProvider);
+        IDomainEventHandler<global::Mixology.Modules.Inventory.Events.StockAdjusted> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Orders.Handlers.StockAdjustedHandler>(scope.ServiceProvider);
         await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
     }
 
     private async Task DispatchRoute5Async(EventHandlerContext context, global::Mixology.Modules.Menus.Events.MenuPublished domainEvent)
@@ -106,5 +124,38 @@ public sealed class DomainEventDispatcher : IDomainEventDispatcher
         IDomainEventHandler<global::Mixology.Modules.Menus.Events.MenuPublished> handler0 =
             ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.MenuPublishedHandler>(scope.ServiceProvider);
         await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute6Async(EventHandlerContext context, global::Mixology.Modules.Orders.Events.OrderCancelled domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Orders.Events.OrderCancelled> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Inventory.Handlers.OrderCancelledHandler>(scope.ServiceProvider);
+        IDomainEventHandler<global::Mixology.Modules.Orders.Events.OrderCancelled> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.OrderCancelledHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute7Async(EventHandlerContext context, global::Mixology.Modules.Orders.Events.OrderCompleted domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Orders.Events.OrderCompleted> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Inventory.Handlers.OrderCompletedHandler>(scope.ServiceProvider);
+        IDomainEventHandler<global::Mixology.Modules.Orders.Events.OrderCompleted> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.OrderCompletedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute8Async(EventHandlerContext context, global::Mixology.Modules.Orders.Events.OrderPlaced domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Orders.Events.OrderPlaced> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Inventory.Handlers.OrderPlacedHandler>(scope.ServiceProvider);
+        IDomainEventHandler<global::Mixology.Modules.Orders.Events.OrderPlaced> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.OrderPlacedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
     }
 }
