@@ -4,6 +4,7 @@ using Mixology.Authorization.Cedar;
 using Mixology.Modules.Menus.Queries;
 using Mixology.Modules.Orders.Authorization;
 using Mixology.Modules.Orders.Persistence;
+using Mixology.Modules.Orders.Presentation;
 using Mixology.Modules.Orders.Queries;
 using Mixology.Modules.Orders.Tagging;
 using Mixology.Modules.Tagging.Models;
@@ -19,6 +20,7 @@ public static class OrderServiceCollectionExtensions
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ICedarAuthorizationModule, OrderCedarAuthorizationModule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IModuleModelConfiguration, OrderModelConfiguration>());
         services.TryAddSingleton<OrdersModule>();
+        services.TryAddSingleton<OrderActionProjector>();
         services.TryAddSingleton<OrderQueries>();
         services.TryAddSingleton<MenuQueries>();
         services.TryAddEnumerable(

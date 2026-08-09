@@ -7,6 +7,7 @@ using Mixology.Modules.Inventory.Queries;
 using Mixology.Modules.Menus.Authorization;
 using Mixology.Modules.Menus.Persistence;
 using Mixology.Modules.Menus.Ports;
+using Mixology.Modules.Menus.Presentation;
 using Mixology.Modules.Menus.Queries;
 using Mixology.Modules.Menus.Tagging;
 using Mixology.Modules.Tagging.Models;
@@ -29,6 +30,7 @@ public static class MenuServiceCollectionExtensions
         services.TryAddSingleton<IMenuOperations, MenuOperations>();
         services.TryAddSingleton<MenuQueries>();
         services.TryAddSingleton<MenusModule>();
+        services.TryAddSingleton<MenuActionProjector>();
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<ITagTargetRegistrationProvider, MenuTagTarget>());
         return services;

@@ -15,6 +15,8 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Fresh operation contexts, middleware order, telemetry, and atomic auditing
 - [x] Cedar policies/entities through the pinned `cedar-dotnet` source adapter
 - [x] Generated two-phase, non-cascading event dispatcher infrastructure
+- [x] Toolkit-neutral action projection with independent Cedar capabilities,
+  lifecycle conditions, and authorization-filtered navigation
 
 ## Domains
 
@@ -47,6 +49,7 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] CLI Tags parity
 - [x] Standalone canonical seed through authorized, audited public module APIs
 - [x] CLI logging and metrics parity
+- [x] Independent dashboard aggregates, recent activity, and CLI status text/JSON
 - [ ] TUI workspace, forms, dialogs, keys, paging, async, and authorization parity
 - [ ] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
 - [ ] Real cross-process writes are observable through every other surface

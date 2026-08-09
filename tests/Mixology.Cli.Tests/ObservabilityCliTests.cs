@@ -60,7 +60,7 @@ public sealed class ObservabilityCliTests
             ]).InvokeAsync();
 
             Assert.Equal(0, textExit);
-            Assert.Equal("Mixology foundation is ready.", textOutput.ToString().Trim());
+            Assert.Contains("DRINKS\tINGREDIENTS\tINVENTORY", textOutput.ToString(), StringComparison.Ordinal);
             Assert.Empty(textError.ToString());
             Assert.Contains("[INF]", await File.ReadAllTextAsync(textLog), StringComparison.Ordinal);
         }
@@ -148,7 +148,7 @@ public sealed class ObservabilityCliTests
                 ]).InvokeAsync();
 
                 Assert.Equal(0, exitCode);
-                Assert.Equal("Mixology foundation is ready.", output.ToString().Trim());
+                Assert.Contains("DRINKS\tINGREDIENTS\tINVENTORY", output.ToString(), StringComparison.Ordinal);
                 Assert.Empty(error.ToString());
             }
         }

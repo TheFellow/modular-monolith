@@ -39,8 +39,9 @@ full. Counts and cursors describe only visible results.
 
 - Kernel and shared infrastructure reference no domain or presentation project.
 - A module consumes only another module's public models, queries, or events.
+- Presentation composes public module capabilities and read models without a UI
+  toolkit; executables and future surfaces depend on it, never the reverse.
 - Toolkits reference neither application modules nor sibling toolkits.
 - A domain surface references its matching toolkit and public application API.
 - Executables compose modules and surfaces but contain no business rules.
 - Architecture tests and project references make these rules executable.
-

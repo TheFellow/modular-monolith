@@ -1,5 +1,7 @@
 using System.CommandLine;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -33,10 +35,13 @@ using Mixology.Modules.Orders.Requests;
 using Mixology.Modules.Tagging;
 using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
+using Mixology.Presentation;
+using Mixology.Presentation.Dashboard;
 using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
+using DashboardData = Mixology.Presentation.Dashboard.Dashboard;
 
 namespace Mixology.Cli;
 
@@ -176,14 +181,16 @@ public static class CliApplication
             output,
             error);
 
-        Command status = new("status", "Initialize storage and report foundation readiness.");
+        Option<bool> statusJson = new("--json") { Description = "Write the dashboard as JSON." };
+        Command status = new("status", "Show the application dashboard aggregate.");
+        status.Options.Add(statusJson);
         status.SetAction(async (parseResult, cancellationToken) =>
         {
             try
             {
                 string databasePath = parseResult.GetValue(database)
                     ?? throw AppError.Invalid("database path is required");
-                _ = Actor.Parse(parseResult.GetValue(actor));
+                Actor principal = Actor.Parse(parseResult.GetValue(actor));
                 CliHostOptions hostOptions = CliHostOptions.Create(
                     parseResult.GetValue(logLevel),
                     parseResult.GetValue(logFormat),
@@ -193,7 +200,27 @@ public static class CliApplication
                     databasePath,
                     hostOptions,
                     cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Mixology foundation is ready.").ConfigureAwait(false);
+                MixologySession session = host.Services.GetRequiredService<MixologySessionFactory>().Create(principal);
+                DashboardResult dashboard = await host.Services.GetRequiredService<DashboardService>()
+                    .LoadAsync(session, cancellationToken).ConfigureAwait(false);
+                if (dashboard.Error is not null)
+                {
+                    return await CliErrorAdapter.WriteAsync(error, dashboard.Error).ConfigureAwait(false);
+                }
+
+                if (parseResult.GetValue(statusJson))
+                {
+                    JsonSerializerOptions options = new()
+                    {
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        WriteIndented = true,
+                    };
+                    await output.WriteLineAsync(JsonSerializer.Serialize(dashboard.Data, options)).ConfigureAwait(false);
+                    return 0;
+                }
+
+                await WriteDashboardAsync(output, dashboard.Data).ConfigureAwait(false);
                 return 0;
             }
             catch (Exception exception)
@@ -211,6 +238,30 @@ public static class CliApplication
         root.Subcommands.Add(AuditCommands.Build(auditContext));
         root.Subcommands.Add(TagsCommands.Build(tagsContext));
         return root;
+    }
+
+    private static async Task WriteDashboardAsync(TextWriter output, DashboardData data)
+    {
+        await output.WriteLineAsync(
+            "DRINKS\tINGREDIENTS\tINVENTORY\tLOW_STOCK\tMENUS\tDRAFT_MENUS\t" +
+            "PUBLISHED_MENUS\tORDERS\tPENDING_ORDERS\tAUDIT").ConfigureAwait(false);
+        await output.WriteLineAsync(
+            $"{data.DrinkCount}\t{data.IngredientCount}\t{data.InventoryCount}\t{data.LowStockCount}\t" +
+            $"{data.MenuCount}\t{data.DraftMenus}\t{data.PublishedMenus}\t{data.OrderCount}\t" +
+            $"{data.PendingOrders}\t{data.AuditCount}").ConfigureAwait(false);
+        await output.WriteLineAsync().ConfigureAwait(false);
+        await output.WriteLineAsync("RECENT ACTIVITY").ConfigureAwait(false);
+        if (data.RecentActivity.Count == 0)
+        {
+            await output.WriteLineAsync("(none)").ConfigureAwait(false);
+            return;
+        }
+
+        foreach (DashboardActivity activity in data.RecentActivity)
+        {
+            await output.WriteLineAsync(
+                $"{activity.Timestamp:O}\t{activity.Actor}\t{activity.Action}").ConfigureAwait(false);
+        }
     }
 
     private static bool EnvironmentBoolean(string name)
@@ -254,6 +305,7 @@ public static class CliApplication
         builder.Services.AddMenusModule();
         builder.Services.AddOrdersModule();
         builder.Services.AddTaggingModule();
+        builder.Services.AddMixologyPresentation();
         IHost? host = null;
         try
         {

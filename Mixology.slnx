@@ -6,6 +6,7 @@
     <Project Path="src/Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
     <Project Path="src/Mixology.Filtering/Mixology.Filtering.csproj" />
     <Project Path="src/Mixology.Persistence/Mixology.Persistence.csproj" />
+    <Project Path="src/Mixology.Presentation/Mixology.Presentation.csproj" />
     <Project Path="src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <Project Path="src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
     <Project Path="src/Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
@@ -35,6 +36,7 @@
     <Project Path="tests/Mixology.Modules.Tagging.Tests/Mixology.Modules.Tagging.Tests.csproj" />
     <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
     <Project Path="tests/Mixology.Persistence.Tests/Mixology.Persistence.Tests.csproj" />
+    <Project Path="tests/Mixology.Presentation.Tests/Mixology.Presentation.Tests.csproj" />
     <Project Path="tests/Mixology.Seed.Tests/Mixology.Seed.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">

@@ -18,3 +18,4 @@ inputs, not package shopping notes.
 - [Observability](observability.md)
 - [Sample-data seed](seed.md)
 - [Action projection](actions.md)
+- [Dashboard and navigation projection](dashboard.md)

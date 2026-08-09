@@ -156,6 +156,34 @@ public sealed class ProjectBoundaryTests
     }
 
     [Fact]
+    public void PresentationIsToolkitFreeAndOnlyPointsTowardApplicationAndModules()
+    {
+        ProjectInfo presentation = Graph["Mixology.Presentation"];
+        Assert.False(presentation.IsExecutable);
+        Assert.Contains("Mixology.Application", presentation.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Cli", presentation.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Dispatcher", presentation.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Migrations", presentation.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Seed", presentation.MixologyReferences);
+        Assert.All(
+            presentation.MixologyReferences,
+            reference => Assert.True(
+                reference == "Mixology.Application" ||
+                reference.StartsWith("Mixology.Modules.", StringComparison.Ordinal),
+                $"Presentation reaches into {reference}"));
+
+        XDocument document = XDocument.Load(presentation.ProjectPath);
+        Assert.Empty(document.Descendants("PackageReference"));
+        foreach (ProjectInfo module in Graph.Projects.Where(
+                     project => project.Name.StartsWith("Mixology.Modules.", StringComparison.Ordinal)))
+        {
+            Assert.DoesNotContain("Mixology.Presentation", module.MixologyReferences);
+        }
+
+        Assert.Contains("Mixology.Presentation", Graph["Mixology.Cli"].MixologyReferences);
+    }
+
+    [Fact]
     public void ModulePersistenceDetailsStayBehindTheirModuleBoundary()
     {
         Assembly[] modules =

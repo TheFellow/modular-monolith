@@ -26,6 +26,14 @@ keep authorization and prerequisite evaluation framework-neutral. Avalonia's
 MVVM layer and Terminal.Gui adapters will map these results to native controls
 later instead of owning policy decisions.
 
+Each bounded context owns the projection from its Cedar actions and public
+model state into this generic vocabulary. Collection capabilities that already
+authorize rows individually stay public; create and detail actions authorize
+independently. Menu and order lifecycle prerequisites remain conditions, and
+menu readiness is composed as an immutable post-projection override. Synthetic
+create resources reproduce the Go model's empty Cedar attributes so future
+attribute policies cannot silently change the capability matrix.
+
 ## Rejected alternatives
 
 - Toolkit-specific command enablement would duplicate authorization and
@@ -39,11 +47,13 @@ later instead of owning policy decisions.
 
 Tests cover permission-denied non-disclosure, ordered prerequisite short
 circuiting, public and required overrides, duplicate/empty declaration errors,
-typed evaluator failures, unknown failure wrapping, and cancellation.
+typed evaluator failures, unknown failure wrapping, cancellation, Cedar's
+bartender/sommelier Drink-create matrix, and Menu/Order lifecycle conditions.
 
 ## Sources
 
 - Reference implementation: `/go-modular-monolith/pkg/presentation/actions`
+- Reference domain projectors: `/go-modular-monolith/app/domains/*/actions.go`
 - [C# record types](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records)
 - [C# delegates specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/delegates)
 - [.NET task cancellation](https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/task-cancellation)

@@ -21,5 +21,6 @@
     <ProjectReference Include="../Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
     <ProjectReference Include="../Mixology.Modules.Orders/Mixology.Modules.Orders.csproj" />
     <ProjectReference Include="../Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
+    <ProjectReference Include="../Mixology.Presentation/Mixology.Presentation.csproj" />
   </ItemGroup>
 </Project>

@@ -14,7 +14,8 @@ public sealed class CliApplicationTests
         RootCommand root = CliApplication.Build();
 
         Command status = Assert.Single(root.Subcommands, command => command.Name == "status");
-        Assert.Equal("Initialize storage and report foundation readiness.", status.Description);
+        Assert.Equal("Show the application dashboard aggregate.", status.Description);
+        Assert.Contains(status.Options, option => option.Name == "--json");
     }
 
     [Fact]
@@ -33,8 +34,53 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.True(File.Exists(database));
-            Assert.Equal("Mixology foundation is ready.", output.ToString().Trim());
+            Assert.Contains("DRINKS\tINGREDIENTS\tINVENTORY", output.ToString(), StringComparison.Ordinal);
+            Assert.Contains("RECENT ACTIVITY", output.ToString(), StringComparison.Ordinal);
             Assert.Empty(error.ToString());
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task StatusJsonHonorsAsAliasAndUsesCanonicalAuditActor()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "mixology-cli-tests", Guid.NewGuid().ToString("N"));
+        string database = Path.Combine(root, "mixology.db");
+        StringWriter createOutput = new();
+        StringWriter createError = new();
+        StringWriter statusOutput = new();
+        StringWriter statusError = new();
+
+        try
+        {
+            int createExit = await CliApplication.Build(createOutput, createError)
+                .Parse([
+                    "--db", database,
+                    "--as", "manager",
+                    "ingredients", "create", "Dashboard Gin",
+                    "--category", "spirit",
+                    "--unit", "oz",
+                ])
+                .InvokeAsync();
+            int statusExit = await CliApplication.Build(statusOutput, statusError)
+                .Parse(["--db", database, "--as", "owner", "status", "--json"])
+                .InvokeAsync();
+
+            Assert.Equal(0, createExit);
+            Assert.Equal(0, statusExit);
+            Assert.Empty(createError.ToString());
+            Assert.Empty(statusError.ToString());
+            using JsonDocument document = JsonDocument.Parse(statusOutput.ToString());
+            Assert.Equal(1, document.RootElement.GetProperty("ingredientCount").GetInt32());
+            JsonElement activity = Assert.Single(document.RootElement.GetProperty("recentActivity").EnumerateArray());
+            Assert.Equal("Mixology::Actor::\"manager\"", activity.GetProperty("actor").GetString());
         }
         finally
         {

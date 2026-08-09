@@ -4,6 +4,7 @@ using Mixology.Authorization.Cedar;
 using Mixology.Modules.Tagging.Authorization;
 using Mixology.Modules.Tagging.Models;
 using Mixology.Modules.Tagging.Persistence;
+using Mixology.Modules.Tagging.Presentation;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Tagging;
@@ -21,6 +22,7 @@ public static class TaggingServiceCollectionExtensions
         services.TryAddSingleton<TagRepository>();
         services.TryAddSingleton<ITagReader>(static provider => provider.GetRequiredService<TagRepository>());
         services.TryAddSingleton<TaggingModule>();
+        services.TryAddSingleton<TaggingActionProjector>();
         return services;
     }
 }

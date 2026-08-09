@@ -4,6 +4,7 @@ using Mixology.Application.Auditing;
 using Mixology.Authorization.Cedar;
 using Mixology.Modules.Audit.Authorization;
 using Mixology.Modules.Audit.Persistence;
+using Mixology.Modules.Audit.Presentation;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Audit;
@@ -18,6 +19,7 @@ public static class AuditServiceCollectionExtensions
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IModuleModelConfiguration, AuditModelConfiguration>());
         services.TryAddSingleton<AuditModule>();
+        services.TryAddSingleton<AuditActionProjector>();
         services.TryAddSingleton<AuditWriter>();
         services.Replace(ServiceDescriptor.Singleton<IActivityRecorder>(services =>
             services.GetRequiredService<AuditWriter>()));
