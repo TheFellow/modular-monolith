@@ -71,10 +71,10 @@ path. Like the Go reference, the seed is deliberately non-idempotent and
 command-atomic: running it against an already seeded store exits with an error,
 while work committed before any later failure remains in the database.
 
-## Terminal dashboard
+## Terminal application
 
-The standalone TUI currently provides the production composition root,
-authorization-filtered route shell, and live Dashboard foundation:
+The standalone TUI provides the live Dashboard plus complete Drinks,
+Ingredients, Inventory, Menus, Orders, Audit, and Tags workspaces:
 
 ```sh
 dotnet run --project src/Mixology.Tui -- --db data/mixology.db --actor owner
@@ -83,5 +83,10 @@ dotnet run --project src/Mixology.Tui -- --db data/mixology.db --actor owner
 It uses an instance-owned Terminal.Gui application, keeps diagnostics in
 `mixology-tui.log` beside the database by default, and supports the same
 `MIXOLOGY_DB`, `MIXOLOGY_ACTOR`, logging, and metrics configuration as the
-reference process. Domain workspaces are being added as independently tested
-vertical slices; unimplemented routes are not advertised by the shell.
+reference process. Cedar filters navigation and workspace actions for the
+selected actor; the shell advertises only routes that are both authorized and
+backed by a registered workspace factory. Every workspace has deterministic
+browse/detail rendering, forms, contextual filter help, cursor paging, stable
+selection, stale-response rejection, and cancellation-aware shutdown. The CLI
+and TUI share the same SQLite file, so writes are visible after either process
+reopens the store.

@@ -16,4 +16,7 @@
     </PackageReference>
     <ProjectReference Include="../../src/Mixology.Tui/Mixology.Tui.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Mixology.Cli/Mixology.Cli.csproj" />
+  </ItemGroup>
 </Project>

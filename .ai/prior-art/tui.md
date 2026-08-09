@@ -31,6 +31,35 @@ workspace factories so an incremental build never advertises a dead route.
 Each Dashboard refresh owns a generation and cancellation source; superseded
 work is retained and observed during shutdown even when its response is stale.
 
+## Implementation consequences
+
+The completed terminal application keeps each bounded context in its own
+workspace and uses the toolkit-neutral presentation projectors for action
+visibility and enablement. Drinks owns its recipe editor; Ingredients owns
+retirement replacement intent; Inventory owns amount, cost, and adjustment
+reason forms; Menus and Orders expose their coupled lifecycle operations; Audit
+is append-only and owner-only; Tags provides owner-only discovery. Forms capture
+text before global shortcuts, local Escape closes the active mode before shell
+navigation, and duplicate submission is gated by the form state machine.
+
+Lists retain stable typed-ID selection across refreshes, use the same checked
+filter language and cursor contracts as the CLI, and render within a fixed
+80-by-21 workspace viewport inside the shell's 80-by-24 minimum terminal.
+Requests carry generations and linked cancellation sources; stale completions
+cannot publish, and disposal cancels then observes all tracked work. Unknown
+exceptions are normalized to a safe `InternalError`, existing `AppError`
+instances keep their identity and user message, and cancellation remains
+distinct.
+
+Production-composition tests project navigation through real Cedar policies for
+owner, manager, and anonymous actors, then mount every advertised route. This
+guards both halves of the route invariant: unauthorized Audit and Tags routes
+stay absent, while no visible route can point at a missing or mismatched factory.
+Cross-surface tests use a real SQLite file in both directions: a mutation through
+the TUI workspace is read by a separately launched CLI process, and a CLI-process
+mutation is read by a newly opened TUI host and workspace. Process completion
+and workspace task-drain seams make these tests deterministic without sleeps.
+
 ## Sources
 
 - [Terminal.Gui repository and MIT license](https://github.com/gui-cs/Terminal.Gui)
