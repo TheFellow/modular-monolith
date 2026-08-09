@@ -126,6 +126,59 @@ public sealed class MixologyStoreTests
         Assert.Equal(ErrorKind.Internal, error.Kind);
     }
 
+    [Fact]
+    public async Task ModelCacheSeparatesDifferentModuleCompositions()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "mixology-model-cache-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        ServiceCollection partialServices = new();
+        partialServices.AddMixologyPersistence(
+            Path.Combine(root, "partial.db"),
+            typeof(MigrationAssemblyMarker).Assembly);
+        partialServices.AddIngredientsModule();
+        await using ServiceProvider partial = partialServices.BuildServiceProvider();
+        ServiceCollection fullServices = new();
+        fullServices.AddMixologyPersistence(
+            Path.Combine(root, "full.db"),
+            typeof(MigrationAssemblyMarker).Assembly);
+        fullServices.AddAuditModule();
+        fullServices.AddIngredientsModule();
+        fullServices.AddDrinksModule();
+        fullServices.AddInventoryModule();
+        fullServices.AddMenusModule();
+        fullServices.AddOrdersModule();
+        fullServices.AddTaggingModule();
+        await using ServiceProvider full = fullServices.BuildServiceProvider();
+
+        try
+        {
+            await using MixologyDbContext partialContext = await partial
+                .GetRequiredService<IDbContextFactory<MixologyDbContext>>()
+                .CreateDbContextAsync();
+            string[] partialEntities = partialContext.Model.GetEntityTypes()
+                .Select(static entity => entity.ClrType.Name)
+                .ToArray();
+            await full.GetRequiredService<MixologyStore>().InitializeAsync();
+            await using StoreSession fullSession = await full.GetRequiredService<MixologyStore>().OpenSessionAsync();
+            string[] fullEntities = fullSession.Context.Model.GetEntityTypes()
+                .Select(static entity => entity.ClrType.Name)
+                .ToArray();
+
+            Assert.Contains("IngredientRow", partialEntities);
+            Assert.DoesNotContain("OrderRow", partialEntities);
+            Assert.Contains("IngredientRow", fullEntities);
+            Assert.Contains("OrderRow", fullEntities);
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
     private static async Task<T> ScalarAsync<T>(MixologyDbContext context, string commandText)
     {
         await context.Database.OpenConnectionAsync();

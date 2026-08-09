@@ -143,10 +143,10 @@ public sealed class InventoryModuleTests
             collection.AddAuditModule();
             collection.AddIngredientsModule();
             collection.AddDrinksModule();
+            collection.AddInventoryModule();
             collection.AddMenusModule();
             collection.AddOrdersModule();
             collection.AddTaggingModule();
-            collection.AddInventoryModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

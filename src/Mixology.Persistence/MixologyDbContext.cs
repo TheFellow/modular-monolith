@@ -13,7 +13,13 @@ public sealed class MixologyDbContext : DbContext
         : base(options)
     {
         this.configurations = configurations.ToArray();
+        ModelConfigurationKey = string.Join(
+            '|',
+            this.configurations.Select(static configuration => configuration.GetType().AssemblyQualifiedName)
+                .Order(StringComparer.Ordinal));
     }
+
+    internal string ModelConfigurationKey { get; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,4 +30,3 @@ public sealed class MixologyDbContext : DbContext
         }
     }
 }
-

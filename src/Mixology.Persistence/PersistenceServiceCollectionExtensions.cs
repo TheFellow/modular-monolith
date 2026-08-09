@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Mixology.Persistence.Model;
@@ -20,9 +21,11 @@ public static class PersistenceServiceCollectionExtensions
         services.AddSingleton(settings);
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<IModuleModelConfiguration, StoreModelConfiguration>();
-        services.AddDbContextFactory<MixologyDbContext>(options => options.UseSqlite(
-            settings.ConnectionString,
-            sqlite => sqlite.MigrationsAssembly(migrationsAssemblyName)));
+        services.AddDbContextFactory<MixologyDbContext>(options => options
+            .UseSqlite(
+                settings.ConnectionString,
+                sqlite => sqlite.MigrationsAssembly(migrationsAssemblyName))
+            .ReplaceService<IModelCacheKeyFactory, ModuleModelCacheKeyFactory>());
         services.AddSingleton<MixologyStore>();
         return services;
     }
