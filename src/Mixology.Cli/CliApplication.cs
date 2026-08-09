@@ -5,10 +5,14 @@ using Mixology.Application;
 using Mixology.Application.Authentication;
 using Mixology.Application.Events;
 using Mixology.Dispatcher;
+using Mixology.Kernel.Entities;
 using Mixology.Kernel.Errors;
+using Mixology.Kernel.Paging;
 using Mixology.Migrations;
 using Mixology.Modules.Audit;
 using Mixology.Modules.Ingredients;
+using Mixology.Modules.Ingredients.Models;
+using Mixology.Modules.Ingredients.Requests;
 using Mixology.Persistence;
 
 namespace Mixology.Cli;
@@ -33,6 +37,14 @@ public static class CliApplication
         root.Options.Add(database);
         root.Options.Add(actor);
 
+        IngredientsCommandContext ingredientsContext = new(
+            async (parseResult, cancellationToken) => await HostedIngredientsCommandSession.OpenAsync(
+                parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
+                Actor.Parse(parseResult.GetValue(actor)),
+                cancellationToken).ConfigureAwait(false),
+            output,
+            error);
+
         Command status = new("status", "Initialize storage and report foundation readiness.");
         status.SetAction(async (parseResult, cancellationToken) =>
         {
@@ -41,15 +53,7 @@ public static class CliApplication
                 string databasePath = parseResult.GetValue(database)
                     ?? throw AppError.Invalid("database path is required");
                 _ = Actor.Parse(parseResult.GetValue(actor));
-                HostApplicationBuilder builder = MixologyHost.CreateBuilder([]);
-                builder.Services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
-                builder.AddMixology(databasePath, typeof(MigrationAssemblyMarker).Assembly);
-                builder.Services.AddAuditModule();
-                builder.Services.AddIngredientsModule();
-                using IHost host = builder.Build();
-                await host.Services.GetRequiredService<MixologyStore>()
-                    .InitializeAsync(cancellationToken)
-                    .ConfigureAwait(false);
+                using IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
                 await output.WriteLineAsync("Mixology foundation is ready.").ConfigureAwait(false);
                 return 0;
             }
@@ -60,7 +64,78 @@ public static class CliApplication
         });
 
         root.Subcommands.Add(status);
+        root.Subcommands.Add(IngredientsCommands.Build(ingredientsContext));
         return root;
+    }
+
+    private static async Task<IHost> OpenHostAsync(string databasePath, CancellationToken cancellationToken)
+    {
+        HostApplicationBuilder builder = MixologyHost.CreateBuilder([]);
+        builder.Services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
+        builder.AddMixology(databasePath, typeof(MigrationAssemblyMarker).Assembly);
+        builder.Services.AddAuditModule();
+        builder.Services.AddIngredientsModule();
+        IHost host = builder.Build();
+        try
+        {
+            await host.Services.GetRequiredService<MixologyStore>()
+                .InitializeAsync(cancellationToken)
+                .ConfigureAwait(false);
+            await host.StartAsync(cancellationToken).ConfigureAwait(false);
+            return host;
+        }
+        catch
+        {
+            host.Dispose();
+            throw;
+        }
+    }
+
+    private sealed class HostedIngredientsCommandSession(
+        IHost host,
+        IngredientsModule ingredients,
+        MixologySession session) : IIngredientsCommandSession
+    {
+        public static async ValueTask<IIngredientsCommandSession> OpenAsync(
+            string databasePath,
+            Actor actor,
+            CancellationToken cancellationToken)
+        {
+            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            return new HostedIngredientsCommandSession(
+                host,
+                host.Services.GetRequiredService<IngredientsModule>(),
+                host.Services.GetRequiredService<MixologySessionFactory>().Create(actor));
+        }
+
+        public Task<Page<Ingredient>> ListAsync(
+            ListIngredientsRequest request,
+            CancellationToken cancellationToken) =>
+            ingredients.ListAsync(session, request, cancellationToken);
+
+        public Task<Ingredient> GetAsync(IngredientId id, CancellationToken cancellationToken) =>
+            ingredients.GetAsync(session, id, cancellationToken);
+
+        public Task<Ingredient> CreateAsync(
+            CreateIngredientRequest request,
+            CancellationToken cancellationToken) =>
+            ingredients.CreateAsync(session, request, cancellationToken);
+
+        public Task<Ingredient> UpdateAsync(
+            UpdateIngredientRequest request,
+            CancellationToken cancellationToken) =>
+            ingredients.UpdateAsync(session, request, cancellationToken);
+
+        public Task<Ingredient> RetireAsync(
+            RetireIngredientRequest request,
+            CancellationToken cancellationToken) =>
+            ingredients.RetireAsync(session, request, cancellationToken);
+
+        public async ValueTask DisposeAsync()
+        {
+            await host.StopAsync(CancellationToken.None).ConfigureAwait(false);
+            host.Dispose();
+        }
     }
 }
 

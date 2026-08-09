@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.Text.Json;
 using Mixology.Cli;
 using Mixology.Kernel.Errors;
 using Xunit;
@@ -94,5 +95,54 @@ public sealed class CliApplicationTests
         Assert.Equal("operation cancelled", cancellationOutput.ToString().Trim());
         Assert.Equal(ErrorCatalog.ExitGeneral, unknown);
         Assert.Equal("internal error", unknownOutput.ToString().Trim());
+    }
+
+    [Fact]
+    public async Task IngredientCommandsPersistAcrossIndependentCliInvocations()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "mixology-cli-ingredients", Guid.NewGuid().ToString("N"));
+        string database = Path.Combine(root, "mixology.db");
+        StringWriter createOutput = new();
+        StringWriter createError = new();
+        StringWriter listOutput = new();
+        StringWriter listError = new();
+
+        try
+        {
+            int created = await CliApplication.Build(createOutput, createError).Parse(
+            [
+                "--db", database,
+                "--actor", "manager",
+                "ingredients", "create", "House Gin",
+                "--category", "spirit",
+                "--unit", "oz",
+                "--description", "Dry",
+            ]).InvokeAsync();
+            int listed = await CliApplication.Build(listOutput, listError).Parse(
+            [
+                "--db", database,
+                "--actor", "anonymous",
+                "ingredients", "list",
+                "--json",
+            ]).InvokeAsync();
+
+            Assert.Equal(0, created);
+            Assert.Equal(0, listed);
+            Assert.StartsWith("ing-", createOutput.ToString().Trim(), StringComparison.Ordinal);
+            Assert.Empty(createError.ToString());
+            Assert.Empty(listError.ToString());
+            using JsonDocument document = JsonDocument.Parse(listOutput.ToString());
+            JsonElement item = Assert.Single(document.RootElement.GetProperty("items").EnumerateArray());
+            Assert.Equal("House Gin", item.GetProperty("name").GetString());
+            Assert.Equal("spirit", item.GetProperty("category").GetString());
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
     }
 }
