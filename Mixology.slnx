@@ -11,6 +11,7 @@
     <Project Path="src/Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
     <Project Path="src/Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
     <Project Path="src/Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
+    <Project Path="src/Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
     <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -24,6 +25,7 @@
     <Project Path="tests/Mixology.Modules.Ingredients.Tests/Mixology.Modules.Ingredients.Tests.csproj" />
     <Project Path="tests/Mixology.Modules.Drinks.Tests/Mixology.Modules.Drinks.Tests.csproj" />
     <Project Path="tests/Mixology.Modules.Inventory.Tests/Mixology.Modules.Inventory.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Menus.Tests/Mixology.Modules.Menus.Tests.csproj" />
     <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
     <Project Path="tests/Mixology.Persistence.Tests/Mixology.Persistence.Tests.csproj" />
   </Folder>

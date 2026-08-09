@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Mixology.Authorization.Cedar;
 using Mixology.Modules.Inventory.Authorization;
 using Mixology.Modules.Inventory.Persistence;
+using Mixology.Modules.Inventory.Queries;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Inventory;
@@ -17,6 +18,7 @@ public static class InventoryServiceCollectionExtensions
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IModuleModelConfiguration, InventoryModelConfiguration>());
         services.TryAddSingleton<InventoryModule>();
+        services.TryAddSingleton<InventoryQueries>();
         return services;
     }
 }

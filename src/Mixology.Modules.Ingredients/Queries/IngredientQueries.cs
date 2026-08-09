@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Mixology.Kernel.Entities;
 using Mixology.Kernel.Errors;
+using Mixology.Kernel.Measurement;
+using Mixology.Kernel.Tags;
+using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Persistence;
 using Mixology.Persistence;
 
@@ -13,33 +16,91 @@ namespace Mixology.Modules.Ingredients.Queries;
 /// </summary>
 public sealed class IngredientQueries
 {
-    public async Task RequireActiveAsync(
+    public async Task<Ingredient> GetAsync(
         StoreSession session,
         IngredientId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(session);
+        RequireId(id);
+        try
+        {
+            IngredientRow? row = await session.Context.Set<IngredientRow>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(
+                    row => row.Id == id.Value && row.DeletedAtUtc == null,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            return row is null
+                ? throw AppError.NotFound($"ingredient {id} not found")
+                : FromRow(row);
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("read ingredient", exception);
+        }
+    }
+
+    public async Task<IReadOnlyList<SubstitutionRule>> SubstitutionsForAsync(
+        StoreSession session,
+        IngredientId id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        RequireId(id);
+        try
+        {
+            IngredientRow[] rows = await session.Context.Set<IngredientRow>()
+                .AsNoTracking()
+                .Where(static row => row.DeletedAtUtc == null)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return IngredientSubstitutionCatalog.Resolve(id, rows.Select(FromRow));
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("resolve ingredient substitutions", exception);
+        }
+    }
+
+    public async Task RequireActiveAsync(
+        StoreSession session,
+        IngredientId id,
+        CancellationToken cancellationToken = default)
+    {
+        _ = await GetAsync(session, id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static Ingredient FromRow(IngredientRow row)
+    {
+        try
+        {
+            return new Ingredient(
+                IngredientId.Parse(row.Id),
+                row.Name,
+                IngredientCategory.Parse(row.Category),
+                Unit.Parse(row.Unit),
+                row.Description,
+                row.DeletedAtUtc is { } deletedAt
+                    ? new DateTimeOffset(DateTime.SpecifyKind(deletedAt, DateTimeKind.Utc))
+                    : null,
+                TagCollection.Empty).Normalize();
+        }
+        catch (InvalidError exception)
+        {
+            throw AppError.Internal($"invalid persisted ingredient {row.Id}", exception);
+        }
+    }
+
+    private static void RequireId(IngredientId id)
+    {
         if (id.IsEmpty)
         {
             throw AppError.Invalid("ingredient id is required");
         }
 
         _ = IngredientId.Parse(id.Value);
-        try
-        {
-            bool exists = await session.Context.Set<IngredientRow>()
-                .AnyAsync(
-                    row => row.Id == id.Value && row.DeletedAtUtc == null,
-                    cancellationToken)
-                .ConfigureAwait(false);
-            if (!exists)
-            {
-                throw AppError.NotFound($"ingredient {id} not found");
-            }
-        }
-        catch (Exception exception) when (exception is not AppError and not OperationCanceledException)
-        {
-            throw AppError.Internal("read ingredient", exception);
-        }
     }
 }

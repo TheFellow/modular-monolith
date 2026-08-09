@@ -10,6 +10,7 @@ using Mixology.Modules.Audit;
 using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
+using Mixology.Modules.Menus;
 using Mixology.Persistence;
 using Xunit;
 
@@ -208,6 +209,7 @@ public sealed class UnitOfWorkMiddlewareTests
             collection.AddIngredientsModule();
             collection.AddDrinksModule();
             collection.AddInventoryModule();
+            collection.AddMenusModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

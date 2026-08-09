@@ -18,5 +18,6 @@
     <ProjectReference Include="../../src/Mixology.Migrations/Mixology.Migrations.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
     <ProjectReference Include="../../src/Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
+    <ProjectReference Include="../../src/Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
   </ItemGroup>
 </Project>

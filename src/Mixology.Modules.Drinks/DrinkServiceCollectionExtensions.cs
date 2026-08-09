@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Mixology.Authorization.Cedar;
 using Mixology.Modules.Drinks.Authorization;
 using Mixology.Modules.Drinks.Persistence;
+using Mixology.Modules.Drinks.Queries;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Drinks;
@@ -17,6 +18,7 @@ public static class DrinkServiceCollectionExtensions
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IModuleModelConfiguration, DrinkModelConfiguration>());
         services.TryAddSingleton<DrinksModule>();
+        services.TryAddSingleton<DrinkQueries>();
         return services;
     }
 }
