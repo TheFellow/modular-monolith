@@ -36,7 +36,7 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Retirement rewrites only compatible explicit replacements
 - [x] Required retired references cause review; optional references disappear
 - [x] Accepted order ingredient names and amounts remain historical truth
-- [ ] Published menus degrade honestly; drafts with blockers cannot publish
+- [x] Published menus degrade honestly; drafts with blockers cannot publish
 - [ ] Event handler order cannot change outcomes and any failure rolls back all
 
 ## Surfaces

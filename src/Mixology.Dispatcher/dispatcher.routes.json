@@ -4,10 +4,32 @@
   "className": "DomainEventDispatcher",
   "routes": [
     {
+      "event": "Mixology.Modules.Drinks.Events.DrinkDeleted",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Menus.Handlers.DrinkDeletedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Drinks.Events.DrinkUpdated",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Menus.Handlers.DrinkUpdatedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
       "event": "Mixology.Modules.Ingredients.Events.IngredientDeleted",
       "handlers": [
         {
           "type": "Mixology.Modules.Drinks.Handlers.IngredientDeletedHandler",
+          "prepare": true
+        },
+        {
+          "type": "Mixology.Modules.Menus.Handlers.IngredientDeletedHandler",
           "prepare": true
         }
       ]
@@ -17,6 +39,28 @@
       "handlers": [
         {
           "type": "Mixology.Modules.Drinks.Handlers.IngredientUpdatedHandler",
+          "prepare": false
+        },
+        {
+          "type": "Mixology.Modules.Menus.Handlers.IngredientUpdatedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Inventory.Events.StockAdjusted",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Menus.Handlers.StockAdjustedHandler",
+          "prepare": false
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Menus.Events.MenuPublished",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Menus.Handlers.MenuPublishedHandler",
           "prepare": false
         }
       ]

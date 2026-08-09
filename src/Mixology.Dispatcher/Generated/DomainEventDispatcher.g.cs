@@ -28,11 +28,23 @@ public sealed class DomainEventDispatcher : IDomainEventDispatcher
 
         switch (domainEvent)
         {
-            case global::Mixology.Modules.Ingredients.Events.IngredientDeleted typedEvent:
+            case global::Mixology.Modules.Drinks.Events.DrinkDeleted typedEvent:
                 await DispatchRoute0Async(context, typedEvent).ConfigureAwait(false);
                 return;
-            case global::Mixology.Modules.Ingredients.Events.IngredientUpdated typedEvent:
+            case global::Mixology.Modules.Drinks.Events.DrinkUpdated typedEvent:
                 await DispatchRoute1Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Ingredients.Events.IngredientDeleted typedEvent:
+                await DispatchRoute2Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Ingredients.Events.IngredientUpdated typedEvent:
+                await DispatchRoute3Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Inventory.Events.StockAdjusted typedEvent:
+                await DispatchRoute4Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Menus.Events.MenuPublished typedEvent:
+                await DispatchRoute5Async(context, typedEvent).ConfigureAwait(false);
                 return;
             default:
                 logger.LogDebug("Unhandled domain event {EventType}", domainEvent.GetType().FullName);
@@ -40,20 +52,59 @@ public sealed class DomainEventDispatcher : IDomainEventDispatcher
         }
     }
 
-    private async Task DispatchRoute0Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientDeleted domainEvent)
+    private async Task DispatchRoute0Async(EventHandlerContext context, global::Mixology.Modules.Drinks.Events.DrinkDeleted domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Drinks.Events.DrinkDeleted> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.DrinkDeletedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute1Async(EventHandlerContext context, global::Mixology.Modules.Drinks.Events.DrinkUpdated domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Drinks.Events.DrinkUpdated> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.DrinkUpdatedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute2Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientDeleted domainEvent)
     {
         await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
         IPreparingDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler0 =
             ActivatorUtilities.CreateInstance<global::Mixology.Modules.Drinks.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
+        IPreparingDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
         await handler0.PrepareAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.PrepareAsync(context, domainEvent).ConfigureAwait(false);
         await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
     }
 
-    private async Task DispatchRoute1Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientUpdated domainEvent)
+    private async Task DispatchRoute3Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientUpdated domainEvent)
     {
         await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
         IDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientUpdated> handler0 =
             ActivatorUtilities.CreateInstance<global::Mixology.Modules.Drinks.Handlers.IngredientUpdatedHandler>(scope.ServiceProvider);
+        IDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientUpdated> handler1 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.IngredientUpdatedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+        await handler1.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute4Async(EventHandlerContext context, global::Mixology.Modules.Inventory.Events.StockAdjusted domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Inventory.Events.StockAdjusted> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.StockAdjustedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute5Async(EventHandlerContext context, global::Mixology.Modules.Menus.Events.MenuPublished domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Menus.Events.MenuPublished> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Menus.Handlers.MenuPublishedHandler>(scope.ServiceProvider);
         await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
     }
 }

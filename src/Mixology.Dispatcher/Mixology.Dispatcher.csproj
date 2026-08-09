@@ -6,5 +6,7 @@
     <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
     <ProjectReference Include="../Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
     <ProjectReference Include="../Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
   </ItemGroup>
 </Project>
