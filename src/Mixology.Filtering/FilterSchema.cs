@@ -6,8 +6,7 @@ public sealed record FilterField<T>(
     string Name,
     Type Type,
     string Description,
-    Func<T, object?> Read,
-    LambdaExpression? PersistedSelector = null);
+    Func<T, object?> Read);
 
 public sealed class FilterSchema<T>
 {

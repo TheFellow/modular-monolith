@@ -15,6 +15,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <ProjectReference Include="../../src/Mixology.Filtering/Mixology.Filtering.csproj" />
+    <ProjectReference Include="../../src/Mixology.Persistence/Mixology.Persistence.csproj" />
   </ItemGroup>
 </Project>
-

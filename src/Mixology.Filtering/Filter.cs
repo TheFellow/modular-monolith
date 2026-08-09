@@ -9,12 +9,15 @@ public static class Filter
     public static FilterField<T> Field<T, TValue>(
         string name,
         Expression<Func<T, TValue>> read,
-        string description = "",
-        Expression<Func<T, TValue>>? persistedSelector = null)
+        string description = "")
     {
         Func<T, TValue> compiled = read.Compile();
-        return new FilterField<T>(name, typeof(TValue), description, value => compiled(value), persistedSelector);
+        return new FilterField<T>(name, typeof(TValue), description, value => compiled(value));
     }
+
+    public static PersistedFilterField<TRow> PersistedField<TRow, TValue>(
+        string name,
+        Expression<Func<TRow, TValue>> selector) => new(name, selector);
 
     public static FilterExpression<T>? Parse<T>(FilterSchema<T> schema, string? source)
     {

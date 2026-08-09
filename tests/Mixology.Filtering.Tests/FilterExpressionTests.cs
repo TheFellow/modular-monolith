@@ -94,6 +94,64 @@ public sealed class FilterExpressionTests
         Assert.IsType<int>(Assert.IsType<LiteralNode>(comparison.Right).Value);
     }
 
+    [Theory]
+    [InlineData("Category == \"wine\" || Category == \"beer\"", "wine", true)]
+    [InlineData("Category == \"wine\" || Category == \"beer\"", "cocktail", false)]
+    [InlineData("!(Price < 10)", "cocktail", true)]
+    [InlineData("Active && (Tags contains \"classic\" || Price > 20)", "cocktail", true)]
+    public void PushdownContainsOnlyProviderSafeImpliedPredicates(string source, string category, bool expected)
+    {
+        FilterExpression<DrinkView> expression = Filter.Parse(Schema, source)!;
+        FilterPersistenceMap<DrinkRow> map = new(
+        [
+            Filter.PersistedField("Category", (DrinkRow row) => row.StoredCategory),
+            Filter.PersistedField("Price", (DrinkRow row) => row.StoredPrice),
+            Filter.PersistedField("Active", (DrinkRow row) => row.IsActive),
+        ]);
+
+        System.Linq.Expressions.Expression<Func<DrinkRow, bool>>? pushdown = expression.BuildPushdown(map);
+
+        Assert.NotNull(pushdown);
+        Assert.Equal(expected, pushdown.Compile()(new DrinkRow(category, 14, true)));
+    }
+
+    [Fact]
+    public void ResidualOnlyDisjunctionDoesNotProduceAFalsePushdown()
+    {
+        FilterExpression<DrinkView> expression = Filter.Parse(Schema, "Category == \"wine\" || Tags contains \"classic\"")!;
+        FilterPersistenceMap<DrinkRow> map = new(
+        [
+            Filter.PersistedField("Category", (DrinkRow row) => row.StoredCategory),
+        ]);
+
+        Assert.Null(expression.BuildPushdown(map));
+        Assert.True(expression.Match(Martini));
+    }
+
+    [Fact]
+    public void FullExpressionAlwaysImpliesCandidatePredicate()
+    {
+        FilterExpression<DrinkView> expression = Filter.Parse(
+            Schema,
+            "(Category == \"wine\" && Tags contains \"featured\") || (Category == \"cocktail\" && Price >= 12)")!;
+        FilterPersistenceMap<DrinkView> map = new(
+        [
+            Filter.PersistedField("Category", (DrinkView view) => view.Category),
+            Filter.PersistedField("Price", (DrinkView view) => view.Price),
+        ]);
+        Func<DrinkView, bool> candidate = expression.BuildPushdown(map)!.Compile();
+
+        DrinkView[] corpus =
+        [
+            Martini,
+            Martini with { Category = "wine", Tags = ["featured"] },
+            Martini with { Category = "beer", Tags = ["featured"] },
+            Martini with { Category = "cocktail", Price = 8 },
+        ];
+
+        Assert.All(corpus.Where(expression.Match), item => Assert.True(candidate(item)));
+    }
+
     public sealed record DrinkView(
         string Name,
         string Category,
@@ -102,4 +160,6 @@ public sealed class FilterExpressionTests
         DateTimeOffset Created,
         TimeSpan Age,
         string[] Tags);
+
+    public sealed record DrinkRow(string StoredCategory, int StoredPrice, bool IsActive);
 }

@@ -26,5 +26,11 @@ public sealed class FilterExpression<T>
 
     public bool Match(T value) => evaluator.Match(Tree, value);
 
+    public System.Linq.Expressions.Expression<Func<TRow, bool>>? BuildPushdown<TRow>(FilterPersistenceMap<TRow> map)
+    {
+        IReadOnlyList<Internal.Pushdown> pushdowns = new Internal.PushdownPlanner<T>(Schema).Plan(Tree);
+        return new Internal.PushdownExpressionBuilder<TRow>(map).Build(pushdowns);
+    }
+
     public override string ToString() => Canonical;
 }

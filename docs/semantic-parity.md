@@ -11,7 +11,7 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Cursor paging primitives and complete traversal; authorized page filling
   remains part of the query pipeline slice
 - [x] Money, currency, volume/discrete measurement, tags, and quality values
-- [ ] Checked filter grammar, canonical AST, exact evaluator, and safe pushdowns
+- [x] Checked filter grammar, canonical AST, exact evaluator, and safe EF pushdowns
 - [x] Shared SQLite store, initial migration, explicit session transaction, and rollback
 - [ ] Fresh operation contexts, middleware order, telemetry, and auditing
 - [ ] Cedar policies/entities through `cedar-dotnet`
