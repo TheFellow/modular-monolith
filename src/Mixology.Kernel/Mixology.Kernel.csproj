@@ -2,5 +2,7 @@
   <PropertyGroup>
     <Description>Shared domain value types for Mixology.</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="KsuidDotNet" />
+  </ItemGroup>
 </Project>
-

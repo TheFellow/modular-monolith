@@ -6,6 +6,7 @@ decision, rejected alternatives, and validation gates. They are architecture
 inputs, not package shopping notes.
 
 - [Runtime and application host](runtime.md)
+- [Entity identifiers](identifiers.md)
 - [Backing storage](storage.md)
 - [Typed filtering](filtering.md)
 - [CLI](cli.md)
@@ -13,4 +14,3 @@ inputs, not package shopping notes.
 - [Desktop GUI](gui.md)
 - [Authorization](authorization.md)
 - [Dispatcher code generation](code-generation.md)
-
