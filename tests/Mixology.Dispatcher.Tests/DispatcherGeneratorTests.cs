@@ -18,6 +18,7 @@ public sealed class DispatcherGeneratorTests
                   "event": "Example.Events.ZebraEvent",
                   "handlers": [
                     { "type": "Example.Handlers.ZebraHandler", "prepare": true },
+                    { "type": "Example.Handlers.BetaHandler", "prepare": true },
                     { "type": "Example.Handlers.AlphaHandler", "prepare": false }
                   ]
                 },
@@ -42,9 +43,13 @@ public sealed class DispatcherGeneratorTests
         Assert.True(
             generated.LastIndexOf("CreateInstance<", StringComparison.Ordinal)
                 < generated.IndexOf("handler1.PrepareAsync", StringComparison.Ordinal));
+        int zebraRouteStart = generated.IndexOf(
+            "global::Example.Events.ZebraEvent domainEvent",
+            StringComparison.Ordinal);
+        string zebraRoute = generated[zebraRouteStart..];
         Assert.True(
-            generated.IndexOf("handler1.PrepareAsync", StringComparison.Ordinal)
-                < generated.LastIndexOf("handler0.HandleAsync", StringComparison.Ordinal));
+            zebraRoute.LastIndexOf(".PrepareAsync", StringComparison.Ordinal)
+                < zebraRoute.IndexOf(".HandleAsync", StringComparison.Ordinal));
         Assert.Equal(generated, DispatcherGenerator.Generate(manifest));
         Assert.DoesNotContain('\r', generated);
     }

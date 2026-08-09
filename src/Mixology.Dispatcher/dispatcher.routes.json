@@ -2,5 +2,24 @@
   "version": 1,
   "namespace": "Mixology.Dispatcher",
   "className": "DomainEventDispatcher",
-  "routes": []
+  "routes": [
+    {
+      "event": "Mixology.Modules.Ingredients.Events.IngredientDeleted",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Drinks.Handlers.IngredientDeletedHandler",
+          "prepare": true
+        }
+      ]
+    },
+    {
+      "event": "Mixology.Modules.Ingredients.Events.IngredientUpdated",
+      "handlers": [
+        {
+          "type": "Mixology.Modules.Drinks.Handlers.IngredientUpdatedHandler",
+          "prepare": false
+        }
+      ]
+    }
+  ]
 }

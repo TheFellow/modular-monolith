@@ -2,6 +2,7 @@
 #nullable enable
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Mixology.Application.Events;
 using Mixology.Application.Operations;
 
@@ -9,18 +10,50 @@ namespace Mixology.Dispatcher;
 
 public sealed class DomainEventDispatcher : IDomainEventDispatcher
 {
+    private readonly IServiceScopeFactory scopeFactory;
     private readonly ILogger<DomainEventDispatcher> logger;
 
-    public DomainEventDispatcher(ILogger<DomainEventDispatcher> logger)
+    public DomainEventDispatcher(
+        IServiceScopeFactory scopeFactory,
+        ILogger<DomainEventDispatcher> logger)
     {
+        this.scopeFactory = scopeFactory;
         this.logger = logger;
     }
 
-    public Task DispatchAsync(EventHandlerContext context, object domainEvent)
+    public async Task DispatchAsync(EventHandlerContext context, object domainEvent)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(domainEvent);
-        logger.LogDebug("Unhandled domain event {EventType}", domainEvent.GetType().FullName);
-        return Task.CompletedTask;
+
+        switch (domainEvent)
+        {
+            case global::Mixology.Modules.Ingredients.Events.IngredientDeleted typedEvent:
+                await DispatchRoute0Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            case global::Mixology.Modules.Ingredients.Events.IngredientUpdated typedEvent:
+                await DispatchRoute1Async(context, typedEvent).ConfigureAwait(false);
+                return;
+            default:
+                logger.LogDebug("Unhandled domain event {EventType}", domainEvent.GetType().FullName);
+                return;
+        }
+    }
+
+    private async Task DispatchRoute0Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientDeleted domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IPreparingDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientDeleted> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Drinks.Handlers.IngredientDeletedHandler>(scope.ServiceProvider);
+        await handler0.PrepareAsync(context, domainEvent).ConfigureAwait(false);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
+    }
+
+    private async Task DispatchRoute1Async(EventHandlerContext context, global::Mixology.Modules.Ingredients.Events.IngredientUpdated domainEvent)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        IDomainEventHandler<global::Mixology.Modules.Ingredients.Events.IngredientUpdated> handler0 =
+            ActivatorUtilities.CreateInstance<global::Mixology.Modules.Drinks.Handlers.IngredientUpdatedHandler>(scope.ServiceProvider);
+        await handler0.HandleAsync(context, domainEvent).ConfigureAwait(false);
     }
 }

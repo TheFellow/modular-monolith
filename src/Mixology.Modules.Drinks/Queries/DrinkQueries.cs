@@ -41,6 +41,35 @@ public sealed class DrinkQueries
         }
     }
 
+    public async Task<IReadOnlyList<Drink>> ListByIngredientAsync(
+        StoreSession session,
+        IngredientId ingredientId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        RequireIngredientId(ingredientId);
+        try
+        {
+            string value = ingredientId.Value;
+            DrinkRow[] rows = await DrinkRows(session.Context)
+                .AsNoTracking()
+                .Where(row => row.DeletedAtUtc == null
+                    && row.RecipeIngredients.Any(ingredient =>
+                        ingredient.IngredientId == value
+                        || ingredient.Substitutes.Any(substitute => substitute.SubstituteId == value)))
+                .OrderBy(static row => row.Name)
+                .ThenBy(static row => row.Id)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return rows.Select(FromRow).ToArray();
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal($"list drinks by ingredient {ingredientId}", exception);
+        }
+    }
+
     private static IQueryable<DrinkRow> DrinkRows(MixologyDbContext database) =>
         database.Set<DrinkRow>()
             .Include(row => row.RecipeIngredients)
@@ -89,5 +118,15 @@ public sealed class DrinkQueries
         }
 
         _ = DrinkId.Parse(id.Value);
+    }
+
+    private static void RequireIngredientId(IngredientId id)
+    {
+        if (id.IsEmpty)
+        {
+            throw AppError.Invalid("ingredient id is required");
+        }
+
+        _ = IngredientId.Parse(id.Value);
     }
 }

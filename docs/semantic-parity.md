@@ -20,7 +20,7 @@ requires production-shaped tests, not only a matching type or method name.
 
 - [x] Ingredients CRUD, filters, retirement, and permanent-replacement intent
 - [x] Drinks CRUD, recipes, typed filters, authorization, and lifecycle
-- [ ] Drinks retirement reactions, review state, and substitution rewrites
+- [x] Drinks retirement reactions, review state, and substitution rewrites
 - [x] Inventory on-hand/reserved/available stock and adjustment reasons
 - [x] Menus curation, publication, availability, analytics, and readiness
 - [ ] Orders placement, reservation, completion, cancellation, and blocking
@@ -32,8 +32,8 @@ requires production-shaped tests, not only a matching type or method name.
 - [ ] Placement captures an immutable usage snapshot and reserves atomically
 - [ ] Completion consumes reservations; cancellation releases them
 - [ ] Shortage blocks every affected pending order; restock unblocks it
-- [ ] Retirement rewrites only compatible explicit replacements
-- [ ] Required retired references cause review; optional references disappear
+- [x] Retirement rewrites only compatible explicit replacements
+- [x] Required retired references cause review; optional references disappear
 - [ ] Accepted order snapshots remain historical truth
 - [ ] Published menus degrade honestly; drafts with blockers cannot publish
 - [ ] Event handler order cannot change outcomes and any failure rolls back all

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Mixology.Application.Authentication;
 using Mixology.Application.Events;
@@ -10,7 +11,11 @@ public sealed class DomainEventDispatcherTests
     [Fact]
     public async Task UnknownEventsAreValidExtensionPoints()
     {
-        DomainEventDispatcher dispatcher = new(NullLogger<DomainEventDispatcher>.Instance);
+        ServiceCollection services = new();
+        using ServiceProvider provider = services.BuildServiceProvider();
+        DomainEventDispatcher dispatcher = new(
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            NullLogger<DomainEventDispatcher>.Instance);
         DispatchEventsMiddleware middleware = new(dispatcher);
         OperationContext context = new(Actor.Owner);
 
