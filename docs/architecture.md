@@ -44,4 +44,7 @@ full. Counts and cursors describe only visible results.
 - Toolkits reference neither application modules nor sibling toolkits.
 - A domain surface references its matching toolkit and public application API.
 - Executables compose modules and surfaces but contain no business rules.
+- The TUI is a leaf executable: it owns Generic Host and Terminal.Gui lifetime,
+  consumes toolkit-neutral dashboard/navigation projections, and registers only
+  implemented authorization-visible workspaces.
 - Architecture tests and project references make these rules executable.

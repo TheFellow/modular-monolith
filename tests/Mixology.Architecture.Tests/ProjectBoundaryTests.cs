@@ -125,9 +125,14 @@ public sealed class ProjectBoundaryTests
     }
 
     [Fact]
-    public void CliAndSeedAreCompositionEdges()
+    public void ProcessCompositionRootsAreExecutableEdges()
     {
-        ProjectInfo[] compositions = [Graph["Mixology.Cli"], Graph["Mixology.Seed"]];
+        ProjectInfo[] compositions =
+        [
+            Graph["Mixology.Cli"],
+            Graph["Mixology.Seed"],
+            Graph["Mixology.Tui"],
+        ];
 
         foreach (ProjectInfo composition in compositions)
         {
@@ -153,6 +158,12 @@ public sealed class ProjectBoundaryTests
                 Assert.Contains(required, composition.MixologyReferences);
             }
         }
+
+        ProjectInfo tui = Graph["Mixology.Tui"];
+        Assert.Contains("Mixology.Presentation", tui.MixologyReferences);
+        Assert.Contains("Mixology.Toolkits.Tui", tui.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Cli", tui.MixologyReferences);
+        Assert.DoesNotContain("Mixology.Seed", tui.MixologyReferences);
     }
 
     [Fact]

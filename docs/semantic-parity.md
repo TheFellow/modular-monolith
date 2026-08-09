@@ -27,7 +27,8 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Menus curation, publication, availability, analytics, and readiness
 - [x] Orders placement, lifecycle, typed filtering, authorization, and blocked-state model
 - [x] Append-only audit history, actor queries, and touched resources
-- [x] Polymorphic tags, registered target loaders, atomic tagged mutations, ABAC
+- [x] Polymorphic tags, registered target loaders, caller-owned atomic tagged
+  mutation coordination, and pre/post-state ABAC
 
 ## Stateful workflows
 
@@ -50,6 +51,8 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Standalone canonical seed through authorized, audited public module APIs
 - [x] CLI logging and metrics parity
 - [x] Independent dashboard aggregates, recent activity, and CLI status text/JSON
+- [x] Production TUI host, authorization-filtered route shell, Dashboard,
+  typed status errors, stale refresh rejection, and deterministic shutdown
 - [ ] TUI workspace, forms, dialogs, keys, paging, async, and authorization parity
 - [ ] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
 - [ ] Real cross-process writes are observable through every other surface

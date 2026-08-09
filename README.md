@@ -70,3 +70,18 @@ It writes to `data/mixology.db` by default. Set `MIXOLOGY_DB` to select another
 path. Like the Go reference, the seed is deliberately non-idempotent and
 command-atomic: running it against an already seeded store exits with an error,
 while work committed before any later failure remains in the database.
+
+## Terminal dashboard
+
+The standalone TUI currently provides the production composition root,
+authorization-filtered route shell, and live Dashboard foundation:
+
+```sh
+dotnet run --project src/Mixology.Tui -- --db data/mixology.db --actor owner
+```
+
+It uses an instance-owned Terminal.Gui application, keeps diagnostics in
+`mixology-tui.log` beside the database by default, and supports the same
+`MIXOLOGY_DB`, `MIXOLOGY_ACTOR`, logging, and metrics configuration as the
+reference process. Domain workspaces are being added as independently tested
+vertical slices; unimplemented routes are not advertised by the shell.

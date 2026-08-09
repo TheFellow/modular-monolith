@@ -20,6 +20,7 @@
     <Project Path="src/Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
     <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
     <Project Path="src/Mixology.Seed/Mixology.Seed.csproj" />
+    <Project Path="src/Mixology.Tui/Mixology.Tui.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Mixology.Architecture.Tests/Mixology.Architecture.Tests.csproj" />
@@ -40,6 +41,7 @@
     <Project Path="tests/Mixology.Presentation.Tests/Mixology.Presentation.Tests.csproj" />
     <Project Path="tests/Mixology.Seed.Tests/Mixology.Seed.Tests.csproj" />
     <Project Path="tests/Mixology.Toolkits.Tui.Tests/Mixology.Toolkits.Tui.Tests.csproj" />
+    <Project Path="tests/Mixology.Tui.Tests/Mixology.Tui.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Mixology.DispatchGenerator/Mixology.DispatchGenerator.csproj" />
