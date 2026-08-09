@@ -468,7 +468,9 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
         Mode = MenuDesktopMode.Detail; StatusMessage = "Menu ready"; NotifyActions();
     }
 
-    private void UpdateDirty() { if (IsForm)
+    private void UpdateDirty()
+    {
+        if (IsForm)
         {
             SetDirty(Snapshot() != baseline);
         }

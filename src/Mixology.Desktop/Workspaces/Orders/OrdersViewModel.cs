@@ -166,7 +166,9 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
 
     public async Task DrainAsync()
     {
-        while (true) { Task snapshot = active; await snapshot.ConfigureAwait(false); if (ReferenceEquals(snapshot, active))
+        while (true)
+        {
+            Task snapshot = active; await snapshot.ConfigureAwait(false); if (ReferenceEquals(snapshot, active))
             {
                 return;
             }
@@ -387,13 +389,15 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
             }).ConfigureAwait(false);
             if (latest.IsCurrent && latest.Value is not null)
             {
-                await dispatcher.InvokeAsync(() => { if (latest.Value.Error is not null)
+                await dispatcher.InvokeAsync(() =>
+                {
+                    if (latest.Value.Error is not null)
                     {
                         PublishError(latest.Value.Error);
-                }
-                else
-                {
-                    PublishMutation(latest.Value.Detail!);
+                    }
+                    else
+                    {
+                        PublishMutation(latest.Value.Detail!);
                     }
                 }).ConfigureAwait(false);
             }
@@ -424,7 +428,9 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
         Error = null; IsLoading = IsSubmitting = false; StatusMessage = "Order ready"; NotifyActions();
     }
 
-    private void MarkDirty() { if (IsPlace)
+    private void MarkDirty()
+    {
+        if (IsPlace)
         {
             SetDirty(PlaceMenu is not null || PlaceLines.Count > 0 || PlaceNotes.Length > 0 || PlaceTags.Length > 0);
         }
