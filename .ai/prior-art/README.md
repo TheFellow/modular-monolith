@@ -7,6 +7,7 @@ inputs, not package shopping notes.
 
 - [Runtime and application host](runtime.md)
 - [Entity identifiers](identifiers.md)
+- [Typed application errors](errors.md)
 - [Backing storage](storage.md)
 - [Typed filtering](filtering.md)
 - [CLI](cli.md)
