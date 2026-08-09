@@ -20,6 +20,9 @@ dotnet restore Mixology.slnx
 dotnet build Mixology.slnx --no-restore
 dotnet test Mixology.slnx --no-build
 dotnet format Mixology.slnx --verify-no-changes --no-restore
+dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
+  --manifest src/Mixology.Dispatcher/dispatcher.routes.json \
+  --output src/Mixology.Dispatcher/Generated/DomainEventDispatcher.g.cs --check
 dotnet ef migrations has-pending-model-changes --project src/Mixology.Persistence --no-build
 ```
 
@@ -38,7 +41,7 @@ src/
   Mixology.Persistence/            EF Core and SQLite unit of work
   Mixology.Authorization.Cedar/    cedar-dotnet adapter
   Mixology.Modules.*/              seven bounded contexts
-  Mixology.Dispatching/            generated event routing
+  Mixology.Dispatcher/             generated event routing
   Mixology.Toolkits.*/             presentation-only mechanics
   Mixology.Cli|Tui|Desktop|Seed/   process composition roots
 tests/

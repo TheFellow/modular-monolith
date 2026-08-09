@@ -4,13 +4,18 @@
     <Project Path="src/Mixology.Application/Mixology.Application.csproj" />
     <Project Path="src/Mixology.Filtering/Mixology.Filtering.csproj" />
     <Project Path="src/Mixology.Persistence/Mixology.Persistence.csproj" />
+    <Project Path="src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Mixology.Application.Tests/Mixology.Application.Tests.csproj" />
     <Project Path="tests/Mixology.Cli.Tests/Mixology.Cli.Tests.csproj" />
     <Project Path="tests/Mixology.Filtering.Tests/Mixology.Filtering.Tests.csproj" />
+    <Project Path="tests/Mixology.Dispatcher.Tests/Mixology.Dispatcher.Tests.csproj" />
     <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
     <Project Path="tests/Mixology.Persistence.Tests/Mixology.Persistence.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Mixology.DispatchGenerator/Mixology.DispatchGenerator.csproj" />
   </Folder>
 </Solution>

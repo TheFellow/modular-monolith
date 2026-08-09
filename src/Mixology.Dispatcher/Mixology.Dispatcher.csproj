@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Generated cross-domain event-to-handler composition.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+  </ItemGroup>
+</Project>

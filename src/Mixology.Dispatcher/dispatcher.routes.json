@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "namespace": "Mixology.Dispatcher",
+  "className": "DomainEventDispatcher",
+  "routes": []
+}
