@@ -55,7 +55,7 @@ public static class CliApplication
             }
             catch (Exception exception)
             {
-                return await CliErrors.WriteAsync(error, exception).ConfigureAwait(false);
+                return await CliErrorAdapter.WriteAsync(error, exception).ConfigureAwait(false);
             }
         });
 
@@ -64,7 +64,7 @@ public static class CliApplication
     }
 }
 
-internal static class CliErrors
+public static class CliErrorAdapter
 {
     public static async Task<int> WriteAsync(TextWriter error, Exception exception)
     {
@@ -75,7 +75,13 @@ internal static class CliErrors
             return applicationError.Spec.CliExitCode;
         }
 
+        if (AppError.IsCancellation(exception))
+        {
+            await error.WriteLineAsync("operation cancelled").ConfigureAwait(false);
+            return ErrorCatalog.ExitGeneral;
+        }
+
         await error.WriteLineAsync("internal error").ConfigureAwait(false);
-        return ErrorCatalog.For(ErrorKind.Internal).CliExitCode;
+        return ErrorCatalog.ExitGeneral;
     }
 }

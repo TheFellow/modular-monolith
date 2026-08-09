@@ -1,5 +1,6 @@
 using System.CommandLine;
 using Mixology.Cli;
+using Mixology.Kernel.Errors;
 using Xunit;
 
 namespace Mixology.Cli.Tests;
@@ -57,5 +58,41 @@ public sealed class CliApplicationTests
         Assert.Equal(10, exitCode);
         Assert.Empty(output.ToString());
         Assert.Equal("unknown actor: \"visitor\"", error.ToString().Trim());
+    }
+
+    [Fact]
+    public async Task ErrorAdapterPreservesTypedMappingsAndHidesInternalDetail()
+    {
+        StringWriter invalidOutput = new();
+        StringWriter internalOutput = new();
+
+        int invalid = await CliErrorAdapter.WriteAsync(invalidOutput, AppError.Invalid("name is required"));
+        int internalCode = await CliErrorAdapter.WriteAsync(
+            internalOutput,
+            AppError.Internal("database password leaked"));
+
+        Assert.Equal(ErrorCatalog.ExitInvalid, invalid);
+        Assert.Equal("name is required", invalidOutput.ToString().Trim());
+        Assert.Equal(ErrorCatalog.ExitInternal, internalCode);
+        Assert.Equal("internal error", internalOutput.ToString().Trim());
+    }
+
+    [Fact]
+    public async Task CancellationAndUnknownFailuresRemainNonApplicationOutcomes()
+    {
+        StringWriter cancellationOutput = new();
+        StringWriter unknownOutput = new();
+
+        int cancellation = await CliErrorAdapter.WriteAsync(
+            cancellationOutput,
+            new InvalidOperationException("outer", new TaskCanceledException()));
+        int unknown = await CliErrorAdapter.WriteAsync(
+            unknownOutput,
+            new IOException("secret path"));
+
+        Assert.Equal(ErrorCatalog.ExitGeneral, cancellation);
+        Assert.Equal("operation cancelled", cancellationOutput.ToString().Trim());
+        Assert.Equal(ErrorCatalog.ExitGeneral, unknown);
+        Assert.Equal("internal error", unknownOutput.ToString().Trim());
     }
 }
