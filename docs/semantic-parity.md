@@ -62,4 +62,4 @@ requires production-shaped tests, not only a matching type or method name.
   environment, typed-validation, and host-lifetime behavior
 - [x] GUI workspace, MVVM forms, actions, stale-work, shutdown, and auth parity
 - [x] Real cross-process writes are observable through every other surface
-- [ ] Self-contained Windows, macOS, and Linux publish smoke tests
+- [x] Self-contained Windows, macOS, and Linux publish smoke tests

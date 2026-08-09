@@ -26,6 +26,10 @@ dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
 dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations --no-build
 ```
 
+GitHub Actions repeats this gate on every push and pull request, then publishes
+and executes the native Desktop help path on Linux x64, Windows x64, and macOS
+x64 runners. The workflow pins official actions by immutable release commit.
+
 The repository pins the .NET 10 SDK and treats compiler, analyzer, and configured
 style warnings as errors. C# 14 is deliberate: native C# discriminated unions are
 not available in the pinned stable toolchain, so closed unions use explicit

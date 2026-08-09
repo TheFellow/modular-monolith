@@ -13,6 +13,7 @@ inputs, not package shopping notes.
 - [CLI](cli.md)
 - [TUI](tui.md)
 - [Desktop GUI](gui.md)
+- [Continuous integration and native publishes](ci.md)
 - [Authorization](authorization.md)
 - [Dispatcher code generation](code-generation.md)
 - [Observability](observability.md)
