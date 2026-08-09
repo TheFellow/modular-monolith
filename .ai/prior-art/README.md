@@ -15,4 +15,5 @@ inputs, not package shopping notes.
 - [Desktop GUI](gui.md)
 - [Authorization](authorization.md)
 - [Dispatcher code generation](code-generation.md)
+- [Observability](observability.md)
 - [Action projection](actions.md)

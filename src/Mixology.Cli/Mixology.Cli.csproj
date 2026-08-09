@@ -6,6 +6,11 @@
   <ItemGroup>
     <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Spectre.Console" />
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.HttpListener" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
     <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
     <ProjectReference Include="../Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
     <ProjectReference Include="../Mixology.Migrations/Mixology.Migrations.csproj" />

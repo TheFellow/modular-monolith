@@ -1,6 +1,8 @@
 using System.CommandLine;
+using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Mixology.Application;
 using Mixology.Application.Authentication;
 using Mixology.Application.Events;
@@ -31,6 +33,10 @@ using Mixology.Modules.Orders.Requests;
 using Mixology.Modules.Tagging;
 using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
+using OpenTelemetry.Metrics;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Json;
 
 namespace Mixology.Cli;
 
@@ -55,13 +61,42 @@ public static class CliApplication
             Description = "Actor identity: owner, manager, sommelier, bartender, or anonymous.",
             DefaultValueFactory = _ => "owner",
         };
+        Option<string> logLevel = new("--log-level")
+        {
+            Description = "Diagnostic level: debug, info, warn, or error.",
+            DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_LOG_LEVEL") ?? "info",
+        };
+        Option<string> logFormat = new("--log-format")
+        {
+            Description = "Diagnostic format: text or json.",
+            DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_LOG_FORMAT") ?? "text",
+        };
+        Option<string> logFile = new("--log-file")
+        {
+            Description = "Write diagnostics to this file instead of stderr.",
+            DefaultValueFactory = _ => Environment.GetEnvironmentVariable("MIXOLOGY_LOG_FILE") ?? string.Empty,
+        };
+        Option<bool> metrics = new("--metrics")
+        {
+            Description = "Expose Prometheus metrics on localhost:9090/metrics for this invocation.",
+            DefaultValueFactory = _ => EnvironmentBoolean("MIXOLOGY_METRICS"),
+        };
         root.Options.Add(database);
         root.Options.Add(actor);
+        root.Options.Add(logLevel);
+        root.Options.Add(logFormat);
+        root.Options.Add(logFile);
+        root.Options.Add(metrics);
 
         IngredientsCommandContext ingredientsContext = new(
             async (parseResult, cancellationToken) => await HostedIngredientsCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             output,
             error);
@@ -69,6 +104,11 @@ public static class CliApplication
             async (parseResult, cancellationToken) => await HostedAuditCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             output,
             error);
@@ -76,6 +116,11 @@ public static class CliApplication
             async (parseResult, cancellationToken) => await HostedDrinksCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             input,
             output,
@@ -84,6 +129,11 @@ public static class CliApplication
             async (parseResult, cancellationToken) => await HostedInventoryCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             output,
             error);
@@ -91,6 +141,11 @@ public static class CliApplication
             async (parseResult, cancellationToken) => await HostedMenusCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             output,
             error,
@@ -99,6 +154,11 @@ public static class CliApplication
             async (parseResult, cancellationToken) => await HostedOrdersCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             output,
             error,
@@ -107,6 +167,11 @@ public static class CliApplication
             async (parseResult, cancellationToken) => await HostedTagsCommandSession.OpenAsync(
                 parseResult.GetValue(database) ?? throw AppError.Invalid("database path is required"),
                 Actor.Parse(parseResult.GetValue(actor)),
+                CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics)),
                 cancellationToken).ConfigureAwait(false),
             output,
             error);
@@ -119,7 +184,15 @@ public static class CliApplication
                 string databasePath = parseResult.GetValue(database)
                     ?? throw AppError.Invalid("database path is required");
                 _ = Actor.Parse(parseResult.GetValue(actor));
-                using IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+                CliHostOptions hostOptions = CliHostOptions.Create(
+                    parseResult.GetValue(logLevel),
+                    parseResult.GetValue(logFormat),
+                    parseResult.GetValue(logFile),
+                    parseResult.GetValue(metrics));
+                using IHost host = await OpenHostAsync(
+                    databasePath,
+                    hostOptions,
+                    cancellationToken).ConfigureAwait(false);
                 await output.WriteLineAsync("Mixology foundation is ready.").ConfigureAwait(false);
                 return 0;
             }
@@ -140,9 +213,38 @@ public static class CliApplication
         return root;
     }
 
-    private static async Task<IHost> OpenHostAsync(string databasePath, CancellationToken cancellationToken)
+    private static bool EnvironmentBoolean(string name)
     {
+        string? value = Environment.GetEnvironmentVariable(name);
+        return value?.Trim().ToLowerInvariant() switch
+        {
+            null or "" or "0" or "f" or "false" => false,
+            "1" or "t" or "true" => true,
+            _ => throw AppError.Invalid($"environment variable {name} must be true or false"),
+        };
+    }
+
+    private static async Task<IHost> OpenHostAsync(
+        string databasePath,
+        CliHostOptions options,
+        CancellationToken cancellationToken)
+    {
+        options.ValidateLogDestination();
         HostApplicationBuilder builder = MixologyHost.CreateBuilder([]);
+        builder.Logging.ClearProviders();
+        builder.Services.AddSerilog((_, configuration) => options.Configure(configuration));
+        if (options.Metrics)
+        {
+            builder.Services.AddOpenTelemetry().WithMetrics(metricsBuilder => metricsBuilder
+                .AddMeter("Mixology.Application")
+                .AddPrometheusHttpListener(exporter =>
+                {
+                    exporter.Host = "localhost";
+                    exporter.Port = 9090;
+                    exporter.ScrapeEndpointPath = "/metrics";
+                }));
+        }
+
         builder.Services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
         builder.AddMixology(databasePath, typeof(MigrationAssemblyMarker).Assembly);
         builder.Services.AddAuditModule();
@@ -152,19 +254,128 @@ public static class CliApplication
         builder.Services.AddMenusModule();
         builder.Services.AddOrdersModule();
         builder.Services.AddTaggingModule();
-        IHost host = builder.Build();
+        IHost? host = null;
         try
         {
+            host = builder.Build();
             await host.Services.GetRequiredService<MixologyStore>()
                 .InitializeAsync(cancellationToken)
                 .ConfigureAwait(false);
             await host.StartAsync(cancellationToken).ConfigureAwait(false);
             return host;
         }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            host?.Dispose();
+            throw AppError.Internal("open CLI application host", exception);
+        }
         catch
         {
-            host.Dispose();
+            host?.Dispose();
             throw;
+        }
+    }
+
+    private sealed record CliHostOptions(
+        LogEventLevel LogLevel,
+        string LogFormat,
+        string LogFile,
+        bool Metrics)
+    {
+        private const string TextTemplate =
+            "{Timestamp:yyyy-MM-ddTHH:mm:ss.fffzzz} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+
+        public static CliHostOptions Create(
+            string? level,
+            string? format,
+            string? file,
+            bool metrics)
+        {
+            string normalizedLevel = level?.Trim().ToLowerInvariant() ?? string.Empty;
+            LogEventLevel parsedLevel = normalizedLevel switch
+            {
+                "debug" => LogEventLevel.Debug,
+                "info" => LogEventLevel.Information,
+                "warn" or "warning" => LogEventLevel.Warning,
+                "error" => LogEventLevel.Error,
+                _ => throw AppError.Invalid($"invalid log level \"{level?.Trim()}\""),
+            };
+            string normalizedFormat = format?.Trim().ToLowerInvariant() ?? string.Empty;
+            if (normalizedFormat is not ("text" or "json"))
+            {
+                throw AppError.Invalid($"invalid log format \"{format?.Trim()}\"");
+            }
+
+            return new CliHostOptions(parsedLevel, normalizedFormat, file?.Trim() ?? string.Empty, metrics);
+        }
+
+        public void ValidateLogDestination()
+        {
+            if (LogFile.Length == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                string path = Path.GetFullPath(LogFile);
+                if (Directory.Exists(path))
+                {
+                    throw AppError.Invalid("log file path names a directory");
+                }
+
+                using FileStream stream = new(
+                    path,
+                    FileMode.Append,
+                    FileAccess.Write,
+                    FileShare.ReadWrite | FileShare.Delete);
+            }
+            catch (Exception exception) when (
+                AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+            {
+                throw AppError.Invalid("log file cannot be opened", exception);
+            }
+        }
+
+        public void Configure(LoggerConfiguration configuration)
+        {
+            configuration.MinimumLevel.Is(LogLevel).Enrich.FromLogContext();
+            if (LogFormat == "json")
+            {
+                JsonFormatter formatter = new(renderMessage: true);
+                if (LogFile.Length == 0)
+                {
+                    configuration.WriteTo.Console(
+                        formatter,
+                        standardErrorFromLevel: LogEventLevel.Verbose);
+                }
+                else
+                {
+                    configuration.WriteTo.File(
+                        formatter,
+                        Path.GetFullPath(LogFile),
+                        shared: true);
+                }
+
+                return;
+            }
+
+            if (LogFile.Length == 0)
+            {
+                configuration.WriteTo.Console(
+                    outputTemplate: TextTemplate,
+                    formatProvider: CultureInfo.InvariantCulture,
+                    standardErrorFromLevel: LogEventLevel.Verbose);
+            }
+            else
+            {
+                configuration.WriteTo.File(
+                    Path.GetFullPath(LogFile),
+                    outputTemplate: TextTemplate,
+                    formatProvider: CultureInfo.InvariantCulture,
+                    shared: true);
+            }
         }
     }
 
@@ -176,9 +387,10 @@ public static class CliApplication
         public static async ValueTask<IIngredientsCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedIngredientsCommandSession(
                 host,
                 host.Services.GetRequiredService<IngredientsModule>(),
@@ -223,9 +435,10 @@ public static class CliApplication
         public static async ValueTask<IAuditCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedAuditCommandSession(
                 host,
                 host.Services.GetRequiredService<AuditModule>(),
@@ -252,9 +465,10 @@ public static class CliApplication
         public static async ValueTask<IDrinksCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedDrinksCommandSession(
                 host,
                 host.Services.GetRequiredService<DrinksModule>(),
@@ -291,9 +505,10 @@ public static class CliApplication
         public static async ValueTask<IInventoryCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedInventoryCommandSession(
                 host,
                 host.Services.GetRequiredService<InventoryModule>(),
@@ -335,9 +550,10 @@ public static class CliApplication
         public static async ValueTask<IMenusCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedMenusCommandSession(
                 host,
                 host.Services.GetRequiredService<MenusModule>(),
@@ -395,9 +611,10 @@ public static class CliApplication
         public static async ValueTask<IOrdersCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedOrdersCommandSession(
                 host,
                 host.Services.GetRequiredService<OrdersModule>(),
@@ -434,9 +651,10 @@ public static class CliApplication
         public static async ValueTask<ITagsCommandSession> OpenAsync(
             string databasePath,
             Actor actor,
+            CliHostOptions options,
             CancellationToken cancellationToken)
         {
-            IHost host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
+            IHost host = await OpenHostAsync(databasePath, options, cancellationToken).ConfigureAwait(false);
             return new HostedTagsCommandSession(
                 host,
                 host.Services.GetRequiredService<TaggingModule>(),
