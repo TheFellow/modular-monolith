@@ -572,6 +572,38 @@ namespace Mixology.Migrations.Migrations
                     b.ToTable("orders", (string)null);
                 });
 
+            modelBuilder.Entity("Mixology.Modules.Tagging.Persistence.TagAssociationRow", b =>
+                {
+                    b.Property<string>("EntityType")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("entity_type")
+                        .UseCollation("BINARY");
+
+                    b.Property<string>("EntityId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("entity_id")
+                        .UseCollation("BINARY");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("key")
+                        .UseCollation("BINARY");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("value")
+                        .UseCollation("BINARY");
+
+                    b.HasKey("EntityType", "EntityId", "Key");
+
+                    b.HasIndex("EntityType", "EntityId");
+
+                    b.HasIndex("Key", "Value");
+
+                    b.ToTable("entity_tags", (string)null);
+                });
+
             modelBuilder.Entity("Mixology.Persistence.Model.StoreMetadataRow", b =>
                 {
                     b.Property<int>("Id")

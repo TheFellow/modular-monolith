@@ -7,12 +7,13 @@ using Mixology.Modules.Drinks.Models;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Persistence;
 using Mixology.Modules.Menus.Ports;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Menus.Queries;
 
 /// <summary>Owner-defined menu reads and fulfillment policy for collaborating domains.</summary>
-public sealed class MenuQueries(IMenuOperations operations)
+public sealed class MenuQueries(IMenuOperations operations, ITagReader tags)
 {
     public async Task<Menu> GetAsync(
         StoreSession session,
@@ -35,7 +36,19 @@ public sealed class MenuQueries(IMenuOperations operations)
                     row => row.Id == id.Value && row.DeletedAtUtc == null,
                     cancellationToken)
                 .ConfigureAwait(false);
-            return row is null ? throw AppError.NotFound($"menu {id} not found") : FromRow(row);
+            if (row is null)
+            {
+                throw AppError.NotFound($"menu {id} not found");
+            }
+
+            Menu menu = FromRow(row);
+            return menu with
+            {
+                Tags = await tags.ListAsync(
+                    session.Context,
+                    menu.EntityUid,
+                    cancellationToken).ConfigureAwait(false),
+            };
         }
         catch (Exception exception) when (exception is not AppError && !AppError.IsCancellation(exception))
         {
@@ -48,6 +61,32 @@ public sealed class MenuQueries(IMenuOperations operations)
         IReadOnlyList<RecipeIngredient> requirements,
         CancellationToken cancellationToken = default) =>
         operations.FulfillIngredientsAsync(session, requirements, cancellationToken);
+
+    public async Task<IReadOnlySet<string>> ActiveIdsAsync(
+        StoreSession session,
+        IReadOnlyCollection<string> ids,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(ids);
+        MenuId[] requested = ids.Distinct(StringComparer.Ordinal).Select(MenuId.Parse).ToArray();
+        string[] values = requested.Select(static value => value.Value).ToArray();
+        try
+        {
+            string[] active = await session.Context.Set<MenuRow>()
+                .AsNoTracking()
+                .Where(row => values.Contains(row.Id) && row.DeletedAtUtc == null)
+                .Select(static row => row.Id)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return active.ToHashSet(StringComparer.Ordinal);
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("read active menu ids", exception);
+        }
+    }
 
     private static Menu FromRow(MenuRow row)
     {

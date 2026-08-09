@@ -10,6 +10,7 @@ using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Modules.Menus;
 using Mixology.Modules.Orders;
+using Mixology.Modules.Tagging;
 using Xunit;
 
 namespace Mixology.Persistence.Tests;
@@ -160,6 +161,7 @@ public sealed class MixologyStoreTests
             collection.AddDrinksModule();
             collection.AddMenusModule();
             collection.AddOrdersModule();
+            collection.AddTaggingModule();
             services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

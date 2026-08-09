@@ -6,6 +6,7 @@ using Mixology.Kernel.Money;
 using Mixology.Kernel.Tags;
 using Mixology.Modules.Inventory.Models;
 using Mixology.Modules.Inventory.Persistence;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Inventory.Queries;
@@ -13,7 +14,7 @@ namespace Mixology.Modules.Inventory.Queries;
 /// <summary>
 /// Owner-defined inventory reads for collaborating domains that already own a store session.
 /// </summary>
-public sealed class InventoryQueries
+public sealed class InventoryQueries(ITagReader tags)
 {
     public async Task<InventoryStock> GetAsync(
         StoreSession session,
@@ -40,12 +41,84 @@ public sealed class InventoryQueries
                 .Where(candidate => candidate.IngredientId == ingredientId.Value)
                 .ToArrayAsync(cancellationToken)
                 .ConfigureAwait(false);
-            return FromRows(row, reservations);
+            InventoryStock inventory = FromRows(row, reservations);
+            return inventory with
+            {
+                Tags = await tags.ListAsync(
+                    session.Context,
+                    inventory.EntityUid,
+                    cancellationToken).ConfigureAwait(false),
+            };
         }
         catch (Exception exception) when (
             AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal("read inventory", exception);
+        }
+    }
+
+    public async Task<InventoryStock> GetByIdAsync(
+        StoreSession session,
+        InventoryId id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        _ = InventoryId.Parse(id.Value);
+        try
+        {
+            InventoryRow? row = await session.Context.Set<InventoryRow>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(candidate => candidate.Id == id.Value, cancellationToken)
+                .ConfigureAwait(false);
+            if (row is null)
+            {
+                throw AppError.NotFound($"inventory {id} not found");
+            }
+
+            InventoryReservationRow[] reservations = await session.Context.Set<InventoryReservationRow>()
+                .AsNoTracking()
+                .Where(candidate => candidate.IngredientId == row.IngredientId)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            InventoryStock inventory = FromRows(row, reservations);
+            return inventory with
+            {
+                Tags = await tags.ListAsync(
+                    session.Context,
+                    inventory.EntityUid,
+                    cancellationToken).ConfigureAwait(false),
+            };
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("read inventory", exception);
+        }
+    }
+
+    public async Task<IReadOnlySet<string>> ActiveIdsAsync(
+        StoreSession session,
+        IReadOnlyCollection<string> ids,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(ids);
+        InventoryId[] requested = ids.Distinct(StringComparer.Ordinal).Select(InventoryId.Parse).ToArray();
+        string[] values = requested.Select(static value => value.Value).ToArray();
+        try
+        {
+            string[] active = await session.Context.Set<InventoryRow>()
+                .AsNoTracking()
+                .Where(row => values.Contains(row.Id))
+                .Select(static row => row.Id)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return active.ToHashSet(StringComparer.Ordinal);
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("read active inventory ids", exception);
         }
     }
 

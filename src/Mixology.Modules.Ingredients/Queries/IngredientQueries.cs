@@ -5,6 +5,7 @@ using Mixology.Kernel.Measurement;
 using Mixology.Kernel.Tags;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Persistence;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Ingredients.Queries;
@@ -14,7 +15,7 @@ namespace Mixology.Modules.Ingredients.Queries;
 /// store session. These queries deliberately do not re-enter the application
 /// middleware or perform a second authorization decision.
 /// </summary>
-public sealed class IngredientQueries
+public sealed class IngredientQueries(ITagReader tags)
 {
     public async Task<Ingredient> GetAsync(
         StoreSession session,
@@ -31,9 +32,19 @@ public sealed class IngredientQueries
                     row => row.Id == id.Value && row.DeletedAtUtc == null,
                     cancellationToken)
                 .ConfigureAwait(false);
-            return row is null
-                ? throw AppError.NotFound($"ingredient {id} not found")
-                : FromRow(row);
+            if (row is null)
+            {
+                throw AppError.NotFound($"ingredient {id} not found");
+            }
+
+            Ingredient ingredient = FromRow(row);
+            return ingredient with
+            {
+                Tags = await tags.ListAsync(
+                    session.Context,
+                    ingredient.EntityUid,
+                    cancellationToken).ConfigureAwait(false),
+            };
         }
         catch (Exception exception) when (
             AppError.Find(exception) is null && !AppError.IsCancellation(exception))
@@ -62,6 +73,32 @@ public sealed class IngredientQueries
             AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal("resolve ingredient substitutions", exception);
+        }
+    }
+
+    public async Task<IReadOnlySet<string>> ActiveIdsAsync(
+        StoreSession session,
+        IReadOnlyCollection<string> ids,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(ids);
+        IngredientId[] requested = ids.Distinct(StringComparer.Ordinal).Select(IngredientId.Parse).ToArray();
+        string[] values = requested.Select(static value => value.Value).ToArray();
+        try
+        {
+            string[] active = await session.Context.Set<IngredientRow>()
+                .AsNoTracking()
+                .Where(row => values.Contains(row.Id) && row.DeletedAtUtc == null)
+                .Select(static row => row.Id)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return active.ToHashSet(StringComparer.Ordinal);
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("read active ingredient ids", exception);
         }
     }
 

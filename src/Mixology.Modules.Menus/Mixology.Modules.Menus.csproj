@@ -7,6 +7,7 @@
     <ProjectReference Include="../Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
     <ProjectReference Include="../Mixology.Filtering/Mixology.Filtering.csproj" />
     <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
     <ProjectReference Include="../Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
     <ProjectReference Include="../Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
     <ProjectReference Include="../Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />

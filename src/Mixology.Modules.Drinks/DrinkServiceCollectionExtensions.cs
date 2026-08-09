@@ -4,6 +4,8 @@ using Mixology.Authorization.Cedar;
 using Mixology.Modules.Drinks.Authorization;
 using Mixology.Modules.Drinks.Persistence;
 using Mixology.Modules.Drinks.Queries;
+using Mixology.Modules.Drinks.Tagging;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Drinks;
@@ -19,6 +21,8 @@ public static class DrinkServiceCollectionExtensions
             ServiceDescriptor.Singleton<IModuleModelConfiguration, DrinkModelConfiguration>());
         services.TryAddSingleton<DrinksModule>();
         services.TryAddSingleton<DrinkQueries>();
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<ITagTargetRegistrationProvider, DrinkTagTarget>());
         return services;
     }
 }

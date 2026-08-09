@@ -15,6 +15,7 @@ using Mixology.Modules.Drinks.Models;
 using Mixology.Modules.Drinks.Persistence;
 using Mixology.Modules.Drinks.Requests;
 using Mixology.Modules.Ingredients.Queries;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Drinks;
@@ -22,6 +23,7 @@ namespace Mixology.Modules.Drinks;
 public sealed class DrinksModule(
     MixologyStore store,
     IngredientQueries ingredients,
+    ITagReader tags,
     IEntityAuthorizer authorizer,
     TimeProvider timeProvider)
 {
@@ -77,9 +79,19 @@ public sealed class DrinksModule(
                                 row => row.Id == id.Value && row.DeletedAtUtc == null,
                                 context.CancellationToken)
                             .ConfigureAwait(false);
-                        return row is null
-                            ? throw AppError.NotFound($"drink {id} not found")
-                            : FromRow(row);
+                        if (row is null)
+                        {
+                            throw AppError.NotFound($"drink {id} not found");
+                        }
+
+                        Drink loaded = FromRow(row);
+                        return loaded with
+                        {
+                            Tags = await tags.ListAsync(
+                                database,
+                                loaded.EntityUid,
+                                context.CancellationToken).ConfigureAwait(false),
+                        };
                     },
                     context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, DrinkAuthorization.Get, drink).ConfigureAwait(false);
@@ -101,7 +113,10 @@ public sealed class DrinksModule(
             {
                 UpdateDrinkRequest normalized = request.Normalize();
                 DrinkRow row = await RequireActiveRowAsync(context, normalized.Id).ConfigureAwait(false);
-                Drink current = FromRow(row);
+                Drink current = await WithTagsAsync(
+                    context.Session!.Context,
+                    FromRow(row),
+                    context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, DrinkAuthorization.Update, current).ConfigureAwait(false);
                 Drink updated = new Drink(
                     normalized.Id,
@@ -136,7 +151,10 @@ public sealed class DrinksModule(
             async context =>
             {
                 DrinkRow row = await RequireActiveRowAsync(context, id).ConfigureAwait(false);
-                Drink current = FromRow(row);
+                Drink current = await WithTagsAsync(
+                    context.Session!.Context,
+                    FromRow(row),
+                    context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, DrinkAuthorization.Delete, current).ConfigureAwait(false);
                 DateTimeOffset deletedAt = timeProvider.GetUtcNow().ToUniversalTime();
                 Drink deleted = current with { DeletedAt = deletedAt };
@@ -193,18 +211,32 @@ public sealed class DrinksModule(
             Query(DrinkAuthorization.List),
             async context =>
             {
-                DrinkRow[] rows = await ReadAsync(
-                    database => DrinkRows(database)
-                        .Where(row => row.DeletedAtUtc == null && row.RecipeIngredients.Any(
-                            recipe => recipe.IngredientId == ingredientId.Value ||
-                                      recipe.Substitutes.Any(substitute => substitute.SubstituteId == ingredientId.Value)))
-                        .OrderBy(row => row.Name)
-                        .ToArrayAsync(context.CancellationToken),
+                (DrinkRow[] Rows, IReadOnlyDictionary<EntityUid, TagCollection> Tags) data = await ReadAsync(
+                    async database =>
+                    {
+                        DrinkRow[] rows = await DrinkRows(database)
+                            .Where(row => row.DeletedAtUtc == null && row.RecipeIngredients.Any(
+                                recipe => recipe.IngredientId == ingredientId.Value ||
+                                          recipe.Substitutes.Any(
+                                              substitute => substitute.SubstituteId == ingredientId.Value)))
+                            .OrderBy(row => row.Name)
+                            .ToArrayAsync(context.CancellationToken).ConfigureAwait(false);
+                        IReadOnlyDictionary<EntityUid, TagCollection> loadedTags = await tags.ListTypeAsync(
+                            database,
+                            EntityIds.DrinkType,
+                            rows.Select(static row => row.Id).ToArray(),
+                            context.CancellationToken).ConfigureAwait(false);
+                        return (rows, loadedTags);
+                    },
                     context.CancellationToken).ConfigureAwait(false);
                 List<Drink> visible = [];
-                foreach (DrinkRow row in rows)
+                foreach (DrinkRow row in data.Rows)
                 {
                     Drink drink = FromRow(row);
+                    if (data.Tags.TryGetValue(drink.EntityUid, out TagCollection? loadedTags))
+                    {
+                        drink = drink with { Tags = loadedTags };
+                    }
                     try
                     {
                         await AuthorizeAsync(context, DrinkAuthorization.List, drink).ConfigureAwait(false);
@@ -256,7 +288,7 @@ public sealed class DrinksModule(
         ListDrinksRequest request,
         FilterExpression<DrinkFilter>? expression)
     {
-        DrinkRow[] candidates = await ReadAsync(
+        (DrinkRow[] Rows, IReadOnlyDictionary<EntityUid, TagCollection> Tags) data = await ReadAsync(
             async database =>
             {
                 IQueryable<DrinkRow> query = DrinkRows(database).Where(static row => row.DeletedAtUtc == null);
@@ -283,21 +315,31 @@ public sealed class DrinksModule(
                     query = query.Where(pushdown);
                 }
 
-                return await query.OrderByDescending(static row => row.Id)
+                DrinkRow[] rows = await query.OrderByDescending(static row => row.Id)
                     .ToArrayAsync(context.CancellationToken)
                     .ConfigureAwait(false);
+                IReadOnlyDictionary<EntityUid, TagCollection> loadedTags = await tags.ListTypeAsync(
+                    database,
+                    EntityIds.DrinkType,
+                    rows.Select(static row => row.Id).ToArray(),
+                    context.CancellationToken).ConfigureAwait(false);
+                return (rows, loadedTags);
             },
             context.CancellationToken).ConfigureAwait(false);
 
         if (!request.Cursor.IsEmpty)
         {
-            candidates = candidates.Where(row => string.CompareOrdinal(row.Id, request.Cursor.Value) < 0).ToArray();
+            data.Rows = data.Rows.Where(row => string.CompareOrdinal(row.Id, request.Cursor.Value) < 0).ToArray();
         }
 
         List<Drink> visible = [];
-        foreach (DrinkRow row in candidates)
+        foreach (DrinkRow row in data.Rows)
         {
             Drink drink = FromRow(row);
+            if (data.Tags.TryGetValue(drink.EntityUid, out TagCollection? loadedTags))
+            {
+                drink = drink with { Tags = loadedTags };
+            }
             if (expression is not null && !expression.Match(ToFilter(drink)))
             {
                 continue;
@@ -456,6 +498,15 @@ public sealed class DrinksModule(
         AddRecipeRows(drink, row);
         return row;
     }
+
+    private async Task<Drink> WithTagsAsync(
+        MixologyDbContext database,
+        Drink drink,
+        CancellationToken cancellationToken) =>
+        drink with
+        {
+            Tags = await tags.ListAsync(database, drink.EntityUid, cancellationToken).ConfigureAwait(false),
+        };
 
     private static void CopyToRow(Drink drink, DrinkRow row)
     {

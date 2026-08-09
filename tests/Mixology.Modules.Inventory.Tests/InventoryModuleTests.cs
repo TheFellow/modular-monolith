@@ -18,6 +18,7 @@ using Mixology.Modules.Inventory.Models;
 using Mixology.Modules.Inventory.Requests;
 using Mixology.Modules.Menus;
 using Mixology.Modules.Orders;
+using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 using Xunit;
 
@@ -144,6 +145,7 @@ public sealed class InventoryModuleTests
             collection.AddDrinksModule();
             collection.AddMenusModule();
             collection.AddOrdersModule();
+            collection.AddTaggingModule();
             collection.AddInventoryModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {

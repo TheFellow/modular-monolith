@@ -14,12 +14,14 @@ using Mixology.Modules.Ingredients.Events;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Persistence;
 using Mixology.Modules.Ingredients.Requests;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Ingredients;
 
 public sealed class IngredientsModule(
     MixologyStore store,
+    ITagReader tags,
     IEntityAuthorizer authorizer,
     TimeProvider timeProvider)
 {
@@ -75,9 +77,19 @@ public sealed class IngredientsModule(
                                 row => row.Id == id.Value && row.DeletedAtUtc == null,
                                 context.CancellationToken)
                             .ConfigureAwait(false);
-                        return row is null
-                            ? throw AppError.NotFound($"ingredient {id} not found")
-                            : FromRow(row);
+                        if (row is null)
+                        {
+                            throw AppError.NotFound($"ingredient {id} not found");
+                        }
+
+                        Ingredient loaded = FromRow(row);
+                        return loaded with
+                        {
+                            Tags = await tags.ListAsync(
+                                database,
+                                loaded.EntityUid,
+                                context.CancellationToken).ConfigureAwait(false),
+                        };
                     },
                     context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, IngredientAuthorization.Get, ingredient).ConfigureAwait(false);
@@ -99,7 +111,10 @@ public sealed class IngredientsModule(
             {
                 UpdateIngredientRequest normalized = request.Normalize();
                 IngredientRow row = await RequireActiveRowAsync(context, normalized.Id).ConfigureAwait(false);
-                Ingredient current = FromRow(row);
+                Ingredient current = await WithTagsAsync(
+                    context.Session!.Context,
+                    FromRow(row),
+                    context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, IngredientAuthorization.Update, current).ConfigureAwait(false);
 
                 Ingredient updated = (current with
@@ -133,7 +148,10 @@ public sealed class IngredientsModule(
             {
                 RetireIngredientRequest normalized = request.Normalize();
                 IngredientRow row = await RequireActiveRowAsync(context, normalized.Id).ConfigureAwait(false);
-                Ingredient current = FromRow(row);
+                Ingredient current = await WithTagsAsync(
+                    context.Session!.Context,
+                    FromRow(row),
+                    context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, IngredientAuthorization.Retire, current).ConfigureAwait(false);
 
                 Ingredient? replacement = null;
@@ -261,7 +279,7 @@ public sealed class IngredientsModule(
         ListIngredientsRequest request,
         FilterExpression<IngredientFilter>? expression)
     {
-        IngredientRow[] candidates = await ReadAsync(
+        (IngredientRow[] Rows, IReadOnlyDictionary<EntityUid, TagCollection> Tags) data = await ReadAsync(
             async database =>
             {
                 IQueryable<IngredientRow> query = database.Set<IngredientRow>()
@@ -279,23 +297,33 @@ public sealed class IngredientsModule(
                     query = query.Where(pushdown);
                 }
 
-                return await query.OrderByDescending(static row => row.Id)
+                IngredientRow[] rows = await query.OrderByDescending(static row => row.Id)
                     .ToArrayAsync(context.CancellationToken)
                     .ConfigureAwait(false);
+                IReadOnlyDictionary<EntityUid, TagCollection> loadedTags = await tags.ListTypeAsync(
+                    database,
+                    EntityIds.IngredientType,
+                    rows.Select(static row => row.Id).ToArray(),
+                    context.CancellationToken).ConfigureAwait(false);
+                return (rows, loadedTags);
             },
             context.CancellationToken).ConfigureAwait(false);
 
         if (!request.Cursor.IsEmpty)
         {
-            candidates = candidates
+            data.Rows = data.Rows
                 .Where(row => string.CompareOrdinal(row.Id, request.Cursor.Value) < 0)
                 .ToArray();
         }
 
         List<Ingredient> visible = [];
-        foreach (IngredientRow row in candidates)
+        foreach (IngredientRow row in data.Rows)
         {
             Ingredient ingredient = FromRow(row);
+            if (data.Tags.TryGetValue(ingredient.EntityUid, out TagCollection? loadedTags))
+            {
+                ingredient = ingredient with { Tags = loadedTags };
+            }
             IngredientFilter view = ToFilter(ingredient);
             if (expression is not null && !expression.Match(view))
             {
@@ -400,6 +428,15 @@ public sealed class IngredientsModule(
         Description = ingredient.Description,
         DeletedAtUtc = ingredient.DeletedAt?.UtcDateTime,
     };
+
+    private async Task<Ingredient> WithTagsAsync(
+        MixologyDbContext database,
+        Ingredient ingredient,
+        CancellationToken cancellationToken) =>
+        ingredient with
+        {
+            Tags = await tags.ListAsync(database, ingredient.EntityUid, cancellationToken).ConfigureAwait(false),
+        };
 
     private static void CopyToRow(Ingredient ingredient, IngredientRow row)
     {

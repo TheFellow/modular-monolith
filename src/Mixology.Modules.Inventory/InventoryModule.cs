@@ -15,12 +15,14 @@ using Mixology.Modules.Inventory.Events;
 using Mixology.Modules.Inventory.Models;
 using Mixology.Modules.Inventory.Persistence;
 using Mixology.Modules.Inventory.Requests;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Inventory;
 
 public sealed class InventoryModule(
     MixologyStore store,
+    ITagReader tags,
     IEntityAuthorizer authorizer,
     TimeProvider timeProvider)
 {
@@ -54,7 +56,14 @@ public sealed class InventoryModule(
                             .Where(candidate => candidate.IngredientId == ingredientId.Value)
                             .ToArrayAsync(context.CancellationToken)
                             .ConfigureAwait(false);
-                        return FromRows(row, reservations);
+                        InventoryStock loaded = FromRows(row, reservations);
+                        return loaded with
+                        {
+                            Tags = await tags.ListAsync(
+                                database,
+                                loaded.EntityUid,
+                                context.CancellationToken).ConfigureAwait(false),
+                        };
                     },
                     context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, InventoryAuthorization.Get, inventory).ConfigureAwait(false);
@@ -118,6 +127,12 @@ public sealed class InventoryModule(
                     context,
                     normalized.IngredientId).ConfigureAwait(false);
                 InventoryId id = row is null ? InventoryId.New() : InventoryId.Parse(row.Id);
+                TagCollection currentTags = row is null
+                    ? TagCollection.Empty
+                    : await tags.ListAsync(
+                        context.Session.Context,
+                        id.EntityUid,
+                        context.CancellationToken).ConfigureAwait(false);
                 Amount onHand = normalized.OnHand.Value < 0d
                     ? Amount.Create(0d, normalized.OnHand.Unit)
                     : normalized.OnHand;
@@ -129,7 +144,7 @@ public sealed class InventoryModule(
                     reserved,
                     normalized.UnitCost,
                     timeProvider.GetUtcNow(),
-                    TagCollection.Empty).Normalize();
+                    currentTags).Normalize();
                 await AuthorizeAsync(context, InventoryAuthorization.Set, updated).ConfigureAwait(false);
 
                 if (row is null)
@@ -187,14 +202,21 @@ public sealed class InventoryModule(
                 InventoryReservationRow[] reservations = await ReservationsAsync(
                     context,
                     normalized.IngredientId).ConfigureAwait(false);
+                InventoryId id = row is null ? InventoryId.New() : InventoryId.Parse(row.Id);
+                TagCollection currentTags = row is null
+                    ? TagCollection.Empty
+                    : await tags.ListAsync(
+                        context.Session.Context,
+                        id.EntityUid,
+                        context.CancellationToken).ConfigureAwait(false);
                 InventoryStock updated = new(
-                    row is null ? InventoryId.New() : InventoryId.Parse(row.Id),
+                    id,
                     normalized.IngredientId,
                     next,
                     ReservedAmount(next.Unit, reservations),
                     cost,
                     timeProvider.GetUtcNow(),
-                    TagCollection.Empty);
+                    currentTags);
                 updated = updated.Normalize();
                 await AuthorizeAsync(context, InventoryAuthorization.Adjust, updated).ConfigureAwait(false);
 
@@ -228,7 +250,8 @@ public sealed class InventoryModule(
         ListInventoryRequest request,
         FilterExpression<InventoryFilter>? expression)
     {
-        (InventoryRow[] Rows, InventoryReservationRow[] Reservations) data = await ReadAsync(
+        (InventoryRow[] Rows, InventoryReservationRow[] Reservations,
+            IReadOnlyDictionary<EntityUid, TagCollection> Tags) data = await ReadAsync(
             async database =>
             {
                 IQueryable<InventoryRow> query = database.Set<InventoryRow>().AsNoTracking();
@@ -257,7 +280,12 @@ public sealed class InventoryModule(
                     .Where(row => ingredientIds.Contains(row.IngredientId))
                     .ToArrayAsync(context.CancellationToken)
                     .ConfigureAwait(false);
-                return (rows, reservations);
+                IReadOnlyDictionary<EntityUid, TagCollection> loadedTags = await tags.ListTypeAsync(
+                    database,
+                    EntityIds.InventoryType,
+                    rows.Select(static row => row.Id).ToArray(),
+                    context.CancellationToken).ConfigureAwait(false);
+                return (rows, reservations, loadedTags);
             },
             context.CancellationToken).ConfigureAwait(false);
 
@@ -274,6 +302,10 @@ public sealed class InventoryModule(
         foreach (InventoryRow row in data.Rows)
         {
             InventoryStock inventory = FromRows(row, reservationsByIngredient[row.IngredientId]);
+            if (data.Tags.TryGetValue(inventory.EntityUid, out TagCollection? loadedTags))
+            {
+                inventory = inventory with { Tags = loadedTags };
+            }
             InventoryFilter view = ToFilter(inventory);
             if (expression is not null && !expression.Match(view))
             {

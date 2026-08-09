@@ -18,6 +18,7 @@ using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Ports;
 using Mixology.Modules.Menus.Requests;
 using Mixology.Modules.Orders;
+using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 using Xunit;
 
@@ -315,6 +316,7 @@ public sealed class MenusModuleTests
             collection.AddDrinksModule();
             collection.AddMenusModule();
             collection.AddOrdersModule();
+            collection.AddTaggingModule();
             collection.Replace(ServiceDescriptor.Singleton<IMenuOperations>(operations));
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {

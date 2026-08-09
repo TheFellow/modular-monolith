@@ -25,7 +25,7 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Menus curation, publication, availability, analytics, and readiness
 - [x] Orders placement, lifecycle, typed filtering, authorization, and blocked-state model
 - [x] Append-only audit history, actor queries, and touched resources
-- [ ] Polymorphic tags, registered target loaders, atomic tagged mutations, ABAC
+- [x] Polymorphic tags, registered target loaders, atomic tagged mutations, ABAC
 
 ## Stateful workflows
 

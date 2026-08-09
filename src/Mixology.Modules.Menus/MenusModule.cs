@@ -15,12 +15,14 @@ using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Persistence;
 using Mixology.Modules.Menus.Ports;
 using Mixology.Modules.Menus.Requests;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Menus;
 
 public sealed class MenusModule(
     MixologyStore store,
+    ITagReader tags,
     IEntityAuthorizer authorizer,
     IMenuOperations operations,
     TimeProvider timeProvider)
@@ -86,7 +88,7 @@ public sealed class MenusModule(
             {
                 UpdateMenuRequest normalized = request.Normalize();
                 MenuRow row = await RequireActiveRowAsync(context, normalized.Id).ConfigureAwait(false);
-                Menu current = FromRow(row);
+                Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 await AuthorizeAsync(context, MenuAuthorization.Update, current).ConfigureAwait(false);
                 current.RequireDraft();
                 Menu updated = (current with
@@ -116,7 +118,7 @@ public sealed class MenusModule(
             async context =>
             {
                 MenuRow row = await RequireActiveRowAsync(context, id).ConfigureAwait(false);
-                Menu current = FromRow(row);
+                Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 await AuthorizeAsync(context, MenuAuthorization.Delete, current).ConfigureAwait(false);
                 current.RequireDraft();
                 DateTimeOffset deletedAt = timeProvider.GetUtcNow().ToUniversalTime();
@@ -154,7 +156,7 @@ public sealed class MenusModule(
                     normalized.DrinkId,
                     context.CancellationToken).ConfigureAwait(false);
                 MenuRow row = await RequireActiveRowAsync(context, normalized.MenuId).ConfigureAwait(false);
-                Menu current = FromRow(row);
+                Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 current.RequireDraft();
                 if (current.Items.Any(item => item.DrinkId == normalized.DrinkId))
                 {
@@ -202,7 +204,7 @@ public sealed class MenusModule(
                     MenuAuthorization.RemoveDrink,
                     normalized.MenuId).ConfigureAwait(false);
                 MenuRow row = await RequireActiveRowAsync(context, normalized.MenuId).ConfigureAwait(false);
-                Menu current = FromRow(row);
+                Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 current.RequireDraft();
                 MenuItem removed = current.Items.SingleOrDefault(item => item.DrinkId == normalized.DrinkId)
                     ?? throw AppError.NotFound($"drink {normalized.DrinkId} is not on menu {current.Id}");
@@ -231,7 +233,7 @@ public sealed class MenusModule(
             async context =>
             {
                 MenuRow row = await RequireActiveRowAsync(context, id).ConfigureAwait(false);
-                Menu current = FromRow(row);
+                Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 await AuthorizeAsync(context, MenuAuthorization.Publish, current).ConfigureAwait(false);
                 current.RequirePublishable();
                 ReadinessReport report = await operations.GetReadinessAsync(
@@ -276,7 +278,7 @@ public sealed class MenusModule(
             async context =>
             {
                 MenuRow row = await RequireActiveRowAsync(context, id).ConfigureAwait(false);
-                Menu current = FromRow(row);
+                Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 await AuthorizeAsync(context, MenuAuthorization.Draft, current).ConfigureAwait(false);
                 current.RequireReturnToDraft();
                 Menu drafted = (current with
@@ -390,7 +392,7 @@ public sealed class MenusModule(
         ListMenusRequest request,
         FilterExpression<MenuFilter>? expression)
     {
-        MenuRow[] candidates = await ReadAsync(
+        (MenuRow[] Rows, IReadOnlyDictionary<EntityUid, TagCollection> Tags) data = await ReadAsync(
             async database =>
             {
                 IQueryable<MenuRow> query = MenuRows(database).Where(static row => row.DeletedAtUtc == null);
@@ -406,23 +408,33 @@ public sealed class MenusModule(
                     query = query.Where(pushdown);
                 }
 
-                return await query.OrderByDescending(static row => row.Id)
+                MenuRow[] rows = await query.OrderByDescending(static row => row.Id)
                     .ToArrayAsync(context.CancellationToken)
                     .ConfigureAwait(false);
+                IReadOnlyDictionary<EntityUid, TagCollection> loadedTags = await tags.ListTypeAsync(
+                    database,
+                    EntityIds.MenuType,
+                    rows.Select(static row => row.Id).ToArray(),
+                    context.CancellationToken).ConfigureAwait(false);
+                return (rows, loadedTags);
             },
             context.CancellationToken).ConfigureAwait(false);
 
         if (!request.Cursor.IsEmpty)
         {
-            candidates = candidates
+            data.Rows = data.Rows
                 .Where(row => string.CompareOrdinal(row.Id, request.Cursor.Value) < 0)
                 .ToArray();
         }
 
         List<Menu> visible = [];
-        foreach (MenuRow row in candidates)
+        foreach (MenuRow row in data.Rows)
         {
             Menu menu = FromRow(row);
+            if (data.Tags.TryGetValue(menu.EntityUid, out TagCollection? loadedTags))
+            {
+                menu = menu with { Tags = loadedTags };
+            }
             if (expression is not null && !expression.Match(ToFilter(menu)))
             {
                 continue;
@@ -460,13 +472,13 @@ public sealed class MenusModule(
             database => ReadMenuAsync(database, id, cancellationToken),
             cancellationToken).ConfigureAwait(false);
 
-    private static Task<Menu> ReadMenuAsync(
+    private Task<Menu> ReadMenuAsync(
         StoreSession session,
         MenuId id,
         CancellationToken cancellationToken) =>
         ReadMenuAsync(session.Context, id, cancellationToken);
 
-    private static async Task<Menu> ReadMenuAsync(
+    private async Task<Menu> ReadMenuAsync(
         MixologyDbContext database,
         MenuId id,
         CancellationToken cancellationToken)
@@ -476,13 +488,29 @@ public sealed class MenusModule(
                 row => row.Id == id.Value && row.DeletedAtUtc == null,
                 cancellationToken)
             .ConfigureAwait(false);
-        return row is null
-            ? throw AppError.NotFound($"menu {id} not found")
-            : FromRow(row);
+        if (row is null)
+        {
+            throw AppError.NotFound($"menu {id} not found");
+        }
+
+        Menu menu = FromRow(row);
+        return menu with
+        {
+            Tags = await tags.ListAsync(database, menu.EntityUid, cancellationToken).ConfigureAwait(false),
+        };
     }
 
     private static IQueryable<MenuRow> MenuRows(MixologyDbContext database) =>
         database.Set<MenuRow>().AsNoTracking().Include(static row => row.Items);
+
+    private async Task<Menu> WithTagsAsync(OperationContext context, Menu menu) =>
+        menu with
+        {
+            Tags = await tags.ListAsync(
+                context.Session!.Context,
+                menu.EntityUid,
+                context.CancellationToken).ConfigureAwait(false),
+        };
 
     private static async Task<MenuRow> RequireActiveRowAsync(OperationContext context, MenuId id)
     {

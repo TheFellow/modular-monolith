@@ -19,12 +19,14 @@ using Mixology.Modules.Orders.Events;
 using Mixology.Modules.Orders.Models;
 using Mixology.Modules.Orders.Persistence;
 using Mixology.Modules.Orders.Requests;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Orders;
 
 public sealed class OrdersModule(
     MixologyStore store,
+    ITagReader tags,
     IEntityAuthorizer authorizer,
     MenuQueries menus,
     DrinkQueries drinks,
@@ -143,9 +145,19 @@ public sealed class OrdersModule(
                         OrderRow? row = await Rows(database).AsNoTracking().SingleOrDefaultAsync(
                             candidate => candidate.Id == id.Value && candidate.DeletedAtUtc == null,
                             context.CancellationToken).ConfigureAwait(false);
-                        return row is null
-                            ? throw AppError.NotFound($"order {id} not found")
-                            : FromRow(row);
+                        if (row is null)
+                        {
+                            throw AppError.NotFound($"order {id} not found");
+                        }
+
+                        Order loaded = FromRow(row);
+                        return loaded with
+                        {
+                            Tags = await tags.ListAsync(
+                                database,
+                                loaded.EntityUid,
+                                context.CancellationToken).ConfigureAwait(false),
+                        };
                     },
                     context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, OrderAuthorization.Get, order).ConfigureAwait(false);
@@ -200,7 +212,7 @@ public sealed class OrdersModule(
             async context =>
             {
                 OrderRow row = await RequireActiveRowAsync(context, id).ConfigureAwait(false);
-                Order current = FromRow(row);
+                Order current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 await AuthorizeAsync(context, OrderAuthorization.Complete, current).ConfigureAwait(false);
                 if (current.Status == OrderStatus.Completed)
                 {
@@ -241,7 +253,7 @@ public sealed class OrdersModule(
             async context =>
             {
                 OrderRow row = await RequireActiveRowAsync(context, id).ConfigureAwait(false);
-                Order current = FromRow(row);
+                Order current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
                 await AuthorizeAsync(context, OrderAuthorization.Cancel, current).ConfigureAwait(false);
                 if (current.Status == OrderStatus.Cancelled)
                 {
@@ -270,7 +282,7 @@ public sealed class OrdersModule(
         ListOrdersRequest request,
         FilterExpression<OrderFilter>? expression)
     {
-        OrderRow[] rows = await ReadAsync(
+        (OrderRow[] Rows, IReadOnlyDictionary<EntityUid, TagCollection> Tags) data = await ReadAsync(
             async database =>
             {
                 IQueryable<OrderRow> query = Rows(database).AsNoTracking()
@@ -291,20 +303,30 @@ public sealed class OrdersModule(
                     query = query.Where(pushdown);
                 }
 
-                return await query.OrderByDescending(static row => row.Id)
+                OrderRow[] rows = await query.OrderByDescending(static row => row.Id)
                     .ToArrayAsync(context.CancellationToken).ConfigureAwait(false);
+                IReadOnlyDictionary<EntityUid, TagCollection> loadedTags = await tags.ListTypeAsync(
+                    database,
+                    EntityIds.OrderType,
+                    rows.Select(static row => row.Id).ToArray(),
+                    context.CancellationToken).ConfigureAwait(false);
+                return (rows, loadedTags);
             },
             context.CancellationToken).ConfigureAwait(false);
 
         if (!request.Cursor.IsEmpty)
         {
-            rows = rows.Where(row => string.CompareOrdinal(row.Id, request.Cursor.Value) < 0).ToArray();
+            data.Rows = data.Rows.Where(row => string.CompareOrdinal(row.Id, request.Cursor.Value) < 0).ToArray();
         }
 
         List<Order> visible = [];
-        foreach (OrderRow row in rows)
+        foreach (OrderRow row in data.Rows)
         {
             Order order = FromRow(row);
+            if (data.Tags.TryGetValue(order.EntityUid, out TagCollection? loadedTags))
+            {
+                order = order with { Tags = loadedTags };
+            }
             if (expression is not null && !expression.Match(ToFilter(order)))
             {
                 continue;
@@ -338,7 +360,7 @@ public sealed class OrdersModule(
             hasNext ? new Cursor(visible[^1].Id.Value) : default);
     }
 
-    private static IQueryable<OrderRow> Rows(MixologyDbContext database) =>
+    internal static IQueryable<OrderRow> Rows(MixologyDbContext database) =>
         database.Set<OrderRow>()
             .Include(static row => row.Items)
             .Include(static row => row.IngredientUsage)
@@ -378,7 +400,7 @@ public sealed class OrdersModule(
             order.ToCedarEntity(),
             context.CancellationToken);
 
-    private static Order FromRow(OrderRow row)
+    internal static Order FromRow(OrderRow row)
     {
         try
         {
@@ -406,6 +428,15 @@ public sealed class OrdersModule(
             throw AppError.Internal($"invalid persisted order {row.Id}", exception);
         }
     }
+
+    private async Task<Order> WithTagsAsync(OperationContext context, Order order) =>
+        order with
+        {
+            Tags = await tags.ListAsync(
+                context.Session!.Context,
+                order.EntityUid,
+                context.CancellationToken).ConfigureAwait(false),
+        };
 
     private static OrderRow ToRow(Order order)
     {

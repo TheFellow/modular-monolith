@@ -25,6 +25,7 @@ using Mixology.Modules.Menus;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Requests;
 using Mixology.Modules.Orders;
+using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 
 namespace Mixology.Cli;
@@ -129,6 +130,7 @@ public static class CliApplication
         builder.Services.AddInventoryModule();
         builder.Services.AddMenusModule();
         builder.Services.AddOrdersModule();
+        builder.Services.AddTaggingModule();
         IHost host = builder.Build();
         try
         {

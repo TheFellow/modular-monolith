@@ -13,6 +13,7 @@
     <ProjectReference Include="../Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
     <ProjectReference Include="../Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
     <ProjectReference Include="../Mixology.Modules.Orders/Mixology.Modules.Orders.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
     <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
   </ItemGroup>
 </Project>

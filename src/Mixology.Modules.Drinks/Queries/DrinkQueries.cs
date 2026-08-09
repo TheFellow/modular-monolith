@@ -5,6 +5,7 @@ using Mixology.Kernel.Measurement;
 using Mixology.Kernel.Tags;
 using Mixology.Modules.Drinks.Models;
 using Mixology.Modules.Drinks.Persistence;
+using Mixology.Modules.Tagging.Models;
 using Mixology.Persistence;
 
 namespace Mixology.Modules.Drinks.Queries;
@@ -13,7 +14,7 @@ namespace Mixology.Modules.Drinks.Queries;
 /// Owner-defined drink reads for collaborating domains that already own a store session.
 /// These queries do not re-enter application middleware or make an authorization decision.
 /// </summary>
-public sealed class DrinkQueries
+public sealed class DrinkQueries(ITagReader tags)
 {
     public async Task<Drink> GetAsync(
         StoreSession session,
@@ -30,9 +31,19 @@ public sealed class DrinkQueries
                     row => row.Id == id.Value && row.DeletedAtUtc == null,
                     cancellationToken)
                 .ConfigureAwait(false);
-            return row is null
-                ? throw AppError.NotFound($"drink {id} not found")
-                : FromRow(row);
+            if (row is null)
+            {
+                throw AppError.NotFound($"drink {id} not found");
+            }
+
+            Drink drink = FromRow(row);
+            return drink with
+            {
+                Tags = await tags.ListAsync(
+                    session.Context,
+                    drink.EntityUid,
+                    cancellationToken).ConfigureAwait(false),
+            };
         }
         catch (Exception exception) when (
             AppError.Find(exception) is null && !AppError.IsCancellation(exception))
@@ -67,6 +78,32 @@ public sealed class DrinkQueries
             AppError.Find(exception) is null && !AppError.IsCancellation(exception))
         {
             throw AppError.Internal($"list drinks by ingredient {ingredientId}", exception);
+        }
+    }
+
+    public async Task<IReadOnlySet<string>> ActiveIdsAsync(
+        StoreSession session,
+        IReadOnlyCollection<string> ids,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(ids);
+        DrinkId[] requested = ids.Distinct(StringComparer.Ordinal).Select(DrinkId.Parse).ToArray();
+        string[] values = requested.Select(static value => value.Value).ToArray();
+        try
+        {
+            string[] active = await session.Context.Set<DrinkRow>()
+                .AsNoTracking()
+                .Where(row => values.Contains(row.Id) && row.DeletedAtUtc == null)
+                .Select(static row => row.Id)
+                .ToArrayAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return active.ToHashSet(StringComparer.Ordinal);
+        }
+        catch (Exception exception) when (
+            AppError.Find(exception) is null && !AppError.IsCancellation(exception))
+        {
+            throw AppError.Internal("read active drink ids", exception);
         }
     }
 

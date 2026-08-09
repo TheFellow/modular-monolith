@@ -18,6 +18,7 @@ using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Events;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
+using Mixology.Modules.Tagging;
 using Mixology.Persistence;
 
 namespace Mixology.Dispatcher.Tests;
@@ -137,6 +138,7 @@ public sealed class IngredientRoutesIntegrationTests
             collection.AddMixologyApplication();
             collection.AddIngredientsModule();
             collection.AddDrinksModule();
+            collection.AddTaggingModule();
             collection.Replace(ServiceDescriptor.Singleton<IActivityRecorder, NoopActivityRecorder>());
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {

@@ -7,6 +7,7 @@
     <ProjectReference Include="../Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
     <ProjectReference Include="../Mixology.Filtering/Mixology.Filtering.csproj" />
     <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
     <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
   </ItemGroup>
 </Project>
