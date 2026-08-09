@@ -11,6 +11,7 @@ using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Modules.Menus;
+using Mixology.Modules.Orders;
 using Mixology.Persistence;
 using Xunit;
 
@@ -210,6 +211,7 @@ public sealed class UnitOfWorkMiddlewareTests
             collection.AddDrinksModule();
             collection.AddInventoryModule();
             collection.AddMenusModule();
+            collection.AddOrdersModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

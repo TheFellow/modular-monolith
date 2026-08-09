@@ -19,6 +19,7 @@ using Mixology.Modules.Inventory;
 using Mixology.Modules.Inventory.Requests;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Requests;
+using Mixology.Modules.Orders;
 using Mixology.Persistence;
 using Xunit;
 
@@ -169,6 +170,7 @@ public sealed class MenuOperationsIntegrationTests
             collection.AddInventoryModule();
             collection.AddDrinksModule();
             collection.AddMenusModule();
+            collection.AddOrdersModule();
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

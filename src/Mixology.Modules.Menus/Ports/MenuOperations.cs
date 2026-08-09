@@ -219,6 +219,28 @@ internal sealed class MenuOperations(
             marginCount == 0 ? null : marginTotal / marginCount);
     }
 
+    public async ValueTask<IReadOnlyList<IngredientFulfillment>?> FulfillIngredientsAsync(
+        StoreSession session,
+        IReadOnlyList<RecipeIngredient> requirements,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(requirements);
+        (IReadOnlyList<IngredientPick> picks, bool fulfilled) = await PlanAsync(
+            session,
+            requirements.ToArray(),
+            cancellationToken).ConfigureAwait(false);
+        return fulfilled
+            ? picks.Select(static pick => new IngredientFulfillment(
+                pick.IngredientId,
+                pick.Required,
+                pick.Available,
+                pick.UsedSubstitution,
+                pick.Ratio,
+                pick.QualityImpact)).ToArray()
+            : null;
+    }
+
     private async Task<AvailabilityDetail> CalculateDetailAsync(
         StoreSession session,
         DrinkId drinkId,

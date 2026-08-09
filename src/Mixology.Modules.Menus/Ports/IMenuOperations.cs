@@ -1,4 +1,5 @@
 using Mixology.Kernel.Entities;
+using Mixology.Modules.Drinks.Models;
 using Mixology.Modules.Menus.Models;
 using Mixology.Persistence;
 
@@ -22,5 +23,9 @@ public interface IMenuOperations
         StoreSession session,
         Menu menu,
         double targetMargin,
+        CancellationToken cancellationToken = default);
+    ValueTask<IReadOnlyList<IngredientFulfillment>?> FulfillIngredientsAsync(
+        StoreSession session,
+        IReadOnlyList<RecipeIngredient> requirements,
         CancellationToken cancellationToken = default);
 }

@@ -23,18 +23,19 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Drinks retirement reactions, review state, and substitution rewrites
 - [x] Inventory on-hand/reserved/available stock and adjustment reasons
 - [x] Menus curation, publication, availability, analytics, and readiness
-- [ ] Orders placement, reservation, completion, cancellation, and blocking
+- [x] Orders placement, lifecycle, typed filtering, authorization, and blocked-state model
 - [x] Append-only audit history, actor queries, and touched resources
 - [ ] Polymorphic tags, registered target loaders, atomic tagged mutations, ABAC
 
 ## Stateful workflows
 
-- [ ] Placement captures an immutable usage snapshot and reserves atomically
+- [x] Placement captures an immutable ingredient-usage snapshot with substitution planning
+- [ ] Placement reserves that snapshot atomically
 - [ ] Completion consumes reservations; cancellation releases them
 - [ ] Shortage blocks every affected pending order; restock unblocks it
 - [x] Retirement rewrites only compatible explicit replacements
 - [x] Required retired references cause review; optional references disappear
-- [ ] Accepted order snapshots remain historical truth
+- [x] Accepted order ingredient names and amounts remain historical truth
 - [ ] Published menus degrade honestly; drafts with blockers cannot publish
 - [ ] Event handler order cannot change outcomes and any failure rolls back all
 

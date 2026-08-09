@@ -6,6 +6,7 @@ using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Modules.Menus;
+using Mixology.Modules.Orders;
 using Mixology.Persistence.Model;
 using Xunit;
 
@@ -159,6 +160,7 @@ public sealed class ProjectBoundaryTests
             typeof(DrinksModule).Assembly,
             typeof(InventoryModule).Assembly,
             typeof(MenusModule).Assembly,
+            typeof(OrdersModule).Assembly,
         ];
 
         foreach (Assembly module in modules)

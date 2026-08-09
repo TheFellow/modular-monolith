@@ -1,4 +1,5 @@
 using Mixology.Kernel.Entities;
+using Mixology.Kernel.Measurement;
 using Mixology.Kernel.Money;
 using Mixology.Kernel.Quality;
 
@@ -29,3 +30,11 @@ public sealed record MenuAnalysis(
     double? AverageMargin);
 
 public sealed record MenuDrink(DrinkId Id, string Name);
+
+public sealed record IngredientFulfillment(
+    IngredientId IngredientId,
+    Amount Required,
+    Amount Available,
+    bool UsedSubstitution,
+    double Ratio,
+    Quality QualityImpact);

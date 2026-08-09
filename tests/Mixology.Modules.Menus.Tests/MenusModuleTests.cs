@@ -17,6 +17,7 @@ using Mixology.Modules.Menus.Events;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Ports;
 using Mixology.Modules.Menus.Requests;
+using Mixology.Modules.Orders;
 using Mixology.Persistence;
 using Xunit;
 
@@ -313,6 +314,7 @@ public sealed class MenusModuleTests
             collection.AddInventoryModule();
             collection.AddDrinksModule();
             collection.AddMenusModule();
+            collection.AddOrdersModule();
             collection.Replace(ServiceDescriptor.Singleton<IMenuOperations>(operations));
             ServiceProvider services = collection.BuildServiceProvider(new ServiceProviderOptions
             {
@@ -391,6 +393,12 @@ public sealed class MenusModuleTests
             LastTargetMargin = targetMargin;
             return ValueTask.FromResult(new MenuAnalysis(menu, [], 0, menu.Items.Count, null));
         }
+
+        public ValueTask<IReadOnlyList<IngredientFulfillment>?> FulfillIngredientsAsync(
+            StoreSession session,
+            IReadOnlyList<Mixology.Modules.Drinks.Models.RecipeIngredient> requirements,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.FromResult<IReadOnlyList<IngredientFulfillment>?>([]);
     }
 
     public sealed class RecordingDispatcher : IDomainEventDispatcher

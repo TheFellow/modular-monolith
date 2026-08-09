@@ -7,6 +7,7 @@ using Mixology.Modules.Inventory.Queries;
 using Mixology.Modules.Menus.Authorization;
 using Mixology.Modules.Menus.Persistence;
 using Mixology.Modules.Menus.Ports;
+using Mixology.Modules.Menus.Queries;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Menus;
@@ -24,6 +25,7 @@ public static class MenuServiceCollectionExtensions
         services.TryAddSingleton<IngredientQueries>();
         services.TryAddSingleton<InventoryQueries>();
         services.TryAddSingleton<IMenuOperations, MenuOperations>();
+        services.TryAddSingleton<MenuQueries>();
         services.TryAddSingleton<MenusModule>();
         return services;
     }

@@ -6,6 +6,7 @@ using Mixology.Modules.Drinks;
 using Mixology.Modules.Ingredients;
 using Mixology.Modules.Inventory;
 using Mixology.Modules.Menus;
+using Mixology.Modules.Orders;
 using Mixology.Persistence;
 
 namespace Mixology.Migrations;
@@ -24,6 +25,7 @@ public sealed class MixologyDesignTimeDbContextFactory : IDesignTimeDbContextFac
         services.AddDrinksModule();
         services.AddInventoryModule();
         services.AddMenusModule();
+        services.AddOrdersModule();
         ServiceProvider provider = services.BuildServiceProvider();
         return provider.GetRequiredService<IDbContextFactory<MixologyDbContext>>().CreateDbContext();
     }
