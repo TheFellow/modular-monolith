@@ -115,25 +115,25 @@ public sealed partial class TagsViewModel : ObservableObject, IDesktopWorkspace
     public Exception? Error { get; private set; }
 
     [ObservableProperty]
-    private TagOperation operation;
+    public partial TagOperation Operation { get; set; }
 
     [ObservableProperty]
-    private TagTargetType? selectedType;
+    public partial TagTargetType? SelectedType { get; set; }
 
     [ObservableProperty]
-    private TagTargetViewModel? selectedTarget;
+    public partial TagTargetViewModel? SelectedTarget { get; set; }
 
     [ObservableProperty]
-    private string value = string.Empty;
+    public partial string Value { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private bool changed;
+    public partial bool Changed { get; set; }
 
     [ObservableProperty]
-    private string statusMessage = string.Empty;
+    public partial string StatusMessage { get; set; } = string.Empty;
 
     public static Func<IDesktopWorkspace> CreateFactory(
         TaggingModule tagging,

@@ -36,10 +36,10 @@ public sealed partial class ShellViewModel : ObservableObject, IAsyncDisposable
     public IReadOnlyList<DesktopNavigationItemViewModel> Navigation { get; }
 
     [ObservableProperty]
-    private IDesktopWorkspace? activeWorkspace;
+    public partial IDesktopWorkspace? ActiveWorkspace { get; set; }
 
     [ObservableProperty]
-    private string statusMessage = string.Empty;
+    public partial string StatusMessage { get; set; } = string.Empty;
 
     public Exception? LastError { get; private set; }
 

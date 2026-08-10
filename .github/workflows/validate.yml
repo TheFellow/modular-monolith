@@ -74,7 +74,7 @@ jobs:
           global-json-file: global.json
       - name: Select Xcode required by .NET Mac Catalyst
         if: runner.os == 'macOS'
-        run: sudo xcode-select --switch /Applications/Xcode_26.0.app
+        run: sudo xcode-select --switch /Applications/Xcode_26.0.1.app
       - name: Install native .NET MAUI workload
         run: dotnet workload install ${{ matrix.workload }} --skip-manifest-update
       - name: Publish native desktop client

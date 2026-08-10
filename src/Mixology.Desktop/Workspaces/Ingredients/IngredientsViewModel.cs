@@ -99,40 +99,74 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
         "unit in [\"ml\", \"oz\"] && !description.contains(\"seasonal\")\n" +
         "tags contains \"featured\" || tags contains \"region=west\"";
 
-    [ObservableProperty] private IngredientListItemViewModel? selectedItem;
-    [ObservableProperty] private Ingredient? selectedIngredient;
-    [ObservableProperty] private IngredientEditorMode editorMode;
-    [ObservableProperty] private bool isLoading;
-    [ObservableProperty] private bool isSubmitting;
-    [ObservableProperty] private bool showFilterHelp;
-    [ObservableProperty] private string filterExpression = string.Empty;
-    [ObservableProperty] private string categoryFilter = string.Empty;
-    [ObservableProperty] private int pageSize = PageRequest.DefaultLimit;
-    [ObservableProperty] private int pageNumber = 1;
-    [ObservableProperty] private bool hasNextPage;
-    [ObservableProperty] private bool hasPreviousPage;
-    [ObservableProperty] private string statusMessage = string.Empty;
-    [ObservableProperty] private string editorName = string.Empty;
-    [ObservableProperty] private string editorCategory = IngredientCategory.Other.Value;
-    [ObservableProperty] private string editorUnit = Unit.Ounce.Value;
-    [ObservableProperty] private string editorDescription = string.Empty;
-    [ObservableProperty] private bool replaceTags;
-    [ObservableProperty] private string editorTags = string.Empty;
-    [ObservableProperty] private string replacementIngredientId = string.Empty;
-    [ObservableProperty] private string replacementRatio = "1";
-    [ObservableProperty] private bool editorDirty;
-    [ObservableProperty] private bool canCreate;
-    [ObservableProperty] private bool canEdit;
-    [ObservableProperty] private bool canRetire;
-    [ObservableProperty] private bool canReplaceTags;
-    [ObservableProperty] private bool isCreateVisible;
-    [ObservableProperty] private bool isEditVisible;
-    [ObservableProperty] private bool isRetireVisible;
-    [ObservableProperty] private bool isTagsVisible;
-    [ObservableProperty] private string createDisabledReason = string.Empty;
-    [ObservableProperty] private string editDisabledReason = string.Empty;
-    [ObservableProperty] private string retireDisabledReason = string.Empty;
-    [ObservableProperty] private string tagsDisabledReason = string.Empty;
+    [ObservableProperty]
+    public partial IngredientListItemViewModel? SelectedItem { get; set; }
+    [ObservableProperty]
+    public partial Ingredient? SelectedIngredient { get; set; }
+    [ObservableProperty]
+    public partial IngredientEditorMode EditorMode { get; set; }
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; }
+    [ObservableProperty]
+    public partial bool IsSubmitting { get; set; }
+    [ObservableProperty]
+    public partial bool ShowFilterHelp { get; set; }
+    [ObservableProperty]
+    public partial string FilterExpression { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string CategoryFilter { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial int PageSize { get; set; } = PageRequest.DefaultLimit;
+    [ObservableProperty]
+    public partial int PageNumber { get; set; } = 1;
+    [ObservableProperty]
+    public partial bool HasNextPage { get; set; }
+    [ObservableProperty]
+    public partial bool HasPreviousPage { get; set; }
+    [ObservableProperty]
+    public partial string StatusMessage { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditorName { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditorCategory { get; set; } = IngredientCategory.Other.Value;
+    [ObservableProperty]
+    public partial string EditorUnit { get; set; } = Unit.Ounce.Value;
+    [ObservableProperty]
+    public partial string EditorDescription { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool ReplaceTags { get; set; }
+    [ObservableProperty]
+    public partial string EditorTags { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string ReplacementIngredientId { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string ReplacementRatio { get; set; } = "1";
+    [ObservableProperty]
+    public partial bool EditorDirty { get; set; }
+    [ObservableProperty]
+    public partial bool CanCreate { get; set; }
+    [ObservableProperty]
+    public partial bool CanEdit { get; set; }
+    [ObservableProperty]
+    public partial bool CanRetire { get; set; }
+    [ObservableProperty]
+    public partial bool CanReplaceTags { get; set; }
+    [ObservableProperty]
+    public partial bool IsCreateVisible { get; set; }
+    [ObservableProperty]
+    public partial bool IsEditVisible { get; set; }
+    [ObservableProperty]
+    public partial bool IsRetireVisible { get; set; }
+    [ObservableProperty]
+    public partial bool IsTagsVisible { get; set; }
+    [ObservableProperty]
+    public partial string CreateDisabledReason { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditDisabledReason { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string RetireDisabledReason { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string TagsDisabledReason { get; set; } = string.Empty;
 
     public Exception? Error { get; private set; }
     public bool IsEditorVisible => EditorMode != IngredientEditorMode.Browse;

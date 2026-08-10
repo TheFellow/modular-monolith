@@ -144,18 +144,30 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     public MenuRowViewModel? Selected { get => selected; set { if (SetProperty(ref selected, value)) { active = SelectAsync(value); } } }
     public Menu? Detail { get => detail; private set => SetProperty(ref detail, value); }
 
-    [ObservableProperty] private string filterStatus = "all";
-    [ObservableProperty] private string filterExpression = string.Empty;
-    [ObservableProperty] private string pageSize = "100";
-    [ObservableProperty] private string name = string.Empty;
-    [ObservableProperty] private string description = string.Empty;
-    [ObservableProperty] private string tags = string.Empty;
-    [ObservableProperty] private MenuDrinkOption? selectedDrink;
-    [ObservableProperty] private string targetMargin = "0.70";
-    [ObservableProperty] private bool isLoading;
-    [ObservableProperty] private bool isSubmitting;
-    [ObservableProperty] private string statusMessage = string.Empty;
-    [ObservableProperty] private string analysisSummary = string.Empty;
+    [ObservableProperty]
+    public partial string FilterStatus { get; set; } = "all";
+    [ObservableProperty]
+    public partial string FilterExpression { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string PageSize { get; set; } = "100";
+    [ObservableProperty]
+    public partial string Name { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string Description { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string Tags { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial MenuDrinkOption? SelectedDrink { get; set; }
+    [ObservableProperty]
+    public partial string TargetMargin { get; set; } = "0.70";
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; }
+    [ObservableProperty]
+    public partial bool IsSubmitting { get; set; }
+    [ObservableProperty]
+    public partial string StatusMessage { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string AnalysisSummary { get; set; } = string.Empty;
 
     partial void OnNameChanged(string value) => UpdateDirty();
     partial void OnDescriptionChanged(string value) => UpdateDirty();
