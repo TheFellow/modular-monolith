@@ -15,10 +15,12 @@ tested vertical slices. See [the port roadmap](docs/roadmap.md) and
 ## Development loop
 
 ```sh
+npm ci --ignore-scripts
+npm run lint:spelling
 dotnet tool restore
 dotnet restore Mixology.slnx
-dotnet build Mixology.slnx --no-restore
-dotnet test Mixology.slnx --no-build
+MIXOLOGY_TEST_ORDER_SEED=local dotnet build Mixology.slnx --no-restore
+MIXOLOGY_TEST_ORDER_SEED=local dotnet test Mixology.slnx --no-build
 dotnet format Mixology.slnx --verify-no-changes --no-restore
 dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
   --manifest src/Mixology.Dispatcher/dispatcher.routes.json \
@@ -28,12 +30,29 @@ dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations
 
 GitHub Actions repeats this gate on every push and pull request, then publishes
 and executes the native Desktop help path on Linux x64, Windows x64, and macOS
-x64 runners. The workflow pins official actions by immutable release commit.
+x64 runners. Its Linux job also runs the SharpDetect dynamic race gate over the
+desktop concurrency primitives. The workflow pins official actions by immutable
+release commit. See [Development](docs/development.md) for the local race command
+and test-order seed reproduction.
 
 The repository pins the .NET 10 SDK and treats compiler, analyzer, and configured
 style warnings as errors. C# 14 is deliberate: native C# discriminated unions are
 not available in the pinned stable toolchain, so closed unions use explicit
 record hierarchies and exhaustive pattern matching.
+
+## Teaching guides
+
+- [Architecture](docs/architecture.md) explains module direction, operations,
+  authorization, transactions, and generated event reactions.
+- [Application features](docs/features.md) traces filtering, tags, personas,
+  audit, fulfillment, retirement, and runtime configuration.
+- [Development](docs/development.md) covers setup, validation, generation,
+  migrations, and production-shaped tests.
+- [Source map](src/README.md) introduces the kernel, bounded contexts, and
+  independent presentation surfaces.
+- [Documentation parity map](docs/documentation-map.md) maps every teaching
+  README in the Go reference to its semantic .NET destination, including the
+  intentionally consolidated toolkit topics.
 
 ## Repository shape
 
