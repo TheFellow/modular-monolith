@@ -5,8 +5,8 @@
 - The .NET SDK selected by [`global.json`](../global.json).
 - The local tools declared in [`.config/dotnet-tools.json`](../.config/dotnet-tools.json).
 - Node.js 22.18 or newer and npm for the pinned spelling check.
-- Native desktop prerequisites are not needed for ordinary builds; Avalonia's
-  managed headless driver covers control tests.
+- Linux needs no GUI workload for ordinary solution builds. Building the native
+  desktop client requires the .NET 10 MAUI workload on Windows or macOS.
 
 Restore the pinned tools and dependencies with:
 
@@ -40,7 +40,7 @@ In addition to build, tests, and formatting, the gate checks that:
 - architecture tests still enforce project and namespace direction;
 - spelling is clean and tests run in a seeded, reproducible randomized order;
 - SharpDetect reports no managed field races in the focused concurrency tests;
-- each supported native desktop target can be published and execute `--help`.
+- each supported native desktop target can be published.
 
 Generated files are source artifacts, not build debris. Change the route
 manifest, run the generator without `--check`, inspect the result, and commit
@@ -68,7 +68,8 @@ Seed a disposable database, then point any surface at it:
 MIXOLOGY_DB=data/mixology.db dotnet run --project src/Mixology.Seed
 dotnet run --project src/Mixology.Cli -- --db data/mixology.db status
 dotnet run --project src/Mixology.Tui -- --db data/mixology.db --actor owner
-dotnet run --project src/Mixology.Desktop -- --db data/mixology.db --actor owner
+# Add -f net10.0-windows10.0.19041.0 on Windows instead.
+dotnet run --project src/Mixology.Desktop -p:BuildNativeDesktop=true -f net10.0-maccatalyst -- --db data/mixology.db --actor owner
 ```
 
 The database uses SQLite WAL mode. Tests and applications must dispose their

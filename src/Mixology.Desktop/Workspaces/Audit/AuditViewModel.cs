@@ -84,37 +84,37 @@ public sealed partial class AuditViewModel : ObservableObject, IDesktopWorkspace
     public Exception? Error { get; private set; }
 
     [ObservableProperty]
-    private AuditScope scope;
+    public partial AuditScope Scope { get; set; }
 
     [ObservableProperty]
-    private string entity = string.Empty;
+    public partial string Entity { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string principal = string.Empty;
+    public partial string Principal { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string action = string.Empty;
+    public partial string Action { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string from = string.Empty;
+    public partial string From { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string to = string.Empty;
+    public partial string To { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string expression = string.Empty;
+    public partial string Expression { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string pageSize = "100";
+    public partial string PageSize { get; set; } = "100";
 
     [ObservableProperty]
-    private AuditRowViewModel? selected;
+    public partial AuditRowViewModel? Selected { get; set; }
 
     [ObservableProperty]
-    private bool isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private string statusMessage = string.Empty;
+    public partial string StatusMessage { get; set; } = string.Empty;
 
     partial void OnSelectedChanged(AuditRowViewModel? value)
     {

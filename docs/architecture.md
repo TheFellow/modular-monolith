@@ -49,8 +49,8 @@ full. Counts and cursors describe only visible results.
 - The TUI is a leaf executable: it owns Generic Host and Terminal.Gui lifetime,
   consumes toolkit-neutral dashboard/navigation projections, and registers only
   implemented authorization-visible workspaces.
-- The desktop client is a leaf executable: it owns Generic Host and Avalonia
-  lifetime, injects its application instance, and lazily caches only implemented,
+- The desktop client is a leaf executable: it owns Generic Host and .NET MAUI
+  lifetime through `DesktopSession`, and lazily caches only implemented,
   authorization-visible MVVM workspaces. Desktop toolkit mechanics have no
   application or domain references.
 - Architecture tests and project references make these rules executable.

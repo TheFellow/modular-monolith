@@ -1,11 +1,11 @@
 # Desktop toolkit
 
 `Mixology.Toolkits.Desktop` holds small MVVM concurrency seams that are reusable
-without referencing Avalonia controls or a Mixology module. The executable owns
+without referencing .NET MAUI controls or a Mixology module. The executable owns
 shells, dialogs, navigation, and visual styling.
 
 `IUiDispatcher` is the boundary for publishing observable state. Production
-uses the Avalonia UI thread; tests use `ImmediateUiDispatcher` or a recording
+uses the .NET MAUI UI thread; tests use `ImmediateUiDispatcher` or a recording
 implementation without weakening the view model's threading contract.
 
 `LatestRequest<T>` gives every accepted asynchronous request a generation,

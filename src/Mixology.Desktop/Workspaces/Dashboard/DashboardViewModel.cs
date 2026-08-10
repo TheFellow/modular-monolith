@@ -40,37 +40,37 @@ public sealed partial class DashboardViewModel : ObservableObject, IDesktopWorks
     public ObservableCollection<DashboardActivityViewModel> RecentActivity { get; } = [];
 
     [ObservableProperty]
-    private string drinkCount = Unknown;
+    public partial string DrinkCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string ingredientCount = Unknown;
+    public partial string IngredientCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string inventoryCount = Unknown;
+    public partial string InventoryCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string lowStockCount = Unknown;
+    public partial string LowStockCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string menuCount = Unknown;
+    public partial string MenuCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string menuStatus = Unknown;
+    public partial string MenuStatus { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string orderCount = Unknown;
+    public partial string OrderCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string pendingOrderCount = Unknown;
+    public partial string PendingOrderCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private string auditCount = Unknown;
+    public partial string AuditCount { get; set; } = Unknown;
 
     [ObservableProperty]
-    private bool isRefreshing;
+    public partial bool IsRefreshing { get; set; }
 
     [ObservableProperty]
-    private string statusMessage = string.Empty;
+    public partial string StatusMessage { get; set; } = string.Empty;
 
     public Exception? Error { get; private set; }
 

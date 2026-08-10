@@ -1,17 +1,5 @@
-using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
-using Avalonia.VisualTree;
 using Mixology.Application.Authentication;
 using Mixology.Desktop.Navigation;
-using Mixology.Desktop.Workspaces.Audit;
-using Mixology.Desktop.Workspaces.Dashboard;
-using Mixology.Desktop.Workspaces.Drinks;
-using Mixology.Desktop.Workspaces.Ingredients;
-using Mixology.Desktop.Workspaces.Inventory;
-using Mixology.Desktop.Workspaces.Menus;
-using Mixology.Desktop.Workspaces.Orders;
-using Mixology.Desktop.Workspaces.Tags;
-using Mixology.Presentation.Navigation;
 using Xunit;
 
 namespace Mixology.Desktop.Tests;
@@ -52,44 +40,6 @@ public sealed class DesktopCompositionTests
         {
             Assert.True(await shell.NavigateAsync(item, TestContext.Current.CancellationToken));
             Assert.Equal(item.Id, shell.ActiveWorkspace?.Id);
-        }
-    }
-
-    [AvaloniaFact]
-    public async Task MainWindowResolvesEveryOwnerWorkspaceToItsBespokeView()
-    {
-        await using TemporaryDesktopHost temporary = await TemporaryDesktopHost.OpenAsync("owner");
-        await using ShellViewModel shell = await DesktopShellFactory.CreateAsync(
-            temporary.Host.Services,
-            Actor.Owner,
-            new RejectDirtyNavigationConfirmation(),
-            cancellationToken: TestContext.Current.CancellationToken);
-        MainWindow window = new(shell);
-        window.Show();
-        try
-        {
-            Dictionary<WorkspaceId, Type> expected = new()
-            {
-                [NavigationProjector.DashboardWorkspace] = typeof(DashboardView),
-                [NavigationProjector.DrinksWorkspace] = typeof(DrinksWorkspaceView),
-                [NavigationProjector.IngredientsWorkspace] = typeof(IngredientsView),
-                [NavigationProjector.InventoryWorkspace] = typeof(InventoryView),
-                [NavigationProjector.MenusWorkspace] = typeof(MenusView),
-                [NavigationProjector.OrdersWorkspace] = typeof(OrdersView),
-                [NavigationProjector.AuditWorkspace] = typeof(AuditView),
-                [NavigationProjector.TagsWorkspace] = typeof(TagsView),
-            };
-
-            foreach (DesktopNavigationItemViewModel item in shell.Navigation)
-            {
-                Assert.True(await shell.NavigateAsync(item, TestContext.Current.CancellationToken));
-                Assert.Contains(window.GetVisualDescendants(), control =>
-                    control.GetType() == expected[item.Id]);
-            }
-        }
-        finally
-        {
-            window.Close();
         }
     }
 

@@ -20,6 +20,7 @@ using Mixology.Modules.Orders.Requests;
 using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
 using Mixology.Toolkits.Desktop.Threading;
+using MenuItemModel = Mixology.Modules.Menus.Models.MenuItem;
 
 namespace Mixology.Desktop.Workspaces.Orders;
 
@@ -48,8 +49,10 @@ public sealed partial class OrderPlacementLine : ObservableObject
 {
     public OrderPlacementLine(OrderDrinkOption drink) => Drink = drink;
     public OrderDrinkOption Drink { get; }
-    [ObservableProperty] private string quantity = "1";
-    [ObservableProperty] private string notes = string.Empty;
+    [ObservableProperty]
+    public partial string Quantity { get; set; } = "1";
+    [ObservableProperty]
+    public partial string Notes { get; set; } = string.Empty;
 }
 
 public sealed record OrderLineViewModel(OrderItem Item, string Name)
@@ -146,17 +149,28 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
     public OrderRowViewModel? Selected { get => selected; set { if (SetProperty(ref selected, value)) { active = SelectAsync(value); } } }
     public Order? Detail { get => detail; private set => SetProperty(ref detail, value); }
 
-    [ObservableProperty] private string filterStatus = "all";
-    [ObservableProperty] private string filterExpression = string.Empty;
-    [ObservableProperty] private string pageSize = "100";
-    [ObservableProperty] private OrderMenuOption? filterMenu;
-    [ObservableProperty] private OrderMenuOption? placeMenu;
-    [ObservableProperty] private OrderDrinkOption? placeDrink;
-    [ObservableProperty] private string placeNotes = string.Empty;
-    [ObservableProperty] private string placeTags = string.Empty;
-    [ObservableProperty] private bool isLoading;
-    [ObservableProperty] private bool isSubmitting;
-    [ObservableProperty] private string statusMessage = string.Empty;
+    [ObservableProperty]
+    public partial string FilterStatus { get; set; } = "all";
+    [ObservableProperty]
+    public partial string FilterExpression { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string PageSize { get; set; } = "100";
+    [ObservableProperty]
+    public partial OrderMenuOption? FilterMenu { get; set; }
+    [ObservableProperty]
+    public partial OrderMenuOption? PlaceMenu { get; set; }
+    [ObservableProperty]
+    public partial OrderDrinkOption? PlaceDrink { get; set; }
+    [ObservableProperty]
+    public partial string PlaceNotes { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string PlaceTags { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; }
+    [ObservableProperty]
+    public partial bool IsSubmitting { get; set; }
+    [ObservableProperty]
+    public partial string StatusMessage { get; set; } = string.Empty;
 
     partial void OnPlaceMenuChanged(OrderMenuOption? value) { RebuildDrinks(value); MarkDirty(); }
     partial void OnPlaceNotesChanged(string value) => MarkDirty();
@@ -299,7 +313,7 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
             return;
         }
 
-        foreach (MenuItem item in selectedMenu.Menu.Items)
+        foreach (MenuItemModel item in selectedMenu.Menu.Items)
         {
             Drinks.Add(new(item.DrinkId, drinkNames.GetValueOrDefault(item.DrinkId, item.DisplayName ?? item.DrinkId.Value), item.Availability, item.Price?.ToString() ?? "price unavailable"));
         }

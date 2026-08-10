@@ -103,37 +103,68 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
         "ingredient_id.startsWith(\"ing-\") || quantity == 0\n" +
         "tags contains \"featured\" || tags contains \"region=west\"";
 
-    [ObservableProperty] private InventoryListItemViewModel? selectedItem;
-    [ObservableProperty] private InventoryListItemViewModel? selectedInventory;
-    [ObservableProperty] private InventoryEditorMode editorMode;
-    [ObservableProperty] private bool isLoading;
-    [ObservableProperty] private bool isSubmitting;
-    [ObservableProperty] private bool showFilterHelp;
-    [ObservableProperty] private string filterExpression = string.Empty;
-    [ObservableProperty] private bool lowStockOnly;
-    [ObservableProperty] private double lowStockThreshold = ListInventoryRequest.DefaultLowStockThreshold;
-    [ObservableProperty] private int pageSize = PageRequest.DefaultLimit;
-    [ObservableProperty] private int pageNumber = 1;
-    [ObservableProperty] private bool hasNextPage;
-    [ObservableProperty] private bool hasPreviousPage;
-    [ObservableProperty] private string statusMessage = string.Empty;
-    [ObservableProperty] private string editorQuantity = string.Empty;
-    [ObservableProperty] private string editorDelta = string.Empty;
-    [ObservableProperty] private string editorUnit = Unit.Ounce.Value;
-    [ObservableProperty] private string editorCost = string.Empty;
-    [ObservableProperty] private string editorReason = AdjustmentReason.Received.Value;
-    [ObservableProperty] private bool replaceTags;
-    [ObservableProperty] private string editorTags = string.Empty;
-    [ObservableProperty] private bool editorDirty;
-    [ObservableProperty] private bool canAdjust;
-    [ObservableProperty] private bool canSet;
-    [ObservableProperty] private bool canReplaceTags;
-    [ObservableProperty] private bool isAdjustVisible;
-    [ObservableProperty] private bool isSetVisible;
-    [ObservableProperty] private bool isTagsVisible;
-    [ObservableProperty] private string adjustDisabledReason = string.Empty;
-    [ObservableProperty] private string setDisabledReason = string.Empty;
-    [ObservableProperty] private string tagsDisabledReason = string.Empty;
+    [ObservableProperty]
+    public partial InventoryListItemViewModel? SelectedItem { get; set; }
+    [ObservableProperty]
+    public partial InventoryListItemViewModel? SelectedInventory { get; set; }
+    [ObservableProperty]
+    public partial InventoryEditorMode EditorMode { get; set; }
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; }
+    [ObservableProperty]
+    public partial bool IsSubmitting { get; set; }
+    [ObservableProperty]
+    public partial bool ShowFilterHelp { get; set; }
+    [ObservableProperty]
+    public partial string FilterExpression { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool LowStockOnly { get; set; }
+    [ObservableProperty]
+    public partial double LowStockThreshold { get; set; } = ListInventoryRequest.DefaultLowStockThreshold;
+    [ObservableProperty]
+    public partial int PageSize { get; set; } = PageRequest.DefaultLimit;
+    [ObservableProperty]
+    public partial int PageNumber { get; set; } = 1;
+    [ObservableProperty]
+    public partial bool HasNextPage { get; set; }
+    [ObservableProperty]
+    public partial bool HasPreviousPage { get; set; }
+    [ObservableProperty]
+    public partial string StatusMessage { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditorQuantity { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditorDelta { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditorUnit { get; set; } = Unit.Ounce.Value;
+    [ObservableProperty]
+    public partial string EditorCost { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string EditorReason { get; set; } = AdjustmentReason.Received.Value;
+    [ObservableProperty]
+    public partial bool ReplaceTags { get; set; }
+    [ObservableProperty]
+    public partial string EditorTags { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool EditorDirty { get; set; }
+    [ObservableProperty]
+    public partial bool CanAdjust { get; set; }
+    [ObservableProperty]
+    public partial bool CanSet { get; set; }
+    [ObservableProperty]
+    public partial bool CanReplaceTags { get; set; }
+    [ObservableProperty]
+    public partial bool IsAdjustVisible { get; set; }
+    [ObservableProperty]
+    public partial bool IsSetVisible { get; set; }
+    [ObservableProperty]
+    public partial bool IsTagsVisible { get; set; }
+    [ObservableProperty]
+    public partial string AdjustDisabledReason { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string SetDisabledReason { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string TagsDisabledReason { get; set; } = string.Empty;
 
     public Exception? Error { get; private set; }
 

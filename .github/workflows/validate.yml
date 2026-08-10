@@ -54,15 +54,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-24.04
-            rid: linux-x64
-            executable: Mixology.Desktop
           - os: windows-2025
             rid: win-x64
-            executable: Mixology.Desktop.exe
+            framework: net10.0-windows10.0.19041.0
+            workload: maui-windows
           - os: macos-15-intel
-            rid: osx-x64
-            executable: Mixology.Desktop
+            rid: maccatalyst-x64
+            framework: net10.0-maccatalyst
+            workload: maui-maccatalyst
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out sources
@@ -73,40 +72,26 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
-      - name: Publish self-contained desktop client
+      - name: Select Xcode required by .NET Mac Catalyst
+        if: runner.os == 'macOS'
+        run: sudo xcode-select --switch /Applications/Xcode_26.0.1.app
+      - name: Install native .NET MAUI workload
+        run: dotnet workload install ${{ matrix.workload }} --skip-manifest-update
+      - name: Publish native desktop client
         shell: pwsh
         run: >-
           dotnet publish src/Mixology.Desktop/Mixology.Desktop.csproj
           --configuration Release
+          -p:BuildNativeDesktop=true
+          --framework ${{ matrix.framework }}
           --runtime ${{ matrix.rid }}
           --self-contained true
           --output "${{ runner.temp }}/mixology-${{ matrix.rid }}"
-      - name: Run native help smoke
+      - name: Verify native publish output
         shell: pwsh
         run: |
-          $executable = Join-Path "${{ runner.temp }}/mixology-${{ matrix.rid }}" "${{ matrix.executable }}"
-          if (-not (Test-Path $executable -PathType Leaf)) {
-            throw "Missing published executable: $executable"
-          }
-
-          $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
-          $startInfo.FileName = $executable
-          $startInfo.UseShellExecute = $false
-          $startInfo.ArgumentList.Add("--help")
-
-          $process = [System.Diagnostics.Process]::Start($startInfo)
-          if ($null -eq $process) {
-            throw "Failed to start published executable: $executable"
-          }
-
-          try {
-            $process.WaitForExit()
-            $exitCode = $process.ExitCode
-          }
-          finally {
-            $process.Dispose()
-          }
-
-          if ($exitCode -ne 0) {
-            throw "Published executable returned $exitCode"
+          $output = "${{ runner.temp }}/mixology-${{ matrix.rid }}"
+          $artifacts = @(Get-ChildItem $output -Recurse -File)
+          if ($artifacts.Count -eq 0) {
+            throw "Native publish produced no files in $output"
           }

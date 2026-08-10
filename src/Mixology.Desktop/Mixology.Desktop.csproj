@@ -1,12 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <Description>Avalonia desktop composition root for Mixology.</Description>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <TargetFramework />
+    <BuildNativeDesktop Condition="'$(BuildNativeDesktop)' == ''">false</BuildNativeDesktop>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(BuildNativeDesktop)' == 'true' And $([MSBuild]::IsOSPlatform('OSX'))">net10.0;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(BuildNativeDesktop)' == 'true' And $([MSBuild]::IsOSPlatform('Windows'))">net10.0;net10.0-windows10.0.19041.0</TargetFrameworks>
+    <OutputType Condition="'$(TargetFramework)' == 'net10.0'">Library</OutputType>
+    <OutputType Condition="'$(TargetFramework)' == 'net10.0-maccatalyst'">Exe</OutputType>
+    <OutputType Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'">WinExe</OutputType>
+    <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'net10.0-maccatalyst'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'">win-x64;win-arm64</RuntimeIdentifiers>
+    <UseMaui Condition="'$(TargetFramework)' == 'net10.0-maccatalyst' Or '$(TargetFramework)' == 'net10.0-windows10.0.19041.0'">true</UseMaui>
+    <SingleProject Condition="'$(UseMaui)' == 'true'">true</SingleProject>
+    <MauiXamlInflator Condition="'$(UseMaui)' == 'true'">SourceGen</MauiXamlInflator>
+    <ApplicationTitle>Mixology</ApplicationTitle>
+    <ApplicationId>com.thefellow.mixology</ApplicationId>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
+    <Description>.NET MAUI desktop composition root for Mixology.</Description>
   </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <Compile Remove="App.xaml.cs;DesktopRuntime.cs;InverseBooleanConverter.cs;LabeledCheckBox.cs;MainPage.xaml.cs;MauiProgram.cs;Navigation/MauiDirtyNavigationConfirmation.cs;Threading/MauiUiDispatcher.cs;WorkspaceViewHost.cs;Platforms/**/*.cs;Workspaces/**/*.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseMaui)' == 'true'">
+    <MauiIcon Include="Resources/AppIcon/appicon.svg" ForegroundFile="Resources/AppIcon/appiconfg.svg" Color="#512BD4" />
+    <MauiSplashScreen Include="Resources/Splash/splash.svg" Color="#512BD4" BaseSize="128,128" />
+  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Microsoft.Maui.Controls" Condition="'$(UseMaui)' == 'true'" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus.HttpListener" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
