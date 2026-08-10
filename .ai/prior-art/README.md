@@ -14,6 +14,7 @@ inputs, not package shopping notes.
 - [TUI](tui.md)
 - [Desktop GUI](gui.md)
 - [Continuous integration and native publishes](ci.md)
+- [Linting, randomized tests, and race detection](linting.md)
 - [Authorization](authorization.md)
 - [Dispatcher code generation](code-generation.md)
 - [Observability](observability.md)

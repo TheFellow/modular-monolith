@@ -3,6 +3,7 @@
 .idea/
 .vs/
 .vscode/
+node_modules/
 TestResults/
 artifacts/
 *.user

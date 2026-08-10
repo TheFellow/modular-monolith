@@ -12,8 +12,12 @@ public sealed class LatestRequestTests
         TaskCompletionSource<int> second = Source<int>();
         await using LatestRequest<int> requests = new();
 
-        Task<LatestResult<int>> stale = requests.RunAsync(_ => first.Task);
-        Task<LatestResult<int>> current = requests.RunAsync(_ => second.Task);
+        Task<LatestResult<int>> stale = requests.RunAsync(
+            _ => first.Task,
+            TestContext.Current.CancellationToken);
+        Task<LatestResult<int>> current = requests.RunAsync(
+            _ => second.Task,
+            TestContext.Current.CancellationToken);
         second.SetResult(22);
         first.SetResult(11);
 
@@ -29,14 +33,18 @@ public sealed class LatestRequestTests
     {
         TaskCompletionSource cancelled = Source();
         await using LatestRequest<int> requests = new();
-        Task<LatestResult<int>> stale = requests.RunAsync(async token =>
-        {
-            using CancellationTokenRegistration registration = token.Register(cancelled.SetResult);
-            await Task.Delay(Timeout.InfiniteTimeSpan, token);
-            return 0;
-        });
+        Task<LatestResult<int>> stale = requests.RunAsync(
+            async token =>
+            {
+                using CancellationTokenRegistration registration = token.Register(cancelled.SetResult);
+                await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                return 0;
+            },
+            TestContext.Current.CancellationToken);
 
-        Task<LatestResult<int>> current = requests.RunAsync(_ => Task.FromResult(2));
+        Task<LatestResult<int>> current = requests.RunAsync(
+            _ => Task.FromResult(2),
+            TestContext.Current.CancellationToken);
 
         await cancelled.Task;
         _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => stale);
@@ -49,20 +57,22 @@ public sealed class LatestRequestTests
         TaskCompletionSource started = Source();
         TaskCompletionSource stopped = Source();
         LatestRequest<int> requests = new();
-        Task<LatestResult<int>> pending = requests.RunAsync(async token =>
-        {
-            started.SetResult();
-            try
+        Task<LatestResult<int>> pending = requests.RunAsync(
+            async token =>
             {
-                await Task.Delay(Timeout.InfiniteTimeSpan, token);
-            }
-            finally
-            {
-                stopped.SetResult();
-            }
+                started.SetResult();
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                }
+                finally
+                {
+                    stopped.SetResult();
+                }
 
-            return 0;
-        });
+                return 0;
+            },
+            TestContext.Current.CancellationToken);
         await started.Task;
 
         await requests.DisposeAsync();
@@ -70,7 +80,9 @@ public sealed class LatestRequestTests
         await stopped.Task;
         _ = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
         _ = await Assert.ThrowsAsync<ObjectDisposedException>(() =>
-            requests.RunAsync(_ => Task.FromResult(1)));
+            requests.RunAsync(
+                _ => Task.FromResult(1),
+                TestContext.Current.CancellationToken));
     }
 
     private static TaskCompletionSource Source() =>

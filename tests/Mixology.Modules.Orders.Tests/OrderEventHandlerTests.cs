@@ -90,7 +90,9 @@ public sealed class OrderEventHandlerTests
             new PersistedUsage(retired.Value, "Original ingredient name", 1d, Unit.Ounce.Value),
             Assert.Single(blockedState.Usage));
         Assert.Equal(
-            new[] { pending, blocked }.OrderBy(static id => id.Value).Select(static id => id.EntityUid),
+            new[] { pending, blocked }
+                .OrderBy(static id => id.Value, StringComparer.Ordinal)
+                .Select(static id => id.EntityUid),
             result.Touches);
         Assert.Equal(1, result.EventCount);
     }
@@ -138,7 +140,9 @@ public sealed class OrderEventHandlerTests
         Assert.Equal(OrderStatus.Completed.Value, (await fixture.ReadAsync(completed)).Status);
         Assert.Equal(OrderStatus.Pending.Value, (await fixture.ReadAsync(unrelatedPending)).Status);
         Assert.Equal(
-            new[] { pending, multiplyBlocked }.OrderBy(static id => id.Value).Select(static id => id.EntityUid),
+            new[] { pending, multiplyBlocked }
+                .OrderBy(static id => id.Value, StringComparer.Ordinal)
+                .Select(static id => id.EntityUid),
             shortage.Touches);
 
         DispatchResult restock = await fixture.DispatchAsync(Adjusted(adjusted, shortage: false));
@@ -150,7 +154,9 @@ public sealed class OrderEventHandlerTests
         Assert.Equal(OrderStatus.Blocked.Value, stillBlocked.Status);
         Assert.Equal([otherBlocker.Value], stillBlocked.BlockedIngredientIds);
         Assert.Equal(
-            new[] { pending, multiplyBlocked }.OrderBy(static id => id.Value).Select(static id => id.EntityUid),
+            new[] { pending, multiplyBlocked }
+                .OrderBy(static id => id.Value, StringComparer.Ordinal)
+                .Select(static id => id.EntityUid),
             restock.Touches);
         Assert.Equal(1, restock.EventCount);
     }

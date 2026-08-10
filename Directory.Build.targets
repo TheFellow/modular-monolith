@@ -1,0 +1,33 @@
+<Project>
+  <ItemGroup Condition="'$(IsTestProject)' == 'true' and '$(MixologyUsesXunitV3)' != 'true'">
+    <Compile Include="$(MSBuildThisFileDirectory)eng/XunitRandomOrderers.cs"
+             Link="Quality/XunitRandomOrderers.cs" />
+    <AssemblyAttribute Include="Xunit.TestCaseOrdererAttribute">
+      <_Parameter1>Mixology.Testing.RandomTestCaseOrderer</_Parameter1>
+      <_Parameter2>$(AssemblyName)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="Xunit.TestCollectionOrdererAttribute">
+      <_Parameter1>Mixology.Testing.RandomTestCollectionOrderer</_Parameter1>
+      <_Parameter2>$(AssemblyName)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="WriteRandomizedXunitOrderId"
+          AfterTargets="Build"
+          Condition="'$(IsTestProject)' == 'true' and '$(MixologyUsesXunitV3)' == 'true' and '$(MixologyRandomizeTestOrder)' != 'false'">
+    <PropertyGroup>
+      <MixologyTestOrderSeed Condition="'$(MixologyTestOrderSeed)' == '' and '$(MIXOLOGY_TEST_ORDER_SEED)' != ''">$(MIXOLOGY_TEST_ORDER_SEED)</MixologyTestOrderSeed>
+      <MixologyTestOrderSeed Condition="'$(MixologyTestOrderSeed)' == ''">$([System.Guid]::NewGuid().ToString('N'))</MixologyTestOrderSeed>
+      <MixologyTestOrderId>$(MixologyTestOrderSeed)-$(MSBuildProjectName)</MixologyTestOrderId>
+      <MixologyTestOrderFile>$(TargetDir)$(TargetName).uniqueid</MixologyTestOrderFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(MixologyTestOrderFile)"
+                      Lines="$(MixologyTestOrderId)"
+                      Overwrite="true" />
+    <ItemGroup>
+      <FileWrites Include="$(MixologyTestOrderFile)" />
+    </ItemGroup>
+    <Message Importance="high"
+             Text="xUnit randomized order ID: $(MixologyTestOrderId)" />
+  </Target>
+</Project>

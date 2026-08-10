@@ -283,7 +283,9 @@ public static class CliApplication
         options.ValidateLogDestination();
         HostApplicationBuilder builder = MixologyHost.CreateBuilder([]);
         builder.Logging.ClearProviders();
-        builder.Services.AddSerilog((_, configuration) => options.Configure(configuration));
+        builder.Services.AddSerilog(
+            (_, configuration) => options.Configure(configuration),
+            preserveStaticLogger: true);
         if (options.Metrics)
         {
             builder.Services.AddOpenTelemetry().WithMetrics(metricsBuilder => metricsBuilder

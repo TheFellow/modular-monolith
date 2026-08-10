@@ -8,6 +8,13 @@
         "dotnet-ef"
       ],
       "rollForward": false
+    },
+    "sharpdetect": {
+      "version": "2.1.4",
+      "commands": [
+        "sharpdetect"
+      ],
+      "rollForward": false
     }
   }
 }
