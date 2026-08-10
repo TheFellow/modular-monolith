@@ -1,139 +1,135 @@
-# Modular-Monolith with DDD - Multiple Clients
+# Mixology Modular Monolith for .NET
 
-An example application and framework built in the modular monolith style with
-a Domain-Driven Design approach, and Explicit Architecture.
+This repository is a semantic C# port of
+[`go-modular-monolith`](https://github.com/TheFellow/go-modular-monolith). It is
+being rebuilt as a teaching application on .NET 10, not transliterated from Go.
+The reference behavior remains one stateful cocktail-bar application with seven
+bounded contexts, one embedded database, Cedar authorization, and independent
+CLI, TUI, and desktop adapters.
 
-## Why?
+The abandoned prototype remains available through Git history. The new codebase
+starts from explicit decisions in [`.ai/prior-art`](.ai/prior-art/) and grows in
+tested vertical slices. See [the port roadmap](docs/roadmap.md) and
+[semantic parity ledger](docs/semantic-parity.md).
 
-> In theory, theory and practice are the same. In practice, they are not.
+## Development loop
 
-I created this project as an exercise for myself to see if the way I imagined a modern architecture
-actually played out that way when if sit down and code it up. *Unsurprisingly* I've learned a few things.
+```sh
+npm ci --ignore-scripts
+npm run lint:spelling
+dotnet tool restore
+dotnet restore Mixology.slnx
+MIXOLOGY_TEST_ORDER_SEED=local dotnet build Mixology.slnx --no-restore
+MIXOLOGY_TEST_ORDER_SEED=local dotnet test Mixology.slnx --no-build
+dotnet format Mixology.slnx --verify-no-changes --no-restore
+dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
+  --manifest src/Mixology.Dispatcher/dispatcher.routes.json \
+  --output src/Mixology.Dispatcher/Generated/DomainEventDispatcher.g.cs --check
+dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations --no-build
+```
 
-## Table of Contents
+GitHub Actions repeats this gate for every pull request and every push to
+`master`, then publishes and executes the native Desktop help path on Linux x64,
+Windows x64, and macOS x64 runners. Its Linux job also runs the SharpDetect
+dynamic race gate over the desktop concurrency primitives. The workflow pins
+official actions by immutable release commit. See
+[Development](docs/development.md) for the local race command and test-order
+seed reproduction.
 
-1. [Inspiration](#inspiration)
-2. [My Goals for this Project](#my-goals-for-this-project)
-   1. [Larger Goals](#larger-goals)
-3. [Architecture](#architecture)
-4. [Code Style](#code-style)
-5. [Code Quality](#code-quality)
+The repository pins the .NET 10 SDK and treats compiler, analyzer, and configured
+style warnings as errors. C# 14 is deliberate: native C# discriminated unions are
+not available in the pinned stable toolchain, so closed unions use explicit
+record hierarchies and exhaustive pattern matching.
 
-----
+## Teaching guides
 
-### Inspiration
+- [Architecture](docs/architecture.md) explains module direction, operations,
+  authorization, transactions, and generated event reactions.
+- [Application features](docs/features.md) traces filtering, tags, personas,
+  audit, fulfillment, retirement, and runtime configuration.
+- [Development](docs/development.md) covers setup, validation, generation,
+  migrations, and production-shaped tests.
+- [Source map](src/README.md) introduces the kernel, bounded contexts, and
+  independent presentation surfaces.
+- [Documentation parity map](docs/documentation-map.md) maps every teaching
+  README in the Go reference to its semantic .NET destination, including the
+  intentionally consolidated toolkit topics.
 
-**This is not an original idea.**
+## Repository shape
 
-I was most inspired to try something like this after stumbling
-across [Kamil Grzybek](http://www.kamilgrzybek.com/)'s excellent
-repo [Modular Monolith with DDD](https://github.com/kgrzybek/modular-monolith-with-ddd).
+```text
+src/
+  Mixology.Kernel/                 shared domain value types
+  Mixology.Application/            host composition and sessions
+  Mixology.Filtering/              checked filter AST and LINQ translation
+  Mixology.Persistence/            EF Core and SQLite unit of work
+  Mixology.Migrations/             design-time model and checked-in migrations
+  Mixology.Authorization.Cedar/    cedar-dotnet adapter
+  Mixology.Modules.*/              seven bounded contexts
+  Mixology.Dispatcher/             generated event routing
+  Mixology.Toolkits.*/             presentation-only mechanics
+  Mixology.Cli|Tui|Desktop|Seed/   process composition roots
+tests/
+  ...                              unit, architecture, integration, and surface tests
+tools/
+  Mixology.DispatchGenerator/      deterministic committed code generation
+```
 
-In that repository Kamil does essentially this exercise where he builds an entire application (instead of demo-ware).
-I will not repeat all that he's done in that repo because (a) it's a lot and (b) you should read it for yourself.
+Public module roots are facades. Models, queries, and events are deliberate
+cross-domain contracts. Commands, persistence rows, and handlers stay internal.
+Presentation projects consume public application behavior and never another
+surface's implementation.
 
-However, I have poured over most of his source code and there are certain things, not represented there,
-which are of particular interest to me.
+## Canonical sample data
 
-#### Technical Inspiration
+The standalone seed process creates the reference set of 18 ingredients and
+inventory records, six classic drinks, and one published menu through the same
+authorized, audited module APIs used by the other surfaces:
 
-There are a handful of sources and examples that I have some familiarity with and appreciation for.
-All subject to my modification of course...
-- [Herberto Graca](https://herbertograca.com/)'s mental model of explicit architecture
-- [Jasper](http://jasperfx.github.io/)'s application and messaging model
-- [abp.io](https://docs.abp.io/en/abp/latest/Best-Practices/Index)'s approach to organizing modules and DDD
-- [Code Framework](https://docs.codeframework.io/)'s approach to well structured XAML-based front ends
-- [Zoran Horvat](http://www.codinghelmet.com/articles)'s coding style
-- Countless others...
+```sh
+dotnet run --project src/Mixology.Seed
+```
 
-----
+It writes to `data/mixology.db` by default. Set `MIXOLOGY_DB` to select another
+path. Like the Go reference, the seed is deliberately non-idempotent and
+command-atomic: running it against an already seeded store exits with an error,
+while work committed before any later failure remains in the database.
 
-### My Goals for this Project
+## Terminal application
 
-Everybody has their own style of coding, but some are better than others. :smirk:
+The standalone TUI provides the live Dashboard plus complete Drinks,
+Ingredients, Inventory, Menus, Orders, Audit, and Tags workspaces:
 
-- I will be following all of the standard rules including GRASP practices, SOLID principles, and proper Object-Oriented Design.
-  - Yes I will use patterns as they appear; no I will not force them in.
-- I will use nullable reference types everywhere.
-  - I plan to use ideas from functional languages (like F#) in the project. E.g. `Option<T>`
-- Code will be defensive by design.
+```sh
+dotnet run --project src/Mixology.Tui -- --db data/mixology.db --actor owner
+```
 
-#### Larger Goals
+It uses an instance-owned Terminal.Gui application, keeps diagnostics in
+`mixology-tui.log` beside the database by default, and supports the same
+`MIXOLOGY_DB`, `MIXOLOGY_ACTOR`, logging, and metrics configuration as the
+reference process. Cedar filters navigation and workspace actions for the
+selected actor; the shell advertises only routes that are both authorized and
+backed by a registered workspace factory. Every workspace has deterministic
+browse/detail rendering, forms, contextual filter help, cursor paging, stable
+selection, stale-response rejection, and cancellation-aware shutdown. The CLI
+and TUI share the same SQLite file, so writes are visible after either process
+reopens the store.
 
-- Build out a hand-rolled application framework
-  - Message Based
-  - CQRS
-  - DDD
-  - Explicit (see below)
-  - Best Practices
+## Desktop client
 
-- Demonstrate modules which use different front-ends.
-  - WinUI 3 XAML
-  - REST API
-  - Console?
-  - MVC
-    - Sub-goal: Learn MVC
-    - Sub-goal: Learn TypeScript
+The Avalonia desktop composition root exposes Dashboard, Drinks, Ingredients,
+Inventory, Menus, Orders, Audit, and Tags through authorization-visible
+navigation:
 
-- Demonstrate modules which use different back-ends
-  - To force the issue of abstracting persistence
-  - Maybe even different styles of back-end?
-    - Relational (we'll start here, in my comfort zone)
-    - Event Sourced?
-    - Graph?
-    - Document?
-    - CSV? (hehe...)
+```sh
+dotnet run --project src/Mixology.Desktop -- --db data/mixology.db --actor owner
+```
 
-- Integrate a module and/or domain logic written in F#
-  - Sub-goal: Learn F#
-
-----
-
-### Architecture
-
-The top-level architecture is [Herberto Graca](https://herbertograca.com/)'s
-[**Explicit Architecture.**](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
-I **strongly** recommend you read this series of articles.
-![Explicit Architecture](docs/ExplicitArchitecture.png)
-
-Dig into the [architecture](docs/Architecture.md).
-
-### Code Style
-
-Object-Oriented Programming is the *transpose* of Functional Programming. 
-
-OOP is good when you have lots of types which share behavior, or can be composed together.
-- Adding a new **type** to a hierarchy is easy (one new class)
-- Adding a new **method** to the top of a hierarchy is hard (every class which inherits this needs to be updated)
-
-Functional Programming is good when you a lot of workflows on potentially disparate types
-- Adding a new **function** is easy (one new function)
-- Adding a new **type** is hard (every function that uses it needs to be updated)
-
-So, there's a trade-off between the two which hinges around the likelihood of
-having to add new behaviors to existing types in the system, or to add new types
-with similar behaviors to the system.
-
-That said, DDD tells us to use immutable value objects as much as possible. Similarly, functional
-programming almost always focuses on immutable objects.
-
-Because C# is OO-first, the solution will include plenty of objects, hopefully designed well. But, the
-lessons learned from the functional-style should be used as much as possible. This includes things like honest
-method signatures, Railway-Oriented programming, and a functional design.
-
-If you can, I would recommend that you watch everything by [Zoran Horvat](http://www.codinghelmet.com/articles)
-over on [Pluralsight](http://www.pluralsight.com/). A lot of similar information is found on his website as well.
-
-----
-
-### Code Quality
-
-Qualities we want in our codebase:
-1. **Maintainable** Making a change in one area of the system impacts only that area
-2. **Extensible** Adding new behavior to the system involves writing new code, not modifying existing code
-3. **Testable** The system is structured in such a way that tests can be easily written to verify behavior
-4. **Modular** The system is packaged in such a way that distinct components are logically separate and reusable
-5. **Encapsulated** Each module of the system has complete ownership over the data and behaviors it represents
-6. **Discoverable** Looking at any module of the system should provide feedback about how it used and what it does
-
-These code qualities apply at **all** leveles of software. More [here](docs/CodeQuality.md).
+It shares no view models with the TUI. Avalonia-native MVVM state owns UI-thread
+publication, latest-request-wins refresh, an owned dirty-navigation dialog, and
+drained shutdown; headless tests exercise the real controls. Desktop accepts
+the CLI-equivalent `--log-level`, `--log-format`, `--log-file`, and `--metrics`
+options plus their `MIXOLOGY_*` environment defaults. The application host owns
+diagnostic file handles and the optional `localhost:9090/metrics` listener for
+the full window lifetime. Production-shaped tests mutate through CLI, TUI, and
+Desktop in both directions against one durable SQLite store.

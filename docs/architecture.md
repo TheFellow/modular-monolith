@@ -1,0 +1,56 @@
+# Architecture
+
+Mixology is one deployable application. Seven bounded contexts own their public
+contracts, commands, persistence mappings, Cedar policies, events, and surface
+adapters. The .NET Generic Host owns configuration, dependency injection,
+logging, lifetime, and the explicit composition root.
+
+## Context map
+
+| Context | Owns | Synchronous dependencies |
+| --- | --- | --- |
+| Ingredients | catalog and retirement | none |
+| Drinks | recipes and review state | Ingredients |
+| Inventory | stock and reservations | Ingredients |
+| Menus | curation, readiness, publication | Drinks, Ingredients, Inventory |
+| Orders | accepted snapshots and lifecycle | Menus, Drinks, Ingredients, Inventory |
+| Audit | append-only activity | none |
+| Tagging | polymorphic authorized tags | registered target-loader ports |
+
+Reciprocal workflows communicate through public queries and generated event
+routing. Event handlers are leaf operations: their restricted context can use
+the current transaction and touch audit resources, but cannot publish another
+event. Every handler is constructed fresh. Generated dispatch runs preparation,
+mutation, a transactional EF flush, then derived-state finalization. Finalizers
+therefore observe the complete post-event state without depending on handler
+order, while any later failure still rolls the entire transaction back.
+
+## Operation boundary
+
+Commands pass through serialization, logging, metrics, activity tracking, a
+unit of work, authorization of loaded and resulting state, execution, event
+dispatch, and successful audit recording. The mutation, leaf handlers, touches,
+and successful audit entry commit atomically. A failure rolls that transaction
+back and records the failed attempt separately.
+
+Gets authorize their result. Lists hydrate and filter before authorizing each
+result, omit only permission denials, and keep reading until the visible page is
+full. Counts and cursors describe only visible results.
+
+## Dependency direction
+
+- Kernel and shared infrastructure reference no domain or presentation project.
+- A module consumes only another module's public models, queries, or events.
+- Presentation composes public module capabilities and read models without a UI
+  toolkit; executables and future surfaces depend on it, never the reverse.
+- Toolkits reference neither application modules nor sibling toolkits.
+- A domain surface references its matching toolkit and public application API.
+- Executables compose modules and surfaces but contain no business rules.
+- The TUI is a leaf executable: it owns Generic Host and Terminal.Gui lifetime,
+  consumes toolkit-neutral dashboard/navigation projections, and registers only
+  implemented authorization-visible workspaces.
+- The desktop client is a leaf executable: it owns Generic Host and Avalonia
+  lifetime, injects its application instance, and lazily caches only implemented,
+  authorization-visible MVVM workspaces. Desktop toolkit mechanics have no
+  application or domain references.
+- Architecture tests and project references make these rules executable.

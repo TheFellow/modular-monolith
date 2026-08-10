@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Description>Deterministic committed-source generator for domain event dispatch.</Description>
+  </PropertyGroup>
+</Project>

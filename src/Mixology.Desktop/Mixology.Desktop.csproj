@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <Description>Avalonia desktop composition root for Mixology.</Description>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.HttpListener" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="System.CommandLine" />
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
+    <ProjectReference Include="../Mixology.Migrations/Mixology.Migrations.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Orders/Mixology.Modules.Orders.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
+    <ProjectReference Include="../Mixology.Presentation/Mixology.Presentation.csproj" />
+    <ProjectReference Include="../Mixology.Toolkits.Desktop/Mixology.Toolkits.Desktop.csproj" />
+  </ItemGroup>
+</Project>

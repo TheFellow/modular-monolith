@@ -1,0 +1,53 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mixology.Kernel/Mixology.Kernel.csproj" />
+    <Project Path="src/Mixology.Migrations/Mixology.Migrations.csproj" />
+    <Project Path="src/Mixology.Application/Mixology.Application.csproj" />
+    <Project Path="src/Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
+    <Project Path="src/Mixology.Filtering/Mixology.Filtering.csproj" />
+    <Project Path="src/Mixology.Persistence/Mixology.Persistence.csproj" />
+    <Project Path="src/Mixology.Presentation/Mixology.Presentation.csproj" />
+    <Project Path="src/Mixology.Toolkits.Tui/Mixology.Toolkits.Tui.csproj" />
+    <Project Path="src/Mixology.Toolkits.Desktop/Mixology.Toolkits.Desktop.csproj" />
+    <Project Path="src/Mixology.Dispatcher/Mixology.Dispatcher.csproj" />
+    <Project Path="src/Mixology.Modules.Audit/Mixology.Modules.Audit.csproj" />
+    <Project Path="src/Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
+    <Project Path="src/Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
+    <Project Path="src/Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
+    <Project Path="src/Mixology.Modules.Inventory.Contracts/Mixology.Modules.Inventory.Contracts.csproj" />
+    <Project Path="src/Mixology.Modules.Menus/Mixology.Modules.Menus.csproj" />
+    <Project Path="src/Mixology.Modules.Orders/Mixology.Modules.Orders.csproj" />
+    <Project Path="src/Mixology.Modules.Orders.Contracts/Mixology.Modules.Orders.Contracts.csproj" />
+    <Project Path="src/Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
+    <Project Path="src/Mixology.Cli/Mixology.Cli.csproj" />
+    <Project Path="src/Mixology.Seed/Mixology.Seed.csproj" />
+    <Project Path="src/Mixology.Tui/Mixology.Tui.csproj" />
+    <Project Path="src/Mixology.Desktop/Mixology.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mixology.Architecture.Tests/Mixology.Architecture.Tests.csproj" />
+    <Project Path="tests/Mixology.Application.Tests/Mixology.Application.Tests.csproj" />
+    <Project Path="tests/Mixology.Authorization.Cedar.Tests/Mixology.Authorization.Cedar.Tests.csproj" />
+    <Project Path="tests/Mixology.Cli.Tests/Mixology.Cli.Tests.csproj" />
+    <Project Path="tests/Mixology.Filtering.Tests/Mixology.Filtering.Tests.csproj" />
+    <Project Path="tests/Mixology.Dispatcher.Tests/Mixology.Dispatcher.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Audit.Tests/Mixology.Modules.Audit.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Ingredients.Tests/Mixology.Modules.Ingredients.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Drinks.Tests/Mixology.Modules.Drinks.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Inventory.Tests/Mixology.Modules.Inventory.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Menus.Tests/Mixology.Modules.Menus.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Orders.Tests/Mixology.Modules.Orders.Tests.csproj" />
+    <Project Path="tests/Mixology.Modules.Tagging.Tests/Mixology.Modules.Tagging.Tests.csproj" />
+    <Project Path="tests/Mixology.Kernel.Tests/Mixology.Kernel.Tests.csproj" />
+    <Project Path="tests/Mixology.Persistence.Tests/Mixology.Persistence.Tests.csproj" />
+    <Project Path="tests/Mixology.Presentation.Tests/Mixology.Presentation.Tests.csproj" />
+    <Project Path="tests/Mixology.Seed.Tests/Mixology.Seed.Tests.csproj" />
+    <Project Path="tests/Mixology.Toolkits.Tui.Tests/Mixology.Toolkits.Tui.Tests.csproj" />
+    <Project Path="tests/Mixology.Toolkits.Desktop.Tests/Mixology.Toolkits.Desktop.Tests.csproj" />
+    <Project Path="tests/Mixology.Tui.Tests/Mixology.Tui.Tests.csproj" />
+    <Project Path="tests/Mixology.Desktop.Tests/Mixology.Desktop.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Mixology.DispatchGenerator/Mixology.DispatchGenerator.csproj" />
+  </Folder>
+</Solution>

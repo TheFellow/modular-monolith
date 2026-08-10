@@ -1,0 +1,35 @@
+{
+  "Target": {
+    "Path": "../tests/Mixology.Toolkits.Desktop.Tests/bin/Debug/net10.0/Mixology.Toolkits.Desktop.Tests.dll",
+    "RedirectInputOutput": {
+      "SingleConsoleMode": true
+    },
+    "Kind": "TestAssembly",
+    "Test": {
+      "Runner": "VsTest",
+      "Filter": "FullyQualifiedName~LatestRequestTests"
+    }
+  },
+  "Analysis": {
+    "Configuration": {
+      "EnableFieldsAccessInstrumentation": true,
+      "SkipInstrumentationForAssemblies": [
+        "System.",
+        "Microsoft.",
+        "Newtonsoft.",
+        "SharpDetect.",
+        "xunit.",
+        "testhost",
+        "Mixology.Toolkits.Desktop.Tests"
+      ]
+    },
+    "PluginName": "FastTrack",
+    "RenderReport": true,
+    "LogLevel": "Warning"
+  },
+  "Runtime": {
+    "Profiler": {
+      "LogLevel": "Warning"
+    }
+  }
+}

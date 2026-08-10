@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Append-only Mixology operation audit context.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
+    <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
+  </ItemGroup>
+</Project>

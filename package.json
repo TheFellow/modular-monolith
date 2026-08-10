@@ -1,0 +1,10 @@
+{
+  "name": "mixology-quality-gates",
+  "private": true,
+  "scripts": {
+    "lint:spelling": "cspell lint . --no-progress --no-summary"
+  },
+  "devDependencies": {
+    "cspell": "10.0.1"
+  }
+}

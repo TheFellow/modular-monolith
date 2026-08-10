@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Menu composition, lifecycle, readiness, and operational analysis.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../Mixology.Authorization.Cedar/Mixology.Authorization.Cedar.csproj" />
+    <ProjectReference Include="../Mixology.Filtering/Mixology.Filtering.csproj" />
+    <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Tagging/Mixology.Modules.Tagging.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Drinks/Mixology.Modules.Drinks.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Ingredients/Mixology.Modules.Ingredients.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Inventory/Mixology.Modules.Inventory.csproj" />
+    <ProjectReference Include="../Mixology.Modules.Orders.Contracts/Mixology.Modules.Orders.Contracts.csproj" />
+    <ProjectReference Include="../Mixology.Persistence/Mixology.Persistence.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Validated cedar-dotnet authorization adapter for Mixology.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Mixology.Application/Mixology.Application.csproj" />
+    <ProjectReference Include="../../external/cedar-dotnet/src/Cedar.Ast/Cedar.Ast.csproj" />
+    <ProjectReference Include="../../external/cedar-dotnet/src/Cedar.Schema/Cedar.Schema.csproj" />
+  </ItemGroup>
+</Project>

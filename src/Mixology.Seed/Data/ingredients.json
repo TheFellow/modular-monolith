@@ -1,0 +1,151 @@
+[
+  {
+    "key": "tequila",
+    "name": "Tequila Blanco",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "Unaged agave spirit",
+    "tags": ["origin=mexico", "base-spirit"],
+    "stock": { "quantity": 25.0, "cost": "$28.00", "tags": ["location=back-bar"] }
+  },
+  {
+    "key": "vodka",
+    "name": "Vodka",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "Neutral grain spirit",
+    "stock": { "quantity": 25.0, "cost": "$22.00" }
+  },
+  {
+    "key": "gin",
+    "name": "London Dry Gin",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "Juniper-forward gin",
+    "tags": ["botanical", "base-spirit"],
+    "stock": { "quantity": 25.0, "cost": "$30.00", "tags": ["location=back-bar"] }
+  },
+  {
+    "key": "bourbon",
+    "name": "Bourbon",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "American whiskey",
+    "tags": ["origin=usa", "base-spirit"],
+    "stock": { "quantity": 25.0, "cost": "$35.00", "tags": ["premium", "location=back-bar"] }
+  },
+  {
+    "key": "rum_white",
+    "name": "White Rum",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "Light Caribbean rum",
+    "stock": { "quantity": 25.0, "cost": "$20.00" }
+  },
+  {
+    "key": "triple_sec",
+    "name": "Triple Sec",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "Orange liqueur",
+    "stock": { "quantity": 17.0, "cost": "$15.00" }
+  },
+  {
+    "key": "campari",
+    "name": "Campari",
+    "category": "spirit",
+    "unit": "oz",
+    "description": "Italian bitter aperitivo",
+    "stock": { "quantity": 17.0, "cost": "$25.00" }
+  },
+  {
+    "key": "lime_juice",
+    "name": "Lime Juice",
+    "category": "juice",
+    "unit": "oz",
+    "description": "Fresh squeezed",
+    "tags": ["fresh", "perishable"],
+    "stock": { "quantity": 16.0, "cost": "$4.00", "tags": ["location=prep-fridge", "reorder-soon"] }
+  },
+  {
+    "key": "lemon_juice",
+    "name": "Lemon Juice",
+    "category": "juice",
+    "unit": "oz",
+    "description": "Fresh squeezed",
+    "stock": { "quantity": 16.0, "cost": "$4.00" }
+  },
+  {
+    "key": "orange_juice",
+    "name": "Orange Juice",
+    "category": "juice",
+    "unit": "oz",
+    "description": "Fresh squeezed",
+    "stock": { "quantity": 32.0, "cost": "$3.00" }
+  },
+  {
+    "key": "simple_syrup",
+    "name": "Simple Syrup",
+    "category": "syrup",
+    "unit": "oz",
+    "description": "1:1 sugar to water",
+    "stock": { "quantity": 16.0, "cost": "$2.00" }
+  },
+  {
+    "key": "soda_water",
+    "name": "Soda Water",
+    "category": "mixer",
+    "unit": "oz",
+    "description": "Carbonated water",
+    "stock": { "quantity": 64.0, "cost": "$0.50" }
+  },
+  {
+    "key": "tonic_water",
+    "name": "Tonic Water",
+    "category": "mixer",
+    "unit": "oz",
+    "description": "Quinine-flavored carbonated water",
+    "stock": { "quantity": 64.0, "cost": "$0.75" }
+  },
+  {
+    "key": "angostura",
+    "name": "Angostura Bitters",
+    "category": "bitter",
+    "unit": "dash",
+    "description": "Aromatic bitters",
+    "stock": { "quantity": 50, "cost": "$0.10" }
+  },
+  {
+    "key": "orange_bitters",
+    "name": "Orange Bitters",
+    "category": "bitter",
+    "unit": "dash",
+    "description": "Citrus bitters",
+    "stock": { "quantity": 50, "cost": "$0.10" }
+  },
+  {
+    "key": "mint",
+    "name": "Fresh Mint",
+    "category": "garnish",
+    "unit": "piece",
+    "description": "Mint sprigs",
+    "tags": ["fresh", "perishable"],
+    "stock": { "quantity": 100, "cost": "$0.15", "tags": ["location=prep-fridge"] }
+  },
+  {
+    "key": "lime_wheel",
+    "name": "Lime Wheel",
+    "category": "garnish",
+    "unit": "piece",
+    "description": "Sliced lime",
+    "stock": { "quantity": 50, "cost": "$0.20" }
+  },
+  {
+    "key": "cherry",
+    "name": "Maraschino Cherry",
+    "category": "garnish",
+    "unit": "piece",
+    "description": "Cocktail cherry",
+    "stock": { "quantity": 100, "cost": "$0.10" }
+  }
+]
