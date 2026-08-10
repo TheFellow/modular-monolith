@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:desktop="clr-namespace:Mixology.Desktop"
+             xmlns:navigation="clr-namespace:Mixology.Desktop.Navigation"
+             x:Class="Mixology.Desktop.MainPage"
+             x:DataType="desktop:ShellViewModel"
+             Title="Mixology">
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="220,*">
+    <Border Grid.Row="0" Grid.ColumnSpan="2" Padding="20,14" Background="{StaticResource AccentBrush}">
+      <Label Text="Mixology" FontSize="24" FontAttributes="Bold" TextColor="White" />
+    </Border>
+    <Border Grid.Row="1" Grid.Column="0" Padding="12" Stroke="{StaticResource BorderColor}" StrokeThickness="1">
+      <VerticalStackLayout Spacing="8">
+        <Label Text="Workspaces" FontAttributes="Bold" Margin="8,0,0,4" />
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Navigation}">
+          <BindableLayout.ItemTemplate>
+            <DataTemplate x:DataType="navigation:DesktopNavigationItemViewModel">
+              <Button Text="{Binding Label}"
+                      Command="{Binding OpenCommand}"
+                      HorizontalOptions="Fill"
+                      SemanticProperties.Description="{Binding Label}" />
+            </DataTemplate>
+          </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+      </VerticalStackLayout>
+    </Border>
+    <desktop:WorkspaceViewHost Grid.Row="1" Grid.Column="1" Workspace="{Binding ActiveWorkspace}" />
+    <Border Grid.Row="2" Grid.ColumnSpan="2" Padding="12,8" Stroke="{StaticResource BorderColor}" StrokeThickness="1">
+      <Label Text="{Binding StatusMessage}" />
+    </Border>
+  </Grid>
+</ContentPage>

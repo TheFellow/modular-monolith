@@ -5,7 +5,6 @@
     <MixologyUsesXunitV3>true</MixologyUsesXunitV3>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Headless.XUnit" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />

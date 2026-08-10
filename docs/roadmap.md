@@ -20,7 +20,7 @@ moving the foundation and CLI ahead of persistent interfaces.
 10. Integrate `cedar-dotnet`, Tagging, ABAC, authorization-filtered pages, and
     action projection. Complete CLI parity and restart tests.
 11. Add the Terminal.Gui TUI with deterministic input and rendering tests.
-12. Add the Avalonia MVVM desktop client with headless control and visual tests.
+12. Add the .NET MAUI MVVM desktop client with view-model and markup-contract tests.
 13. Prove cross-surface durability, architecture rules, self-contained publishes,
     migrations, and generated-output freshness on every supported OS.
 

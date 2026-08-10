@@ -12,8 +12,8 @@ asynchronous delegates.
   value contracts and algorithms directly.
 - `Mixology.Modules.*.Tests` compose real persistence, authorization, pipeline,
   event dispatch, and audit behavior for one bounded context.
-- `Mixology.Cli.Tests`, `Tui.Tests`, and `Desktop.Tests` exercise native parser,
-  workspace/view-model, and real control adapters respectively.
+- `Mixology.Cli.Tests`, `Tui.Tests`, and `Desktop.Tests` exercise native parsers,
+  workspace/view-model behavior, and desktop markup contracts respectively.
 - `Mixology.Architecture.Tests` enforce project/namespace direction and public
   facade boundaries.
 - `Mixology.Dispatcher.Tests` verify generated routes, ordering, fresh handler
@@ -37,8 +37,8 @@ Audit module rather than inspecting EF's change tracker.
 CLI tests inject `TextReader`/`TextWriter` and invoke the command graph in
 process. TUI tests operate on workspace state and bounded rendering, with the
 Terminal.Gui host covered separately. Desktop tests inject `IUiDispatcher`,
-dirty-navigation confirmation, and controlled completions; headless tests also
-instantiate the real Avalonia controls. Cross-surface durability tests always
+dirty-navigation confirmation, and controlled completions; markup tests validate
+the MAUI XAML without requiring a platform workload. Cross-surface durability tests always
 dispose one host before opening the next against the same file.
 
 Run a focused project while developing and the full solution before handoff:

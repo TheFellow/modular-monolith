@@ -18,6 +18,7 @@ using Mixology.Modules.Menus.Requests;
 using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
 using Mixology.Toolkits.Desktop.Threading;
+using MenuItemModel = Mixology.Modules.Menus.Models.MenuItem;
 
 namespace Mixology.Desktop.Workspaces.Menus;
 
@@ -37,7 +38,7 @@ public sealed record MenuDrinkOption(DrinkId Id, string Name)
     public string Display => $"{Name} · {Id.Value}";
 }
 
-public sealed record MenuItemViewModel(MenuItem Item, string Name)
+public sealed record MenuItemViewModel(MenuItemModel Item, string Name)
 {
     public string DrinkId => Item.DrinkId.Value;
     public string Availability => Item.Availability.Value;
@@ -448,7 +449,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
         }
 
         selected = Rows.First(row => row.Id == menu.Id.Value); OnPropertyChanged(nameof(Selected));
-        Items.Clear(); foreach (MenuItem item in menu.Items)
+        Items.Clear(); foreach (MenuItemModel item in menu.Items)
         {
             Items.Add(new(item, drinkNames.GetValueOrDefault(item.DrinkId, item.DisplayName ?? item.DrinkId.Value)));
         }

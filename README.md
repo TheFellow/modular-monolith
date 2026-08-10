@@ -29,9 +29,9 @@ dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations
 ```
 
 GitHub Actions repeats this gate for every pull request and every push to
-`master`, then publishes and executes the native Desktop help path on Linux x64,
-Windows x64, and macOS x64 runners. Its Linux job also runs the SharpDetect
-dynamic race gate over the desktop concurrency primitives. The workflow pins
+`master`, then publishes the native Desktop client on Windows x64 and macOS x64
+runners. The Linux solution job still runs the SharpDetect dynamic race gate
+over the desktop concurrency primitives. The workflow pins
 official actions by immutable release commit. See
 [Development](docs/development.md) for the local race command and test-order
 seed reproduction.
@@ -117,17 +117,22 @@ reopens the store.
 
 ## Desktop client
 
-The Avalonia desktop composition root exposes Dashboard, Drinks, Ingredients,
+The .NET MAUI desktop composition root exposes Dashboard, Drinks, Ingredients,
 Inventory, Menus, Orders, Audit, and Tags through authorization-visible
 navigation:
 
 ```sh
-dotnet run --project src/Mixology.Desktop -- --db data/mixology.db --actor owner
+# macOS
+dotnet run --project src/Mixology.Desktop -p:BuildNativeDesktop=true -f net10.0-maccatalyst -- --db data/mixology.db --actor owner
+
+# Windows
+dotnet run --project src/Mixology.Desktop -p:BuildNativeDesktop=true -f net10.0-windows10.0.19041.0 -- --db data/mixology.db --actor owner
 ```
 
-It shares no view models with the TUI. Avalonia-native MVVM state owns UI-thread
+It shares no view models with the TUI. MAUI-native MVVM state owns UI-thread
 publication, latest-request-wins refresh, an owned dirty-navigation dialog, and
-drained shutdown; headless tests exercise the real controls. Desktop accepts
+drained shutdown; platform-neutral tests cover view models and XAML contracts.
+Desktop accepts
 the CLI-equivalent `--log-level`, `--log-format`, `--log-file`, and `--metrics`
 options plus their `MIXOLOGY_*` environment defaults. The application host owns
 diagnostic file handles and the optional `localhost:9090/metrics` listener for

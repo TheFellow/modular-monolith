@@ -40,7 +40,7 @@ public sealed class DesktopCrossSurfaceTests
             workspace.EditorName = "Desktop Cross Surface Gin";
             workspace.EditorCategory = "spirit";
             workspace.EditorUnit = "oz";
-            workspace.EditorDescription = "created through the Avalonia view model";
+            workspace.EditorDescription = "created through the .NET MAUI view model";
             await workspace.SubmitAsync(TestContext.Current.CancellationToken);
 
             Assert.Null(workspace.Error);

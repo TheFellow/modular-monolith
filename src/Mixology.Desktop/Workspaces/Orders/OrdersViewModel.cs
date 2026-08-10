@@ -20,6 +20,7 @@ using Mixology.Modules.Orders.Requests;
 using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
 using Mixology.Toolkits.Desktop.Threading;
+using MenuItemModel = Mixology.Modules.Menus.Models.MenuItem;
 
 namespace Mixology.Desktop.Workspaces.Orders;
 
@@ -299,7 +300,7 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
             return;
         }
 
-        foreach (MenuItem item in selectedMenu.Menu.Items)
+        foreach (MenuItemModel item in selectedMenu.Menu.Items)
         {
             Drinks.Add(new(item.DrinkId, drinkNames.GetValueOrDefault(item.DrinkId, item.DisplayName ?? item.DrinkId.Value), item.Availability, item.Price?.ToString() ?? "price unavailable"));
         }

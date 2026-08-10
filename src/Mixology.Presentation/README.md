@@ -3,7 +3,7 @@
 `Mixology.Presentation` is shared application-facing presentation, not a UI
 framework. It combines public module APIs into dashboard, navigation, and
 tagged-mutation use cases. It references no System.CommandLine, Terminal.Gui,
-or Avalonia type, so each executable can choose native interaction patterns.
+or .NET MAUI type, so each executable can choose native interaction patterns.
 
 `DashboardService` assembles aggregates and recent activity. `NavigationProjector`
 uses domain action projections to include only workspaces visible to the actor.

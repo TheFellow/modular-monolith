@@ -51,7 +51,7 @@ the caller's transaction but cannot publish another event. See
 - [`Mixology.Cli`](Mixology.Cli/README.md) is the scriptable `System.CommandLine`
   surface.
 - [`Mixology.Tui`](Mixology.Tui/README.md) is the Terminal.Gui workspace shell.
-- [`Mixology.Desktop`](Mixology.Desktop/README.md) is the Avalonia MVVM client.
+- [`Mixology.Desktop`](Mixology.Desktop/README.md) is the .NET MAUI MVVM client.
 - [`Mixology.Seed`](Mixology.Seed/README.md) creates the canonical teaching data.
 
 Surfaces share application behavior and presentation-neutral projections, not

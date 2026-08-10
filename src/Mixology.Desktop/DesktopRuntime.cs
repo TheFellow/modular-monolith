@@ -1,75 +1,63 @@
-using Avalonia;
 using Mixology.Desktop.Navigation;
 using Mixology.Desktop.Threading;
 using Mixology.Kernel.Errors;
 
 namespace Mixology.Desktop;
 
-public interface IDesktopRuntime
+public sealed class DesktopSession : IAsyncDisposable
 {
-    int Run(DesktopOptions options);
-}
+    private readonly DesktopHost host;
+    private bool disposed;
 
-public interface IDesktopLifetime
-{
-    int Run(DesktopApplication application);
-}
-
-public sealed class ClassicDesktopLifetime : IDesktopLifetime
-{
-    public int Run(DesktopApplication application)
+    private DesktopSession(DesktopHost host, ShellViewModel shell)
     {
-        ArgumentNullException.ThrowIfNull(application);
-        return AppBuilder.Configure(() => application)
-            .UsePlatformDetect()
-            .LogToTrace()
-            .StartWithClassicDesktopLifetime([]);
+        this.host = host;
+        Shell = shell;
     }
-}
 
-public sealed class HostedDesktopRuntime(IDesktopLifetime? lifetime = null) : IDesktopRuntime
-{
-    private readonly IDesktopLifetime lifetime = lifetime ?? new ClassicDesktopLifetime();
+    public ShellViewModel Shell { get; }
 
-    public int Run(DesktopOptions options)
+    public static DesktopSession Open(DesktopOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
         DesktopHost? host = null;
-        ShellViewModel? shell = null;
         try
         {
-            // Keep Avalonia startup on the process STA thread. Host startup completes before the
-            // native lifetime begins, so this synchronous edge is intentional.
             host = DesktopHost.OpenAsync(options).GetAwaiter().GetResult();
-            shell = DesktopShellFactory.CreateAsync(
+            ShellViewModel shell = DesktopShellFactory.CreateAsync(
                 host.Services,
                 options.Actor,
-                new AvaloniaDirtyNavigationConfirmation(),
-                new AvaloniaUiDispatcher()).GetAwaiter().GetResult();
-            return lifetime.Run(new DesktopApplication(shell));
+                new MauiDirtyNavigationConfirmation(),
+                new MauiUiDispatcher()).GetAwaiter().GetResult();
+            return new DesktopSession(host, shell);
         }
-        catch (Exception exception) when (AppError.IsCancellation(exception))
+        catch (Exception exception) when (AppError.IsCancellation(exception) || AppError.Find(exception) is not null)
         {
-            throw;
-        }
-        catch (Exception exception) when (AppError.Find(exception) is not null)
-        {
+            host?.DisposeAsync().AsTask().GetAwaiter().GetResult();
             throw;
         }
         catch (Exception exception)
         {
-            throw AppError.Internal("run desktop application", exception);
+            host?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            throw AppError.Internal("open desktop session", exception);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        disposed = true;
+        try
+        {
+            await Shell.DisposeAsync().ConfigureAwait(false);
         }
         finally
         {
-            try
-            {
-                shell?.DisposeAsync().AsTask().GetAwaiter().GetResult();
-            }
-            finally
-            {
-                host?.DisposeAsync().AsTask().GetAwaiter().GetResult();
-            }
+            await host.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

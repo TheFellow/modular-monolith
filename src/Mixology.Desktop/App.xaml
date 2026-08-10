@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:desktop="clr-namespace:Mixology.Desktop"
+             x:Class="Mixology.Desktop.DesktopApplication">
+  <Application.Resources>
+    <ResourceDictionary>
+      <Color x:Key="AccentColor">#512BD4</Color>
+      <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+      <Color x:Key="BorderColor">#808080</Color>
+      <desktop:InverseBooleanConverter x:Key="InverseBoolConverter" />
+      <Style x:Key="MetricBorderStyle" TargetType="Border">
+        <Setter Property="WidthRequest" Value="190" />
+        <Setter Property="MinimumHeightRequest" Value="108" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="0,0,12,12" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+      </Style>
+      <Style x:Key="PanelBorderStyle" TargetType="Border">
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+      </Style>
+      <Style x:Key="RecipeRowBorderStyle" TargetType="Border">
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+      </Style>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>
