@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Checked filter syntax, owned AST, exact evaluation, and LINQ planning.</Description>
+    <Description>Expr-backed typed filters with safe application-specific LINQ planning.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Expr" />
     <ProjectReference Include="../Mixology.Kernel/Mixology.Kernel.csproj" />
   </ItemGroup>
 </Project>
-

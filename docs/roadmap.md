@@ -9,7 +9,7 @@ moving the foundation and CLI ahead of persistent interfaces.
    and quality.
 3. Establish SQLite storage, migrations, transaction ownership, and a
    production-shaped test fixture.
-4. Port the typed filter grammar, checked owned AST, canonical printer, exact
+4. Integrate a typed filter grammar, checked owned AST, canonical printer, exact
    evaluator, and conservative LINQ pushdown planner.
 5. Build the Generic Host composition shape, authentication, operation context,
    middleware, telemetry, audit protocol, and generated leaf event dispatch.
@@ -27,4 +27,3 @@ moving the foundation and CLI ahead of persistent interfaces.
 Each numbered slice should land as one or more independently building, tested
 commits. The behavioral source is `/go-modular-monolith`; tutorial prose guides
 the reveal but never overrides observable behavior.
-

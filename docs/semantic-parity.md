@@ -10,7 +10,7 @@ requires production-shaped tests, not only a matching type or method name.
 - [x] Typed application errors with safe messages and CLI/HTTP/gRPC mappings
 - [x] Cursor paging primitives, complete traversal, and permission-aware page filling
 - [x] Money, currency, volume/discrete measurement, tags, and quality values
-- [x] Checked filter grammar, canonical AST, exact evaluator, and safe EF pushdowns
+- [x] Expr-backed checked filters, canonical AST, exact evaluator, and safe EF pushdowns
 - [x] Shared SQLite store, initial migration, explicit session transaction, and rollback
 - [x] Fresh operation contexts, middleware order, telemetry, and atomic auditing
 - [x] Cedar policies/entities through the pinned `cedar-dotnet` source adapter

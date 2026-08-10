@@ -61,7 +61,7 @@ record hierarchies and exhaustive pattern matching.
 src/
   Mixology.Kernel/                 shared domain value types
   Mixology.Application/            host composition and sessions
-  Mixology.Filtering/              checked filter AST and LINQ translation
+  Mixology.Filtering/              Expr adapter and LINQ translation
   Mixology.Persistence/            EF Core and SQLite unit of work
   Mixology.Migrations/             design-time model and checked-in migrations
   Mixology.Authorization.Cedar/    cedar-dotnet adapter

@@ -1,3 +1,4 @@
+using Expr.Syntax;
 using Mixology.Kernel.Errors;
 using Xunit;
 
@@ -57,9 +58,7 @@ public sealed class FilterExpressionTests
     [InlineData("Category and Active")]
     [InlineData("Missing == 1")]
     [InlineData("Price == \"expensive\"")]
-    [InlineData("Price + 1 > 2")]
     [InlineData("unknown(\"x\")")]
-    [InlineData("Name.matches(Category)")]
     [InlineData("Name.matches(\"[\")")]
     [InlineData("Created > date(\"nope\")")]
     [InlineData("Age > duration(\"soon\")")]
@@ -71,9 +70,9 @@ public sealed class FilterExpressionTests
     }
 
     [Theory]
-    [InlineData("Active and Price >= 10 or Category == \"wine\"", "Active && Price >= 10 || Category == \"wine\"")]
-    [InlineData("not (Category == \"wine\" or Active)", "!(Category == \"wine\" || Active)")]
-    [InlineData("Name contains \"art\"", "Name.contains(\"art\")")]
+    [InlineData("Active and Price >= 10 or Category == \"wine\"", "(Active and Price >= 10) or Category == \"wine\"")]
+    [InlineData("not (Category == \"wine\" or Active)", "not (Category == \"wine\" or Active)")]
+    [InlineData("Name contains \"art\"", "Name contains \"art\"")]
     [InlineData("Category in [\"wine\",\"beer\"]", "Category in [\"wine\", \"beer\"]")]
     public void CanonicalTextIsStable(string source, string expected)
     {
@@ -91,7 +90,51 @@ public sealed class FilterExpressionTests
         BinaryNode root = Assert.IsType<BinaryNode>(expression.Tree);
         Assert.Equal("&&", root.Operator);
         BinaryNode comparison = Assert.IsType<BinaryNode>(root.Left);
-        Assert.IsType<int>(Assert.IsType<LiteralNode>(comparison.Right).Value);
+        Assert.IsType<IntegerNode>(comparison.Right);
+    }
+
+    [Fact]
+    public void ExprLanguageFeaturesRemainAvailableThroughTheFilterAdapter()
+    {
+        FilterExpression<DrinkView> expression = Filter.Parse(Schema, "Price * 2 >= 28")!;
+
+        Assert.True(expression.Match(Martini));
+    }
+
+    [Fact]
+    public void DottedFieldsAndLegacyMethodPredicatesRemainCompatible()
+    {
+        FilterSchema<DottedView> schema = new(
+        [
+            Filter.Field("recipe.garnish", (DottedView view) => view.Garnish),
+        ]);
+
+        FilterExpression<DottedView> expression = Filter.Parse(schema, "recipe.garnish.startsWith(\"lem\")")!;
+
+        Assert.True(expression.Match(new DottedView("lemon twist")));
+    }
+
+    [Fact]
+    public void ReadOnlyListFieldsRetainCollectionMembership()
+    {
+        FilterSchema<ReadOnlyListView> schema = new(
+        [
+            Filter.Field("tags", (ReadOnlyListView view) => view.Tags),
+        ]);
+
+        FilterExpression<ReadOnlyListView> expression = Filter.Parse(schema, "tags contains \"featured\"")!;
+
+        Assert.True(expression.Match(new ReadOnlyListView(Array.AsReadOnly(["featured"]))));
+    }
+
+    [Fact]
+    public void RuntimeExpressionFailuresRemainTypedInvalidErrors()
+    {
+        FilterExpression<DrinkView> expression = Filter.Parse(Schema, "Created > date(Name)")!;
+
+        InvalidError error = Assert.Throws<InvalidError>(() => expression.Match(Martini));
+
+        Assert.Equal(ErrorKind.Invalid, error.Kind);
     }
 
     [Theory]
@@ -152,6 +195,23 @@ public sealed class FilterExpressionTests
         Assert.All(corpus.Where(expression.Match), item => Assert.True(candidate(item)));
     }
 
+    [Fact]
+    public void ConstantDatesRetainPersistencePushdown()
+    {
+        FilterExpression<DrinkView> expression = Filter.Parse(
+            Schema,
+            "Created >= date(\"2026-08-01T00:00:00Z\")")!;
+        FilterPersistenceMap<DrinkView> map = new(
+        [
+            Filter.PersistedField("Created", (DrinkView view) => view.Created),
+        ]);
+
+        Func<DrinkView, bool> candidate = expression.BuildPushdown(map)!.Compile();
+
+        Assert.True(candidate(Martini));
+        Assert.False(candidate(Martini with { Created = Martini.Created.AddDays(-1) }));
+    }
+
     public sealed record DrinkView(
         string Name,
         string Category,
@@ -162,4 +222,8 @@ public sealed class FilterExpressionTests
         string[] Tags);
 
     public sealed record DrinkRow(string StoredCategory, int StoredPrice, bool IsActive);
+
+    private sealed record DottedView(string Garnish);
+
+    private sealed record ReadOnlyListView(IReadOnlyList<string> Tags);
 }
