@@ -13,7 +13,7 @@ only process and presentation concerns.
   operation pipelines, audit activity, metrics, and event dispatch ports.
 - [`Mixology.Persistence`](Mixology.Persistence/README.md) owns SQLite/EF Core
   lifecycle and caller-owned units of work.
-- [`Mixology.Filtering`](Mixology.Filtering/README.md) owns the checked filter
+- [`Mixology.Filtering`](Mixology.Filtering/README.md) adapts Expr's checked filter
   AST, exact evaluator, and conservative LINQ pushdown planner.
 - [`Mixology.Authorization.Cedar`](Mixology.Authorization.Cedar/README.md)
   adapts domain authorization contracts to `cedar-dotnet`.

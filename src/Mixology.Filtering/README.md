@@ -1,9 +1,11 @@
 # Typed filter expressions
 
-`Mixology.Filtering` is the transport-neutral expression language used by list
-operations. A module declares a public filter view and schema; parsing produces
-a checked, application-owned AST that supports canonical display, exact
-in-memory evaluation, and safe EF Core narrowing.
+`Mixology.Filtering` adapts the general-purpose
+[`Expr`](https://www.nuget.org/packages/Expr) package for list operations. A
+module declares a public filter view and schema; Expr supplies parsing, static
+checking, the public AST, canonical display, optimization, and exact in-memory
+evaluation. The adapter adds typed application errors and safe EF Core
+narrowing.
 
 ## Data path
 
@@ -28,7 +30,7 @@ FilterSchema<DrinkFilterView> schema = new(
     [
         Filter.Field<DrinkFilterView, string>("id", value => value.Id, "Drink ID"),
         Filter.Field<DrinkFilterView, string>("name", value => value.Name, "Drink name"),
-        Filter.Field<DrinkFilterView, IReadOnlyList<string>>(
+        Filter.Field<DrinkFilterView, string[]>(
             "tags", value => value.Tags, "Tags (key or key=value)"),
     ],
     "name.contains(\"gin\")",
@@ -42,15 +44,16 @@ row selectors for which pushdown is semantically safe.
 ## Parsing and evaluation
 
 `Filter.Parse(schema, source)` returns `null` for empty input; otherwise it
-lexes, parses, and type-checks before database work starts. Unknown fields,
-incompatible values, unsupported constructs, and invalid patterns become typed
-`Invalid` errors. A `FilterExpression<T>` retains its trimmed source, canonical
-string, owned `FilterNode` tree, and exact `Match` behavior.
+parses and type-checks with Expr before database work starts. Unknown fields,
+incompatible values, invalid constant dates, durations, and patterns become
+typed `Invalid` errors. A `FilterExpression<T>` retains its trimmed source,
+canonical string, public Expr `SyntaxNode` tree, and exact `Match` behavior.
 
-Supported forms include comparisons (`==`, `!=`, `<`, `<=`, `>`, `>=`, `in`,
-`not in`), boolean logic, parentheses, negation, and string/collection
-predicates (`contains`, `startsWith`, `endsWith`, and `matches`). The language
-intentionally rejects arithmetic and arbitrary method calls.
+The full checked Expr language is available, including arithmetic, comparisons,
+boolean logic, collections, and predicates. Existing Mixology filters remain
+compatible: method spellings such as `name.contains("gin")`, collection
+membership such as `tags contains "featured"`, and dotted schema fields are
+rewritten to equivalent Expr syntax before checking.
 
 ## LINQ/EF Core pushdown
 

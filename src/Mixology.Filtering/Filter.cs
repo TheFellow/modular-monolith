@@ -1,4 +1,8 @@
 using System.Linq.Expressions;
+using Expr;
+using Expr.Configuration;
+using Expr.Syntax;
+using Expr.Types;
 using Mixology.Filtering.Internal;
 using Mixology.Kernel.Errors;
 
@@ -12,7 +16,14 @@ public static class Filter
         string description = "")
     {
         Func<T, TValue> compiled = read.Compile();
-        return new FilterField<T>(name, typeof(TValue), description, value => compiled(value));
+        ExprTypeDescriptor type = FilterTypeMapper.Map(typeof(TValue));
+        string environmentName = FilterSchema<T>.EnvironmentName(name);
+        return new FilterField<T>(
+            name,
+            typeof(TValue),
+            description,
+            value => compiled(value),
+            builder => builder.Member(environmentName, compiled, type));
     }
 
     public static PersistedFilterField<TRow> PersistedField<TRow, TValue>(
@@ -29,9 +40,15 @@ public static class Filter
 
         try
         {
-            FilterNode parsed = new FilterParser(source).Parse();
-            FilterNode checkedTree = new FilterTypeChecker<T>(schema).Check(parsed);
-            return new FilterExpression<T>(source, schema, checkedTree);
+            SyntaxTree parsed = ExprEngine.Parse(source);
+            SyntaxNode compatible = new Internal.FilterCompatibilityRewriter<T>(schema).Visit(parsed.Root);
+            FilterConstantValidator.Validate(compatible);
+            SyntaxTree rewritten = new(compatible, parsed.Source);
+            ExprConfiguration configuration = ExprConfiguration.Default
+                .WithEnvironment(schema.Environment)
+                .WithExpectedType(ExprTypes.Boolean, warnOnAny: true);
+            CompiledExpression compiled = ExprEngine.Compile(rewritten, configuration);
+            return new FilterExpression<T>(source, schema, parsed.Root, compiled);
         }
         catch (AppError)
         {

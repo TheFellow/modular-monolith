@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq.Expressions;
 
 namespace Mixology.Filtering.Internal;
@@ -25,7 +26,8 @@ internal sealed class PushdownExpressionBuilder<TRow>(FilterPersistenceMap<TRow>
 
     private static Expression BuildPredicate(Expression property, Pushdown pushdown)
     {
-        Expression[] values = pushdown.Values.Select(value => Expression.Constant(value, property.Type)).ToArray();
+        Type targetType = Nullable.GetUnderlyingType(property.Type) ?? property.Type;
+        Expression[] values = pushdown.Values.Select(value => Constant(value, property.Type, targetType)).ToArray();
         if (pushdown.Operator is "==" or "!=" && values.Length > 1)
         {
             Expression contains = Expression.Call(
@@ -50,9 +52,29 @@ internal sealed class PushdownExpressionBuilder<TRow>(FilterPersistenceMap<TRow>
         };
     }
 
+    private static Expression Constant(object value, Type propertyType, Type targetType)
+    {
+        Expression constant = Expression.Constant(ConvertValue(value, targetType), targetType);
+        return propertyType == targetType ? constant : Expression.Convert(constant, propertyType);
+    }
+
+    private static object ConvertValue(object value, Type type)
+    {
+        if (type.IsInstanceOfType(value))
+        {
+            return value;
+        }
+
+        return (value, type) switch
+        {
+            (DateTimeOffset instant, Type target) when target == typeof(DateTime) => instant.UtcDateTime,
+            (DateTime instant, Type target) when target == typeof(DateTimeOffset) => new DateTimeOffset(instant),
+            _ => Convert.ChangeType(value, type, CultureInfo.InvariantCulture),
+        };
+    }
+
     private sealed class ReplaceParameterVisitor(ParameterExpression source, ParameterExpression replacement) : ExpressionVisitor
     {
         protected override Expression VisitParameter(ParameterExpression node) => node == source ? replacement : base.VisitParameter(node);
     }
 }
-
