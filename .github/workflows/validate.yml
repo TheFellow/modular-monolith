@@ -72,6 +72,9 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
+      - name: Select Xcode required by .NET Mac Catalyst
+        if: runner.os == 'macOS'
+        run: sudo xcode-select --switch /Applications/Xcode_26.0.app
       - name: Install native .NET MAUI workload
         run: dotnet workload install ${{ matrix.workload }} --skip-manifest-update
       - name: Publish native desktop client
