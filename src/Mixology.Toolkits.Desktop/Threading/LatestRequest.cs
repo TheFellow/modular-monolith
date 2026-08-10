@@ -15,7 +15,7 @@ public sealed class LatestRequest<T> : IAsyncDisposable
 {
     private readonly object sync = new();
     private readonly Dictionary<long, CancellationTokenSource> cancellations = [];
-    private readonly HashSet<Task> pending = [];
+    private readonly Dictionary<Task, CompletionRegistration> pending = [];
     private long generation;
     private bool disposed;
 
@@ -39,9 +39,12 @@ public sealed class LatestRequest<T> : IAsyncDisposable
             cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cancellations.Add(acceptedGeneration, cancellation);
             task = ExecuteAsync(acceptedGeneration, cancellation, request);
-            _ = pending.Add(task);
+            pending.Add(
+                task,
+                new CompletionRegistration(acceptedGeneration, cancellation));
             _ = task.ContinueWith(
-                completed => Complete(acceptedGeneration, cancellation, completed),
+                static (completed, owner) => ((LatestRequest<T>)owner!).Complete(completed),
+                this,
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
                 TaskScheduler.Default);
@@ -67,7 +70,7 @@ public sealed class LatestRequest<T> : IAsyncDisposable
                 cancellation.Cancel();
             }
 
-            drain = pending.Select(ObserveAsync).ToArray();
+            drain = pending.Keys.Select(ObserveAsync).ToArray();
         }
 
         await Task.WhenAll(drain).ConfigureAwait(false);
@@ -87,10 +90,7 @@ public sealed class LatestRequest<T> : IAsyncDisposable
         }
     }
 
-    private void Complete(
-        long acceptedGeneration,
-        CancellationTokenSource cancellation,
-        Task<LatestResult<T>> completed)
+    private void Complete(Task<LatestResult<T>> completed)
     {
         if (completed.IsFaulted)
         {
@@ -99,13 +99,18 @@ public sealed class LatestRequest<T> : IAsyncDisposable
             _ = completed.Exception;
         }
 
+        CompletionRegistration registration;
         lock (sync)
         {
-            _ = cancellations.Remove(acceptedGeneration);
-            _ = pending.Remove(completed);
+            if (!pending.Remove(completed, out registration!))
+            {
+                return;
+            }
+
+            _ = cancellations.Remove(registration.Generation);
         }
 
-        cancellation.Dispose();
+        registration.Cancellation.Dispose();
     }
 
     private static async Task ObserveAsync(Task task)
@@ -119,4 +124,8 @@ public sealed class LatestRequest<T> : IAsyncDisposable
             // The caller owns request errors. Disposal only guarantees observation and draining.
         }
     }
+
+    private sealed record CompletionRegistration(
+        long Generation,
+        CancellationTokenSource Cancellation);
 }

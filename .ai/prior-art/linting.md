@@ -70,6 +70,18 @@ because of publication heuristics, and can report false positives around
 unsupported synchronization. Dynamic coverage also remains limited to code
 exercised by the selected tests. macOS developers run the gate through CI.
 
+The gate uses `eng/sharpdetect-latest-request.json` rather than inline options.
+SharpDetect's configuration format permits assembly-prefix exclusions that the
+CLI flags do not expose. The configuration retains instrumentation for
+`Mixology.Toolkits.Desktop` while excluding the test assembly, VSTest host,
+xUnit, SharpDetect itself, and Newtonsoft.Json. Those exclusions prevent test
+runner implementation details from being mistaken for product races without
+hiding the production concurrency primitive under test. `LatestRequest<T>`
+uses a static task continuation instead of a compiler-generated closure, while
+completion metadata is inserted and removed under the same `Monitor` lock.
+Both task lifecycle and `Monitor` synchronization are documented by the pinned
+SharpDetect release.
+
 ## Validation gates
 
 ```sh
@@ -78,10 +90,7 @@ npm run lint:spelling
 dotnet tool restore
 MIXOLOGY_TEST_ORDER_SEED=local-check dotnet build Mixology.slnx
 MIXOLOGY_TEST_ORDER_SEED=local-check dotnet test Mixology.slnx --no-build
-dotnet sharpdetect run \
-  --target tests/Mixology.Toolkits.Desktop.Tests/bin/Debug/net10.0/Mixology.Toolkits.Desktop.Tests.dll \
-  --plugin FastTrack --test --runner VsTest \
-  --filter FullyQualifiedName~LatestRequestTests
+dotnet sharpdetect run eng/sharpdetect-latest-request.json
 ```
 
 The final command requires Windows or Linux x64.
@@ -94,5 +103,6 @@ The final command requires Windows or Linux x64.
 - [xUnit v3 stable randomization and `.uniqueid`](https://xunit.net/docs/getting-started/v3/whats-new#stable-randomization)
 - [SharpDetect source, supported operations, limitations, and platforms](https://github.com/acizmarik/sharpdetect)
 - [SharpDetect test-assembly runner](https://github.com/acizmarik/sharpdetect/blob/main/docs/guides/running-analysis-against-tests.md)
+- [SharpDetect configuration-file and instrumentation-scope reference](https://github.com/acizmarik/sharpdetect/blob/main/docs/guides/running-analysis-with-configuration-file.md)
 - [SharpDetect 2.1.4 package](https://www.nuget.org/packages/SharpDetect/2.1.4)
 - [Microsoft Coyote controlled task scheduling](https://microsoft.github.io/coyote/concepts/tasks/overview/)

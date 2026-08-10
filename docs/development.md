@@ -103,11 +103,13 @@ The dynamic race gate is available on Windows and Linux x64 after `dotnet tool
 restore`:
 
 ```sh
-dotnet sharpdetect run \
-  --target tests/Mixology.Toolkits.Desktop.Tests/bin/Debug/net10.0/Mixology.Toolkits.Desktop.Tests.dll \
-  --plugin FastTrack --test --runner VsTest \
-  --filter FullyQualifiedName~LatestRequestTests
+dotnet sharpdetect run eng/sharpdetect-latest-request.json
 ```
+
+The checked-in configuration instruments the production desktop toolkit while
+excluding the VSTest host, test assembly, and third-party test infrastructure.
+This keeps the gate focused on races in `LatestRequest<T>` instead of reporting
+unsupported publication patterns inside the runner.
 
 See the [linting prior-art record](../.ai/prior-art/linting.md) for the exact
 coverage and residual differences from Go's race detector.

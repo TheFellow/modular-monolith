@@ -28,12 +28,13 @@ dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
 dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations --no-build
 ```
 
-GitHub Actions repeats this gate on every push and pull request, then publishes
-and executes the native Desktop help path on Linux x64, Windows x64, and macOS
-x64 runners. Its Linux job also runs the SharpDetect dynamic race gate over the
-desktop concurrency primitives. The workflow pins official actions by immutable
-release commit. See [Development](docs/development.md) for the local race command
-and test-order seed reproduction.
+GitHub Actions repeats this gate for every pull request and every push to
+`master`, then publishes and executes the native Desktop help path on Linux x64,
+Windows x64, and macOS x64 runners. Its Linux job also runs the SharpDetect
+dynamic race gate over the desktop concurrency primitives. The workflow pins
+official actions by immutable release commit. See
+[Development](docs/development.md) for the local race command and test-order
+seed reproduction.
 
 The repository pins the .NET 10 SDK and treats compiler, analyzer, and configured
 style warnings as errors. C# 14 is deliberate: native C# discriminated unions are

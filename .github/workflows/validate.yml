@@ -1,8 +1,9 @@
 name: Validate
 
 on:
-  push:
   pull_request:
+  push:
+    branches: [master]
 
 permissions:
   contents: read
@@ -45,13 +46,7 @@ jobs:
           echo "Test order seed: ${MIXOLOGY_TEST_ORDER_SEED}"
           dotnet test Mixology.slnx --no-build
       - name: Detect managed data races in concurrency primitives
-        run: >-
-          dotnet sharpdetect run
-          --target tests/Mixology.Toolkits.Desktop.Tests/bin/Debug/net10.0/Mixology.Toolkits.Desktop.Tests.dll
-          --plugin FastTrack
-          --test
-          --runner VsTest
-          --filter FullyQualifiedName~LatestRequestTests
+        run: dotnet sharpdetect run eng/sharpdetect-latest-request.json
 
   native-publish:
     name: Publish ${{ matrix.rid }}
@@ -93,7 +88,25 @@ jobs:
           if (-not (Test-Path $executable -PathType Leaf)) {
             throw "Missing published executable: $executable"
           }
-          & $executable --help
-          if ($LASTEXITCODE -ne 0) {
-            throw "Published executable returned $LASTEXITCODE"
+
+          $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+          $startInfo.FileName = $executable
+          $startInfo.UseShellExecute = $false
+          $startInfo.ArgumentList.Add("--help")
+
+          $process = [System.Diagnostics.Process]::Start($startInfo)
+          if ($null -eq $process) {
+            throw "Failed to start published executable: $executable"
+          }
+
+          try {
+            $process.WaitForExit()
+            $exitCode = $process.ExitCode
+          }
+          finally {
+            $process.Dispose()
+          }
+
+          if ($exitCode -ne 0) {
+            throw "Published executable returned $exitCode"
           }
