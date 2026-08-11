@@ -394,7 +394,15 @@ public static class CliApplication
 
         public void Configure(LoggerConfiguration configuration)
         {
-            configuration.MinimumLevel.Is(LogLevel).Enrich.FromLogContext();
+            configuration.MinimumLevel.Is(LogLevel);
+            if (LogLevel == LogEventLevel.Information)
+            {
+                configuration.MinimumLevel.Override(
+                    "Microsoft",
+                    LogEventLevel.Warning);
+            }
+
+            configuration.Enrich.FromLogContext();
             if (LogFormat == "json")
             {
                 JsonFormatter formatter = new(renderMessage: true);

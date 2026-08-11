@@ -35,6 +35,9 @@ public sealed class ObservabilityCliTests
             Assert.Empty(jsonError.ToString());
             string[] lines = await File.ReadAllLinesAsync(jsonLog);
             Assert.NotEmpty(lines);
+            Assert.Contains(
+                lines,
+                line => line.Contains("Microsoft.EntityFrameworkCore", StringComparison.Ordinal));
             Assert.All(lines, line =>
             {
                 using JsonDocument diagnostic = JsonDocument.Parse(line);
@@ -62,7 +65,10 @@ public sealed class ObservabilityCliTests
             Assert.Equal(0, textExit);
             Assert.Contains("DRINKS\tINGREDIENTS\tINVENTORY", textOutput.ToString(), StringComparison.Ordinal);
             Assert.Empty(textError.ToString());
-            Assert.Contains("[INF]", await File.ReadAllTextAsync(textLog), StringComparison.Ordinal);
+            Assert.DoesNotContain(
+                "Microsoft.",
+                await File.ReadAllTextAsync(textLog),
+                StringComparison.Ordinal);
         }
         finally
         {
