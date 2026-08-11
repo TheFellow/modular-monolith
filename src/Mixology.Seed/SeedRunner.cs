@@ -4,6 +4,7 @@ using Mixology.Kernel.Entities;
 using Mixology.Kernel.Errors;
 using Mixology.Kernel.Measurement;
 using Mixology.Kernel.Money;
+using Mixology.Kernel.Paging;
 using Mixology.Kernel.Tags;
 using Mixology.Modules.Drinks;
 using Mixology.Modules.Drinks.Models;
@@ -40,25 +41,38 @@ public sealed class SeedRunner(
         ArgumentException.ThrowIfNullOrEmpty(databasePath);
         MixologySession session = sessions.Create(Actor.Owner);
 
+        Page<Ingredient> existingIngredientPage = await ingredients.ListAsync(
+            session,
+            new ListIngredientsRequest(Limit: 100),
+            cancellationToken).ConfigureAwait(false);
+        Dictionary<string, Ingredient> existingIngredients = existingIngredientPage.Items
+            .ToDictionary(static value => value.Name, StringComparer.OrdinalIgnoreCase);
         Dictionary<string, IngredientId> ingredientIds = new(StringComparer.Ordinal);
         await output.WriteLineAsync("Creating ingredients...").ConfigureAwait(false);
         foreach (SeedIngredient value in dataset.Ingredients)
         {
             Ingredient created;
-            try
+            if (existingIngredients.TryGetValue(value.Name, out Ingredient? existing))
             {
-                created = await ingredients.CreateAsync(
-                    session,
-                    new CreateIngredientRequest(
-                        value.Name,
-                        IngredientCategory.Parse(value.Category),
-                        Unit.Parse(value.Unit),
-                        value.Description),
-                    cancellationToken).ConfigureAwait(false);
+                created = existing;
             }
-            catch (Exception exception)
+            else
             {
-                throw Contextualize($"create ingredient \"{value.Name}\"", exception);
+                try
+                {
+                    created = await ingredients.CreateAsync(
+                        session,
+                        new CreateIngredientRequest(
+                            value.Name,
+                            IngredientCategory.Parse(value.Category),
+                            Unit.Parse(value.Unit),
+                            value.Description),
+                        cancellationToken).ConfigureAwait(false);
+                }
+                catch (Exception exception)
+                {
+                    throw Contextualize($"create ingredient \"{value.Name}\"", exception);
+                }
             }
 
             ingredientIds[value.Key] = created.Id;
@@ -74,17 +88,28 @@ public sealed class SeedRunner(
         await output.WriteLineAsync($"  Created {dataset.Ingredients.Count} ingredients").ConfigureAwait(false);
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("Setting inventory levels...").ConfigureAwait(false);
+        Page<InventoryStock> existingInventoryPage = await inventory.ListAsync(
+            session,
+            new ListInventoryRequest(Limit: 100),
+            cancellationToken).ConfigureAwait(false);
+        Dictionary<IngredientId, InventoryStock> existingInventory = existingInventoryPage.Items
+            .ToDictionary(static value => value.IngredientId);
         foreach (SeedIngredient value in dataset.Ingredients)
         {
             InventoryStock stock;
             try
             {
+                IngredientId ingredientId = ingredientIds[value.Key];
+                long revision = existingInventory.TryGetValue(ingredientId, out InventoryStock? current)
+                    ? current.Revision
+                    : 0;
                 stock = await inventory.SetAsync(
                     session,
                     new SetInventoryRequest(
-                        ingredientIds[value.Key],
+                        ingredientId,
                         Amount.Create(value.Stock.Quantity, Unit.Parse(value.Unit)),
-                        Price.Parse(value.Stock.Cost)),
+                        Price.Parse(value.Stock.Cost),
+                        revision),
                     cancellationToken).ConfigureAwait(false);
             }
             catch (Exception exception)
@@ -103,6 +128,12 @@ public sealed class SeedRunner(
         await output.WriteLineAsync("  Inventory stocked").ConfigureAwait(false);
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("Creating drinks...").ConfigureAwait(false);
+        Page<Drink> existingDrinkPage = await drinks.ListAsync(
+            session,
+            new ListDrinksRequest(Limit: 100),
+            cancellationToken).ConfigureAwait(false);
+        Dictionary<string, Drink> existingDrinks = existingDrinkPage.Items
+            .ToDictionary(static value => value.Name, StringComparer.OrdinalIgnoreCase);
         List<DrinkId> drinkIds = new(dataset.Drinks.Count);
         foreach (SeedDrink value in dataset.Drinks)
         {
@@ -130,21 +161,28 @@ public sealed class SeedRunner(
             }
 
             Drink created;
-            try
+            if (existingDrinks.TryGetValue(value.Name, out Drink? existing))
             {
-                created = await drinks.CreateAsync(
-                    session,
-                    new CreateDrinkRequest(
-                        value.Name,
-                        DrinkCategory.Parse(value.Category),
-                        GlassType.Parse(value.Glass),
-                        new Recipe(recipeIngredients, value.Recipe.Steps, value.Recipe.Garnish),
-                        value.Description),
-                    cancellationToken).ConfigureAwait(false);
+                created = existing;
             }
-            catch (Exception exception)
+            else
             {
-                throw Contextualize($"create drink \"{value.Name}\"", exception);
+                try
+                {
+                    created = await drinks.CreateAsync(
+                        session,
+                        new CreateDrinkRequest(
+                            value.Name,
+                            DrinkCategory.Parse(value.Category),
+                            GlassType.Parse(value.Glass),
+                            new Recipe(recipeIngredients, value.Recipe.Steps, value.Recipe.Garnish),
+                            value.Description),
+                        cancellationToken).ConfigureAwait(false);
+                }
+                catch (Exception exception)
+                {
+                    throw Contextualize($"create drink \"{value.Name}\"", exception);
+                }
             }
 
             drinkIds.Add(created.Id);
@@ -159,17 +197,33 @@ public sealed class SeedRunner(
 
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("Creating menu...").ConfigureAwait(false);
+        Page<Menu> existingMenuPage = await menus.ListAsync(
+            session,
+            new ListMenusRequest(Limit: 100),
+            cancellationToken).ConfigureAwait(false);
+        Menu? existingMenu = existingMenuPage.Items.SingleOrDefault(
+            static value => string.Equals(
+                value.Name,
+                "Classic Cocktails",
+                StringComparison.OrdinalIgnoreCase));
         Menu menu;
-        try
+        if (existingMenu is not null)
         {
-            menu = await menus.CreateAsync(
-                session,
-                new CreateMenuRequest("Classic Cocktails"),
-                cancellationToken).ConfigureAwait(false);
+            menu = existingMenu;
         }
-        catch (Exception exception)
+        else
         {
-            throw Contextualize("create menu", exception);
+            try
+            {
+                menu = await menus.CreateAsync(
+                    session,
+                    new CreateMenuRequest("Classic Cocktails"),
+                    cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                throw Contextualize("create menu", exception);
+            }
         }
 
         await ReplaceTagsAsync(
@@ -179,11 +233,23 @@ public sealed class SeedRunner(
             "tag menu",
             cancellationToken).ConfigureAwait(false);
         await output.WriteLineAsync($"  Menu: {menu.Id}").ConfigureAwait(false);
+        HashSet<DrinkId> desiredDrinkIds = [.. drinkIds];
+        bool isMissingDrinks = desiredDrinkIds.Except(menu.Items.Select(static item => item.DrinkId)).Any();
+        if (isMissingDrinks && menu.Status == MenuStatus.Published)
+        {
+            menu = await menus.DraftAsync(session, menu.Id, cancellationToken).ConfigureAwait(false);
+        }
+
         foreach (DrinkId drinkId in drinkIds)
         {
+            if (menu.Items.Any(item => item.DrinkId == drinkId))
+            {
+                continue;
+            }
+
             try
             {
-                _ = await menus.AddDrinkAsync(
+                menu = await menus.AddDrinkAsync(
                     session,
                     new AddMenuItemRequest(menu.Id, drinkId),
                     cancellationToken).ConfigureAwait(false);
@@ -194,13 +260,16 @@ public sealed class SeedRunner(
             }
         }
 
-        try
+        if (menu.Status == MenuStatus.Draft)
         {
-            menu = await menus.PublishAsync(session, menu.Id, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            throw Contextualize("publish menu", exception);
+            try
+            {
+                menu = await menus.PublishAsync(session, menu.Id, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                throw Contextualize("publish menu", exception);
+            }
         }
 
         await output.WriteLineAsync($"  Menu published with {drinkIds.Count} drinks").ConfigureAwait(false);

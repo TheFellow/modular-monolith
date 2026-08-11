@@ -1,0 +1,82 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:desktop="clr-namespace:Mixology.Gui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:inventory="clr-namespace:Mixology.Gui.Workspaces.Inventory"
+             x:Class="Mixology.Gui.Workspaces.Inventory.InventoryView"
+             x:DataType="inventory:InventoryViewModel">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24,20,24,18" RowSpacing="12">
+    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" IsVisible="{Binding IsBrowse}">
+      <VerticalStackLayout><Label Text="Inventory" Style="{StaticResource WorkspaceTitleStyle}"/><Label Text="On-hand, reserved, available, and unit cost" Style="{StaticResource SecondaryTextStyle}"/></VerticalStackLayout>
+      <Button Grid.Column="1" Text="Adjust" Command="{Binding BeginAdjustCommand}" IsVisible="{Binding IsAdjustVisible}" IsEnabled="{Binding CanAdjust}" ToolTipProperties.Text="{Binding AdjustDisabledReason}"/>
+      <Button Grid.Column="2" Text="Set" Command="{Binding BeginSetCommand}" IsVisible="{Binding IsSetVisible}" IsEnabled="{Binding CanSet}" ToolTipProperties.Text="{Binding SetDisabledReason}"/>
+    </Grid>
+    <VerticalStackLayout Grid.Row="1" Spacing="8" IsVisible="{Binding IsBrowse}">
+      <Grid ColumnDefinitions="*,Auto,120,90,Auto,Auto" ColumnSpacing="8">
+        <Entry Placeholder="Server filter expression" Text="{Binding FilterExpression}" SemanticProperties.Description="Inventory filter"/>
+        <desktop:LabeledCheckBox Grid.Column="1" Text="Low stock" IsChecked="{Binding LowStockOnly}" VerticalOptions="Center"/>
+        <Entry Grid.Column="2" Text="{Binding LowStockThreshold}" IsEnabled="{Binding LowStockOnly}"/>
+        <Entry Grid.Column="3" Text="{Binding PageSize}"/>
+        <Button Grid.Column="4" Text="Apply" Command="{Binding ApplyFilterCommand}"/>
+        <Button Grid.Column="5" Text="Filter help" Command="{Binding ToggleFilterHelpCommand}"/>
+      </Grid>
+      <Border Padding="12" StrokeThickness="1" IsVisible="{Binding ShowFilterHelp}"><Label Text="{x:Static inventory:InventoryViewModel.FilterHelp}" LineBreakMode="WordWrap"/></Border>
+      <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"/>
+    </VerticalStackLayout>
+    <Grid Grid.Row="2">
+      <Grid RowDefinitions="Auto,*" Background="{StaticResource SurfaceBrush}" IsVisible="{Binding IsBrowse}">
+        <Grid ColumnDefinitions="2*,*,*,*" Padding="10,8" Background="{StaticResource HeaderBackgroundBrush}"><Label Text="INGREDIENT" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="1" Text="ON HAND" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="2" Text="AVAILABLE" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="3" Text="COST" Style="{StaticResource TableHeaderLabelStyle}"/></Grid>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" SemanticProperties.Description="Inventory">
+          <CollectionView.ItemTemplate><DataTemplate x:DataType="inventory:InventoryListItemViewModel"><Grid ColumnDefinitions="2*,*,*,*" Padding="10,7"><Label Text="{Binding Name}" FontAttributes="Bold"/><Label Grid.Column="1" Text="{Binding OnHand}"/><Label Grid.Column="2" Text="{Binding Available}"/><Label Grid.Column="3" Text="{Binding Cost}"/></Grid></DataTemplate></CollectionView.ItemTemplate>
+        </CollectionView>
+      </Grid>
+      <Border Style="{StaticResource PanelBorderStyle}" IsVisible="{Binding IsBrowse, Converter={StaticResource InverseBoolConverter}}"><ScrollView>
+        <VerticalStackLayout Spacing="9">
+          <HorizontalStackLayout Spacing="8">
+            <Button Text="Back" ImageSource="icon_back.svg" ContentLayout="Left,8" Command="{Binding BackCommand}" SemanticProperties.Description="Back to inventory"/>
+            <Button Text="Inventory" Command="{Binding BackCommand}" Style="{StaticResource BreadcrumbButtonStyle}"/>
+            <Label Text="›" Style="{StaticResource SecondaryTextStyle}"/>
+            <Label Text="{Binding PageTitle}" Style="{StaticResource SecondaryTextStyle}"/>
+          </HorizontalStackLayout>
+          <VerticalStackLayout IsVisible="{Binding IsDetail}" Spacing="5">
+            <Label Text="{Binding SelectedInventory.Name}" FontSize="22" FontAttributes="Bold"/>
+            <Label Text="{Binding SelectedInventory.Stock.IngredientId, StringFormat='Ingredient ID: {0}'}"/>
+            <Label Text="{Binding SelectedInventory.Stock.Id, StringFormat='Inventory ID: {0}'}"/>
+            <Label Text="{Binding SelectedInventory.Stock.OnHand, StringFormat='On hand: {0}'}"/>
+            <Label Text="{Binding SelectedInventory.Stock.Reserved, StringFormat='Reserved: {0}'}"/>
+            <Label Text="{Binding SelectedInventory.Stock.Available, StringFormat='Available: {0}'}"/>
+            <Label Text="{Binding SelectedInventory.Cost, StringFormat='Cost per unit: {0}'}"/>
+            <Label Text="{Binding SelectedInventory.Stock.Tags, StringFormat='Tags: {0}'}" LineBreakMode="WordWrap"/>
+            <Label Text="{Binding SelectedInventory.Stock.LastUpdated, StringFormat='Updated: {0:g}'}"/>
+          </VerticalStackLayout>
+          <VerticalStackLayout IsVisible="{Binding IsAdjustEditor}" Spacing="7">
+            <Label Text="Adjust inventory" FontSize="22" FontAttributes="Bold"/>
+            <Label Text="Delta (blank for cost-only adjustment)"/><Entry Text="{Binding EditorDelta}"/>
+            <Label Text="Reason"/><Picker ItemsSource="{Binding Reasons}" SelectedItem="{Binding EditorReason}"/>
+          </VerticalStackLayout>
+          <VerticalStackLayout IsVisible="{Binding IsSetEditor}" Spacing="7">
+            <Label Text="Set inventory" FontSize="22" FontAttributes="Bold"/>
+            <Label Text="On-hand quantity"/><Entry Text="{Binding EditorQuantity}"/>
+          </VerticalStackLayout>
+          <VerticalStackLayout IsVisible="{Binding IsEditorVisible}" Spacing="7">
+            <Label Text="Unit"/><Picker ItemsSource="{Binding Units}" SelectedItem="{Binding EditorUnit}"/>
+            <Label Text="Cost per unit (for example EUR 2.30)"/><Entry Text="{Binding EditorCost}"/>
+            <desktop:LabeledCheckBox Text="Replace complete tag collection" IsChecked="{Binding ReplaceTags}" IsVisible="{Binding IsTagsVisible}" IsEnabled="{Binding CanReplaceTags}" ToolTipProperties.Text="{Binding TagsDisabledReason}"/>
+            <Entry Placeholder="key=value, featured" Text="{Binding EditorTags}" IsEnabled="{Binding ReplaceTags}"/>
+            <HorizontalStackLayout Spacing="8">
+              <Button Text="Save" ImageSource="icon_save.svg" ContentLayout="Left,8" Command="{Binding SubmitCommand}" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"/>
+              <Button Text="Cancel" Command="{Binding CancelEditorCommand}" IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"/>
+              <Label Text="Unsaved changes" IsVisible="{Binding IsDirty}" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+          </VerticalStackLayout>
+        </VerticalStackLayout>
+      </ScrollView></Border>
+    </Grid>
+    <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto,Auto,*,Auto" ColumnSpacing="8" IsVisible="{Binding IsBrowse}">
+      <Button Text="Previous" Command="{Binding PreviousPageCommand}" IsEnabled="{Binding HasPreviousPage}"/>
+      <Label Grid.Column="1" Text="{Binding PageNumber, StringFormat='Page {0}'}" VerticalOptions="Center"/>
+      <Button Grid.Column="2" Text="Next" Command="{Binding NextPageCommand}" IsEnabled="{Binding HasNextPage}"/>
+      <Label Grid.Column="3" Text="{Binding StatusMessage}" TextColor="Red"/>
+      <Button Grid.Column="4" Text="Refresh" ImageSource="icon_refresh.svg" ContentLayout="Left,8" Command="{Binding RefreshCommand}"/>
+    </Grid>
+  </Grid>
+</ContentView>

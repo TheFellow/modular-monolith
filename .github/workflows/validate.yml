@@ -80,9 +80,9 @@ jobs:
       - name: Publish native desktop client
         shell: pwsh
         run: >-
-          dotnet publish src/Mixology.Desktop/Mixology.Desktop.csproj
+          dotnet publish src/Mixology.Gui/Mixology.Gui.csproj
           --configuration Release
-          -p:BuildNativeDesktop=true
+          -p:BuildNativeGui=true
           --framework ${{ matrix.framework }}
           --runtime ${{ matrix.rid }}
           --self-contained true

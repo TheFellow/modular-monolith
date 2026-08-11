@@ -1,0 +1,85 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:desktop="clr-namespace:Mixology.Gui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tags="clr-namespace:Mixology.Gui.Workspaces.Tags"
+             xmlns:tagging="clr-namespace:Mixology.Modules.Tagging.Models"
+             x:Class="Mixology.Gui.Workspaces.Tags.TagsView"
+             x:DataType="tags:TagsViewModel">
+  <Grid Margin="24,20,24,18" RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="12">
+    <Grid ColumnDefinitions="*,Auto">
+      <VerticalStackLayout>
+        <Label Text="Tags" Style="{StaticResource WorkspaceTitleStyle}" />
+        <Label Text="Inspect, mutate, and discover exact tag associations" Style="{StaticResource SecondaryTextStyle}" />
+      </VerticalStackLayout>
+      <Button Grid.Column="1" Text="Refresh permissions" Command="{Binding RefreshCommand}"
+              SemanticProperties.Description="Refresh tag permissions" />
+    </Grid>
+    <Grid Grid.Row="1" ColumnDefinitions="180,180,*,Auto" ColumnSpacing="8">
+      <Picker ItemsSource="{Binding VisibleOperations}" SelectedItem="{Binding Operation}"
+                SemanticProperties.Description="Tag operation" />
+      <Picker Grid.Column="1" ItemsSource="{Binding TargetTypes}" SelectedItem="{Binding SelectedType}"
+                ItemDisplayBinding="{Binding Label}" SemanticProperties.Description="Tag entity type" />
+      <Picker Grid.Column="2" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}"
+                ItemDisplayBinding="{Binding Display}" SemanticProperties.Description="Tag target" />
+      <Button Grid.Column="3" Text="Load targets" Command="{Binding LoadTargetsCommand}"
+              SemanticProperties.Description="Load tag targets" />
+    </Grid>
+    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+      <Entry Text="{Binding Value}" Placeholder="Tag or key (case-sensitive)"
+               SemanticProperties.Description="Tag value" />
+      <Button Grid.Column="1" Text="Run" Command="{Binding ExecuteCommand}" Style="{StaticResource PrimaryButtonStyle}"
+              SemanticProperties.Description="Run tag operation" />
+    </Grid>
+    <ScrollView Grid.Row="3">
+      <VerticalStackLayout Spacing="16">
+        <VerticalStackLayout>
+          <Label Text="Entity tags" FontSize="20" FontAttributes="Bold" />
+          <VerticalStackLayout BindableLayout.ItemsSource="{Binding ResultTags}" SemanticProperties.Description="Entity tags">
+            <BindableLayout.ItemTemplate>
+              <DataTemplate x:DataType="x:String"><Border Padding="8" Margin="0,3" StrokeThickness="1"><Label Text="{Binding}" /></Border></DataTemplate>
+            </BindableLayout.ItemTemplate>
+          </VerticalStackLayout>
+        </VerticalStackLayout>
+        <VerticalStackLayout>
+          <Label Text="Active references" FontSize="20" FontAttributes="Bold" />
+          <Grid ColumnDefinitions="120,*,220,180" Padding="10,8" Background="{StaticResource HeaderBackgroundBrush}"><Label Text="TYPE" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="1" Text="ENTITY" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="2" Text="ID" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="3" Text="TAG" Style="{StaticResource TableHeaderLabelStyle}"/></Grid>
+          <VerticalStackLayout BindableLayout.ItemsSource="{Binding References}" SemanticProperties.Description="Tag references">
+            <BindableLayout.ItemTemplate>
+              <DataTemplate x:DataType="tagging:TagReference">
+                <Grid ColumnDefinitions="120,*,220,180" Padding="10,7">
+                  <Label Text="{Binding EntityType}" />
+                  <Label Grid.Column="1" Text="{Binding EntityName}" />
+                  <Label Grid.Column="2" Text="{Binding EntityId}" />
+                  <Label Grid.Column="3" Text="{Binding Tag}" />
+                </Grid>
+              </DataTemplate>
+            </BindableLayout.ItemTemplate>
+          </VerticalStackLayout>
+        </VerticalStackLayout>
+        <VerticalStackLayout>
+          <Label Text="Usage summary" FontSize="20" FontAttributes="Bold" />
+          <Grid ColumnDefinitions="*,70,70,90,80,70,70" Padding="10,8" Background="{StaticResource HeaderBackgroundBrush}"><Label Text="TAG" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="1" Text="TOTAL" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="2" Text="DRINKS" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="3" Text="INGREDIENTS" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="4" Text="STOCK" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="5" Text="MENUS" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="6" Text="ORDERS" Style="{StaticResource TableHeaderLabelStyle}"/></Grid>
+          <VerticalStackLayout BindableLayout.ItemsSource="{Binding Summaries}" SemanticProperties.Description="Tag summary">
+            <BindableLayout.ItemTemplate>
+              <DataTemplate x:DataType="tagging:TagSummary">
+                <Grid ColumnDefinitions="*,70,70,90,80,70,70" Padding="10,7">
+                  <Label Text="{Binding Tag}" />
+                  <Label Grid.Column="1" Text="{Binding Total}" />
+                  <Label Grid.Column="2" Text="{Binding Drinks}" />
+                  <Label Grid.Column="3" Text="{Binding Ingredients}" />
+                  <Label Grid.Column="4" Text="{Binding Inventory}" />
+                  <Label Grid.Column="5" Text="{Binding Menus}" />
+                  <Label Grid.Column="6" Text="{Binding Orders}" />
+                </Grid>
+              </DataTemplate>
+            </BindableLayout.ItemTemplate>
+          </VerticalStackLayout>
+        </VerticalStackLayout>
+      </VerticalStackLayout>
+    </ScrollView>
+    <VerticalStackLayout Grid.Row="4">
+      <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+      <Label Text="{Binding StatusMessage}" LineBreakMode="WordWrap" />
+    </VerticalStackLayout>
+  </Grid>
+</ContentView>

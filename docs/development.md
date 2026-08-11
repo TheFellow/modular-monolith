@@ -69,7 +69,7 @@ MIXOLOGY_DB=data/mixology.db dotnet run --project src/Mixology.Seed
 dotnet run --project src/Mixology.Cli -- --db data/mixology.db status
 dotnet run --project src/Mixology.Tui -- --db data/mixology.db --actor owner
 # Add -f net10.0-windows10.0.19041.0 on Windows instead.
-dotnet run --project src/Mixology.Desktop -p:BuildNativeDesktop=true -f net10.0-maccatalyst -- --db data/mixology.db --actor owner
+dotnet run --project src/Mixology.Gui -p:BuildNativeGui=true -f net10.0-maccatalyst -- --db data/mixology.db --actor owner
 ```
 
 The database uses SQLite WAL mode. Tests and applications must dispose their

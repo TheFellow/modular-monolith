@@ -124,10 +124,10 @@ navigation:
 
 ```sh
 # macOS
-dotnet run --project src/Mixology.Desktop -p:BuildNativeDesktop=true -f net10.0-maccatalyst -- --db data/mixology.db --actor owner
+dotnet run --project src/Mixology.Gui -p:BuildNativeGui=true -f net10.0-maccatalyst -- --db data/mixology.db --actor owner
 
 # Windows
-dotnet run --project src/Mixology.Desktop -p:BuildNativeDesktop=true -f net10.0-windows10.0.19041.0 -- --db data/mixology.db --actor owner
+dotnet run --project src/Mixology.Gui -p:BuildNativeGui=true -f net10.0-windows10.0.19041.0 -- --db data/mixology.db --actor owner
 ```
 
 It shares no view models with the TUI. MAUI-native MVVM state owns UI-thread

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dashboard="clr-namespace:Mixology.Gui.Workspaces.Dashboard"
+             x:Class="Mixology.Gui.Workspaces.Dashboard.DashboardView"
+             x:DataType="dashboard:DashboardViewModel">
+  <Grid RowDefinitions="Auto,*" Padding="24,20,24,18" RowSpacing="16">
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+      <VerticalStackLayout Spacing="2">
+        <Label Text="Dashboard" FontSize="25" FontAttributes="Bold" />
+        <Label Text="Current bar activity and operational totals"
+               FontSize="13" Style="{StaticResource SecondaryTextStyle}" />
+      </VerticalStackLayout>
+      <HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
+        <ActivityIndicator IsRunning="{Binding IsRefreshing}"
+                           IsVisible="{Binding IsRefreshing}"
+                           Color="{StaticResource AccentColor}"
+                           SemanticProperties.Description="Loading dashboard" />
+        <Button Text="Refresh" Command="{Binding RefreshCommand}"
+                SemanticProperties.Description="Refresh dashboard" />
+      </HorizontalStackLayout>
+    </Grid>
+
+    <ScrollView Grid.Row="1">
+      <VerticalStackLayout Spacing="18">
+        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto"
+              ColumnSpacing="12" RowSpacing="12">
+          <Border Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Drinks" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="{Binding DrinkCount}" FontSize="28" FontAttributes="Bold" />
+              <Button Grid.Row="2" Text="Open" Command="{Binding OpenDrinksCommand}"
+                      HorizontalOptions="End" Style="{StaticResource PrimaryButtonStyle}" />
+            </Grid>
+          </Border>
+          <Border Grid.Column="1" Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Ingredients" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="{Binding IngredientCount}" FontSize="28" FontAttributes="Bold" />
+              <Button Grid.Row="2" Text="Open" Command="{Binding OpenIngredientsCommand}"
+                      HorizontalOptions="End" Style="{StaticResource PrimaryButtonStyle}" />
+            </Grid>
+          </Border>
+          <Border Grid.Column="2" Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Inventory" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="{Binding InventoryCount}" FontSize="28" FontAttributes="Bold" />
+              <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                <Label Text="{Binding LowStockCount, StringFormat='{}{0} low stock'}"
+                       FontSize="12" Style="{StaticResource SecondaryTextStyle}" />
+                <Button Grid.Column="1" Text="Open" Command="{Binding OpenInventoryCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+              </Grid>
+            </Grid>
+          </Border>
+
+          <Border Grid.Row="1" Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Menus" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="{Binding MenuCount}" FontSize="28" FontAttributes="Bold" />
+              <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                <Label Text="{Binding MenuStatus}" FontSize="12"
+                       LineBreakMode="TailTruncation" Style="{StaticResource SecondaryTextStyle}" />
+                <Button Grid.Column="1" Text="Open" Command="{Binding OpenMenusCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+              </Grid>
+            </Grid>
+          </Border>
+          <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Orders" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="{Binding OrderCount}" FontSize="28" FontAttributes="Bold" />
+              <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                <Label Text="{Binding PendingOrderCount, StringFormat='{}{0} pending'}"
+                       FontSize="12" Style="{StaticResource SecondaryTextStyle}" />
+                <Button Grid.Column="1" Text="Open" Command="{Binding OpenOrdersCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+              </Grid>
+            </Grid>
+          </Border>
+          <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Audit" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="{Binding AuditCount}" FontSize="28" FontAttributes="Bold" />
+              <Button Grid.Row="2" Text="Open" Command="{Binding OpenAuditCommand}"
+                      HorizontalOptions="End" Style="{StaticResource PrimaryButtonStyle}" />
+            </Grid>
+          </Border>
+
+          <Border Grid.Row="2" Style="{StaticResource MetricBorderStyle}">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Label Text="Tags" FontAttributes="Bold" />
+              <Label Grid.Row="1" Text="Manage entity tags" FontSize="13"
+                     Style="{StaticResource SecondaryTextStyle}" />
+              <Button Grid.Row="2" Text="Open" Command="{Binding OpenTagsCommand}"
+                      HorizontalOptions="End" Style="{StaticResource PrimaryButtonStyle}" />
+            </Grid>
+          </Border>
+        </Grid>
+
+        <Label Text="{Binding StatusMessage}" TextColor="{StaticResource DangerColor}"
+               IsVisible="True">
+          <Label.Triggers>
+            <DataTrigger TargetType="Label" Binding="{Binding StatusMessage}" Value="">
+              <Setter Property="IsVisible" Value="False" />
+            </DataTrigger>
+          </Label.Triggers>
+        </Label>
+
+        <VerticalStackLayout Spacing="8">
+          <Label Text="Recent activity" FontSize="18" FontAttributes="Bold" />
+          <Border Padding="0" Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                  Background="{StaticResource SurfaceBrush}">
+            <VerticalStackLayout Spacing="0">
+              <Grid ColumnDefinitions="180,140,*" Padding="12,9"
+                    Background="{StaticResource HeaderBackgroundBrush}">
+                <Label Text="WHEN" FontSize="11" FontAttributes="Bold"
+                       Style="{StaticResource SecondaryTextStyle}" />
+                <Label Grid.Column="1" Text="ACTOR" FontSize="11" FontAttributes="Bold"
+                       Style="{StaticResource SecondaryTextStyle}" />
+                <Label Grid.Column="2" Text="ACTION" FontSize="11" FontAttributes="Bold"
+                       Style="{StaticResource SecondaryTextStyle}" />
+              </Grid>
+              <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentActivity}"
+                                   SemanticProperties.Description="Recent activity">
+                <BindableLayout.ItemTemplate>
+                  <DataTemplate x:DataType="dashboard:DashboardActivityViewModel">
+                    <Grid ColumnDefinitions="180,140,*" Padding="12,8">
+                      <Label Text="{Binding Timestamp}" FontSize="12" />
+                      <Label Grid.Column="1" Text="{Binding Actor}" FontSize="12"
+                             LineBreakMode="TailTruncation" />
+                      <Label Grid.Column="2" Text="{Binding Action}" FontSize="12"
+                             LineBreakMode="TailTruncation" />
+                    </Grid>
+                  </DataTemplate>
+                </BindableLayout.ItemTemplate>
+              </VerticalStackLayout>
+            </VerticalStackLayout>
+          </Border>
+        </VerticalStackLayout>
+      </VerticalStackLayout>
+    </ScrollView>
+  </Grid>
+</ContentView>
