@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mixology.Persistence;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Menus.Persistence;
@@ -18,6 +19,7 @@ public sealed class MenuModelConfiguration : IModuleModelConfiguration
             entity.Property(row => row.CreatedAtUtc).HasColumnName("created_at_utc").IsRequired();
             entity.Property(row => row.PublishedAtUtc).HasColumnName("published_at_utc");
             entity.Property(row => row.DeletedAtUtc).HasColumnName("deleted_at_utc");
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => row.Name).IsUnique();
             entity.HasIndex(row => row.Status);
             entity.HasIndex(row => row.CreatedAtUtc);

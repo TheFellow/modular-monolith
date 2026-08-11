@@ -44,6 +44,25 @@ Repositories may apply the safe candidate expression described in the
 [filter guide](../Mixology.Filtering/README.md), but must hydrate and evaluate
 the residual expression before authorization and paging.
 
+## Optimistic concurrency and change signals
+
+Mutable root rows implement `IRevisionedRow`. Their `revision` column is an EF
+concurrency token: inserts start at one, every tracked update increments it in
+`MixologyDbContext`, and the generated `UPDATE`/`DELETE` predicate compares the
+revision that the caller read. Document-shaped mutations round-trip that value
+through the public model and request. A zero or stale update revision is not a
+last-writer-wins shortcut; persistence reports a typed `Conflict` and retains
+the committed value. Keep this comparison in persistence mapping rather than
+duplicating revision checks in commands.
+
+`MixologyStore.MonitorChanges` pins a separate, non-pooled SQLite connection and
+polls `PRAGMA data_version` every 250 ms by default. It publishes monotonically
+increasing, payload-free epochs through a capacity-one channel. Signals are
+intentionally lossy and coalesced: clients must re-query through normal module
+APIs, authorization, and filtering. SQLite advances the value only for commits
+made by another connection, so rollbacks and a client's own read connection do
+not create false refreshes. Reconnection emits an unconditional invalidation.
+
 ## Tests
 
 Persistence tests use a unique SQLite path, real migrations, and disposal. Do

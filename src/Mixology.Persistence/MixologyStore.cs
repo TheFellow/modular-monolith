@@ -30,5 +30,7 @@ public sealed class MixologyStore(
 
     public async ValueTask<StoreSession> OpenSessionAsync(CancellationToken cancellationToken = default) =>
         new(await contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false));
-}
 
+    public SqliteChangeMonitor MonitorChanges(TimeSpan? pollInterval = null) =>
+        new(settings, timeProvider, pollInterval ?? SqliteChangeMonitor.DefaultPollInterval);
+}

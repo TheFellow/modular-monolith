@@ -621,7 +621,8 @@ public sealed class IngredientsWorkspace : ITuiWorkspace
                     active["Name"],
                     IngredientCategory.Parse(active["Category"]),
                     Unit.Parse(active["Unit"]),
-                    active["Description"]),
+                    active["Description"],
+                    detail.Revision),
                 active.DesiredTags(TagsField),
                 token),
             IngredientsWorkspaceMode.Retire when detail is not null => token => operations.RetireAsync(

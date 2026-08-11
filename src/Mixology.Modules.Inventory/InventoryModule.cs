@@ -123,6 +123,7 @@ public sealed class InventoryModule(
                         candidate => candidate.IngredientId == normalized.IngredientId.Value,
                         context.CancellationToken)
                     .ConfigureAwait(false);
+                context.Session.Context.ExpectUpsertRevision(row, normalized.Revision, "inventory");
                 InventoryReservationRow[] reservations = await ReservationsAsync(
                     context,
                     normalized.IngredientId).ConfigureAwait(false);
@@ -144,7 +145,8 @@ public sealed class InventoryModule(
                     reserved,
                     normalized.UnitCost,
                     timeProvider.GetUtcNow(),
-                    currentTags).Normalize();
+                    currentTags,
+                    row is null ? 1 : checked(normalized.Revision + 1)).Normalize();
                 await AuthorizeAsync(context, InventoryAuthorization.Set, updated).ConfigureAwait(false);
 
                 if (row is null)
@@ -216,7 +218,8 @@ public sealed class InventoryModule(
                     ReservedAmount(next.Unit, reservations),
                     cost,
                     timeProvider.GetUtcNow(),
-                    currentTags);
+                    currentTags,
+                    row is null ? 1 : checked(row.Revision + 1));
                 updated = updated.Normalize();
                 await AuthorizeAsync(context, InventoryAuthorization.Adjust, updated).ConfigureAwait(false);
 
@@ -388,7 +391,8 @@ public sealed class InventoryModule(
                 ReservedAmount(onHand.Unit, reservations),
                 PersistedPrice(row),
                 new DateTimeOffset(DateTime.SpecifyKind(row.LastUpdatedUtc, DateTimeKind.Utc)),
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {
@@ -456,6 +460,7 @@ public sealed class InventoryModule(
         UnitCostAmount = inventory.UnitCost?.Amount,
         UnitCostCurrency = inventory.UnitCost?.Currency.Code,
         LastUpdatedUtc = inventory.LastUpdated.UtcDateTime,
+        Revision = inventory.Revision,
     };
 
     private static void CopyToRow(InventoryStock inventory, InventoryRow row)

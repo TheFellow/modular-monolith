@@ -102,7 +102,7 @@ public sealed class MenuQueries(IMenuOperations operations, ITagReader tags)
             return new Menu(
                 MenuId.Parse(row.Id), row.Name, row.Description, items, MenuStatus.Parse(row.Status),
                 Utc(row.CreatedAtUtc), row.PublishedAtUtc is { } published ? Utc(published) : null,
-                row.DeletedAtUtc is { } deleted ? Utc(deleted) : null, TagCollection.Empty).Normalize();
+                row.DeletedAtUtc is { } deleted ? Utc(deleted) : null, TagCollection.Empty, row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {

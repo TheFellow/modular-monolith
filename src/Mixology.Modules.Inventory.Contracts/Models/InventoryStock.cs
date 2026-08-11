@@ -13,7 +13,8 @@ public sealed record InventoryStock(
     Amount Reserved,
     Price? UnitCost,
     DateTimeOffset LastUpdated,
-    TagCollection Tags)
+    TagCollection Tags,
+    long Revision = 1)
 {
     public EntityUid EntityUid => Id.EntityUid;
 
@@ -49,6 +50,10 @@ public sealed record InventoryStock(
         UnitCost?.Validate();
         ArgumentNullException.ThrowIfNull(Tags);
         Tags.Validate();
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
         return this with
         {
             Reserved = normalizedReserved,

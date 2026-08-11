@@ -44,7 +44,8 @@ public sealed class IngredientsModule(
                     normalized.Unit,
                     normalized.Description,
                     null,
-                    TagCollection.Empty);
+                    TagCollection.Empty,
+                    1);
                 await AuthorizeAsync(context, IngredientAuthorization.Create, ingredient).ConfigureAwait(false);
                 await AuthorizeAsync(context, IngredientAuthorization.Create, ingredient).ConfigureAwait(false);
 
@@ -123,9 +124,11 @@ public sealed class IngredientsModule(
                     Category = normalized.Category ?? current.Category,
                     Unit = normalized.Unit ?? current.Unit,
                     Description = normalized.Description ?? current.Description,
+                    Revision = checked(normalized.Revision + 1),
                 }).Normalize();
                 await AuthorizeAsync(context, IngredientAuthorization.Update, updated).ConfigureAwait(false);
 
+                context.Session.Context.ExpectRevision(row, normalized.Revision);
                 CopyToRow(updated, row);
                 context.SelectResource(updated.EntityUid);
                 context.Touch(updated.EntityUid);
@@ -191,7 +194,11 @@ public sealed class IngredientsModule(
                 }
 
                 DateTimeOffset deletedAt = timeProvider.GetUtcNow().ToUniversalTime();
-                Ingredient retired = current with { DeletedAt = deletedAt };
+                Ingredient retired = current with
+                {
+                    DeletedAt = deletedAt,
+                    Revision = checked(current.Revision + 1),
+                };
                 await AuthorizeAsync(context, IngredientAuthorization.Retire, retired).ConfigureAwait(false);
                 row.DeletedAtUtc = deletedAt.UtcDateTime;
                 context.SelectResource(retired.EntityUid);
@@ -411,7 +418,8 @@ public sealed class IngredientsModule(
                 row.DeletedAtUtc is { } deletedAt
                     ? new DateTimeOffset(DateTime.SpecifyKind(deletedAt, DateTimeKind.Utc))
                     : null,
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {
@@ -427,6 +435,7 @@ public sealed class IngredientsModule(
         Unit = ingredient.Unit.Value,
         Description = ingredient.Description,
         DeletedAtUtc = ingredient.DeletedAt?.UtcDateTime,
+        Revision = ingredient.Revision,
     };
 
     private async Task<Ingredient> WithTagsAsync(

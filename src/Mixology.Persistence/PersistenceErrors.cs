@@ -26,6 +26,11 @@ public static class PersistenceErrors
             return AppError.Conflict($"{operation}: a unique value already exists", exception);
         }
 
+        if (exception is DbUpdateConcurrencyException)
+        {
+            return AppError.Conflict($"{operation}: the record changed after it was read", exception);
+        }
+
         return AppError.Internal(operation, exception);
     }
 }

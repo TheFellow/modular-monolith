@@ -28,6 +28,32 @@ namespace Mixology.Modules.Drinks.Tests;
 public sealed class DrinksModuleTests
 {
     [Fact]
+    public async Task StaleRevisionCannotOverwriteACommittedUpdate()
+    {
+        await using Fixture fixture = await Fixture.CreateAsync();
+        MixologySession manager = fixture.Session(Actor.Manager);
+        Ingredient lime = await fixture.Ingredient("Lime Juice");
+        Drink original = await fixture.Drinks.CreateAsync(manager, Create("Sour", lime.Id));
+        UpdateDrinkRequest winner = new(
+            original.Id,
+            "Winner",
+            original.Category,
+            original.Glass,
+            original.Recipe,
+            original.Description,
+            original.Revision);
+        UpdateDrinkRequest stale = winner with { Name = "Stale" };
+
+        Drink committed = await fixture.Drinks.UpdateAsync(manager, winner);
+        ConflictError error = await Assert.ThrowsAsync<ConflictError>(() =>
+            fixture.Drinks.UpdateAsync(manager, stale));
+
+        Assert.Equal(original.Revision + 1, committed.Revision);
+        Assert.Contains("changed after it was read", error.Message, StringComparison.Ordinal);
+        Assert.Equal("Winner", (await fixture.Drinks.GetAsync(manager, original.Id)).Name);
+    }
+
+    [Fact]
     public async Task CrudPersistsRecipesEmitsEventsAndSoftDeletes()
     {
         await using Fixture fixture = await Fixture.CreateAsync();
@@ -47,7 +73,8 @@ public sealed class DrinksModuleTests
                 DrinkCategory.Cocktail,
                 GlassType.Coupe,
                 Recipe(lemon.Id, "Shake hard", "Lemon wheel"),
-                "  Bright  "));
+                "  Bright  ",
+                created.Revision));
         Drink deleted = await fixture.Drinks.DeleteAsync(manager, created.Id);
 
         Assert.Equal("Margarita", loaded.Name);
@@ -168,7 +195,8 @@ public sealed class DrinksModuleTests
                 DrinkCategory.Cocktail,
                 wine.Glass,
                 wine.Recipe,
-                wine.Description)));
+                wine.Description,
+                wine.Revision)));
         Assert.Equal(DrinkCategory.Wine, (await fixture.Drinks.GetAsync(manager, wine.Id)).Category);
     }
 

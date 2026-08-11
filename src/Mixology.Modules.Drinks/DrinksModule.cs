@@ -48,7 +48,8 @@ public sealed class DrinksModule(
                     normalized.Description,
                     DrinkStatus.Active,
                     null,
-                    TagCollection.Empty);
+                    TagCollection.Empty,
+                    1);
                 await AuthorizeAsync(context, DrinkAuthorization.Create, created).ConfigureAwait(false);
                 await ValidateIngredientsAsync(context, created.Recipe).ConfigureAwait(false);
                 context.Session!.Context.Add(ToRow(created));
@@ -127,9 +128,11 @@ public sealed class DrinksModule(
                     normalized.Description,
                     DrinkStatus.Active,
                     null,
-                    current.Tags).Normalize();
+                    current.Tags,
+                    checked(normalized.Revision + 1)).Normalize();
                 await AuthorizeAsync(context, DrinkAuthorization.Update, updated).ConfigureAwait(false);
                 await ValidateIngredientsAsync(context, updated.Recipe).ConfigureAwait(false);
+                context.Session.Context.ExpectRevision(row, normalized.Revision);
                 CopyToRow(updated, row);
                 context.SelectResource(updated.EntityUid);
                 context.Touch(updated.EntityUid);
@@ -157,7 +160,11 @@ public sealed class DrinksModule(
                     context.CancellationToken).ConfigureAwait(false);
                 await AuthorizeAsync(context, DrinkAuthorization.Delete, current).ConfigureAwait(false);
                 DateTimeOffset deletedAt = timeProvider.GetUtcNow().ToUniversalTime();
-                Drink deleted = current with { DeletedAt = deletedAt };
+                Drink deleted = current with
+                {
+                    DeletedAt = deletedAt,
+                    Revision = checked(current.Revision + 1),
+                };
                 await AuthorizeAsync(context, DrinkAuthorization.Delete, deleted).ConfigureAwait(false);
                 row.DeletedAtUtc = deletedAt.UtcDateTime;
                 context.SelectResource(deleted.EntityUid);
@@ -474,7 +481,8 @@ public sealed class DrinksModule(
                 row.DeletedAtUtc is { } deletedAt
                     ? new DateTimeOffset(DateTime.SpecifyKind(deletedAt, DateTimeKind.Utc))
                     : null,
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {
@@ -494,6 +502,7 @@ public sealed class DrinksModule(
             Description = drink.Description,
             Status = drink.Status.Value,
             DeletedAtUtc = drink.DeletedAt?.UtcDateTime,
+            Revision = drink.Revision,
         };
         AddRecipeRows(drink, row);
         return row;

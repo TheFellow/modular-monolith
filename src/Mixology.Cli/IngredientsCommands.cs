@@ -212,13 +212,17 @@ public static class IngredientsCommands
         AddOptions(command, id, name, category, unit, description, json);
         command.SetAction((result, cancellationToken) => ExecuteAsync(context, result, async session =>
         {
+            Ingredient current = await session.GetAsync(
+                IngredientId.Parse(result.GetRequiredValue(id)),
+                cancellationToken).ConfigureAwait(false);
             Ingredient updated = await session.UpdateAsync(
                 new UpdateIngredientRequest(
-                    IngredientId.Parse(result.GetRequiredValue(id)),
+                    current.Id,
                     result.GetValue(name),
                     ParseCategory(result.GetValue(category)),
                     ParseUnit(result.GetValue(unit)),
-                    result.GetValue(description)),
+                    result.GetValue(description),
+                    current.Revision),
                 cancellationToken).ConfigureAwait(false);
             await WriteMutationAsync(context.Output, updated, result.GetValue(json)).ConfigureAwait(false);
         }, cancellationToken));
@@ -345,6 +349,7 @@ public static class IngredientsCommands
 
     private static IngredientView ToView(Ingredient ingredient) => new(
         ingredient.Id.Value,
+        ingredient.Revision,
         ingredient.Name,
         ingredient.Category.Value,
         ingredient.Unit.Value,
@@ -378,6 +383,7 @@ public static class IngredientsCommands
 
     private sealed record IngredientView(
         string Id,
+        long Revision,
         string Name,
         string Category,
         string Unit,

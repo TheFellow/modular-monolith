@@ -1,7 +1,9 @@
+using System.Threading.Channels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mixology.Desktop.Navigation;
 using Mixology.Desktop.Workspaces;
 using Mixology.Kernel.Errors;
+using Mixology.Persistence;
 using Mixology.Presentation.Navigation;
 using Xunit;
 
@@ -9,6 +11,34 @@ namespace Mixology.Desktop.Tests;
 
 public sealed class ShellViewModelTests
 {
+    [Fact]
+    public async Task DatabaseInvalidationRefreshesCleanWorkspaceAndDefersDirtyWorkspace()
+    {
+        FakeChangeSource changes = new();
+        FakeWorkspace dashboard = new(NavigationProjector.DashboardWorkspace, "Dashboard");
+        await using ShellViewModel shell = new(
+            Projection(NavigationProjector.DrinksWorkspace),
+            new Dictionary<WorkspaceId, Func<IDesktopWorkspace>>
+            {
+                [dashboard.Id] = () => dashboard,
+                [NavigationProjector.DrinksWorkspace] = () =>
+                    new FakeWorkspace(NavigationProjector.DrinksWorkspace, "Drinks"),
+            },
+            new Confirmation(true),
+            monitor: changes);
+        await shell.InitializeAsync();
+
+        changes.Publish();
+        await WaitUntilAsync(() => dashboard.ActivationCalls == 2);
+        dashboard.SetDirty(true);
+        changes.Publish();
+        await Task.Delay(50);
+        Assert.Equal(2, dashboard.ActivationCalls);
+
+        dashboard.SetDirty(false);
+        await WaitUntilAsync(() => dashboard.ActivationCalls == 3);
+    }
+
     [Fact]
     public async Task OnlyAuthorizedImplementedRoutesAreAdvertisedAndWorkspacesAreLazyCached()
     {
@@ -143,7 +173,7 @@ public sealed class ShellViewModelTests
         public WorkspaceId Id { get; } = id;
         public string Title { get; } = title;
         public bool IsDirty => IsDirtyValue;
-        public bool IsDirtyValue { get; init; }
+        public bool IsDirtyValue { get; set; }
         public Exception? ActivationError { get; set; }
         public int ActivationCalls { get; private set; }
 
@@ -155,6 +185,31 @@ public sealed class ShellViewModelTests
         }
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+        public void SetDirty(bool value)
+        {
+            IsDirtyValue = value;
+            OnPropertyChanged(nameof(IsDirty));
+        }
+    }
+
+    private sealed class FakeChangeSource : IStoreChangeSource
+    {
+        private readonly Channel<long> changes = Channel.CreateUnbounded<long>();
+        private long epoch;
+
+        public ChannelReader<long> Changes => changes.Reader;
+
+        public void Publish() => _ = changes.Writer.TryWrite(Interlocked.Increment(ref epoch));
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(2));
+        while (!condition())
+        {
+            await Task.Delay(10, timeout.Token);
+        }
     }
 
     private sealed class Confirmation(bool answer) : IDirtyNavigationConfirmation

@@ -19,6 +19,14 @@ the SQLite file. `MauiUiDispatcher` marshals observable publication to the nativ
 UI thread, and `MauiDirtyNavigationConfirmation` uses the platform alert API.
 The `.xaml` views use compiled bindings and contain only MAUI layout concerns.
 
+`ShellViewModel` consumes the persistence store's coalesced SQLite change
+epochs. Clean active workspaces re-query immediately using their existing
+latest-request-wins loader, and inactive cached workspaces reload on their next
+activation. A dirty editor is marked stale but preserved; clearing or cancelling
+the editor triggers the deferred refresh. If it is saved first, its revision is
+compared by EF and a concurrent update is presented as a typed conflict instead
+of silently overwriting the other client.
+
 ## Prerequisites and running
 
 Install the .NET 10 MAUI workload on a supported host:

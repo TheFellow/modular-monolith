@@ -468,6 +468,7 @@ public static class OrdersCommands
 
     private static OrderView ToView(Order order) => new(
         order.Id.Value,
+        order.Revision,
         order.MenuId.Value,
         order.Status.Value,
         FormatTime(order.CreatedAt),
@@ -549,6 +550,7 @@ public static class OrdersCommands
     private sealed record OrderPageView(IReadOnlyList<OrderRowView> Items, string? Next);
     private sealed record OrderView(
         string Id,
+        long Revision,
         string MenuId,
         string Status,
         string CreatedAt,

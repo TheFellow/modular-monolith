@@ -25,6 +25,7 @@ using Mixology.Modules.Orders;
 using Mixology.Modules.Orders.Presentation;
 using Mixology.Modules.Tagging;
 using Mixology.Modules.Tagging.Presentation;
+using Mixology.Persistence;
 using Mixology.Presentation.Dashboard;
 using Mixology.Presentation.Mutations;
 using Mixology.Presentation.Navigation;
@@ -121,15 +122,26 @@ public static class DesktopShellFactory
                     dispatcher),
             };
 
-        ShellViewModel shell = new(navigation, workspaces, confirmation, dispatcher);
+        SqliteChangeMonitor changes = services.GetRequiredService<MixologyStore>().MonitorChanges();
+        ShellViewModel? shell = null;
         try
         {
+            await changes.Ready.WaitAsync(cancellationToken).ConfigureAwait(false);
+            shell = new(navigation, workspaces, confirmation, dispatcher, changes, ownsMonitor: true);
             await shell.InitializeAsync(cancellationToken).ConfigureAwait(false);
             return shell;
         }
         catch
         {
-            await shell.DisposeAsync().ConfigureAwait(false);
+            if (shell is null)
+            {
+                await changes.DisposeAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                await shell.DisposeAsync().ConfigureAwait(false);
+            }
+
             throw;
         }
     }

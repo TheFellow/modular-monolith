@@ -422,7 +422,7 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
                 IngredientEditorMode.Create => ct => operations.CreateAsync(
                     new CreateIngredientRequest(EditorName, IngredientCategory.Parse(EditorCategory), Unit.Parse(EditorUnit), EditorDescription).Normalize(), tags, ct),
                 IngredientEditorMode.Edit when SelectedIngredient is { } selected => ct => operations.UpdateAsync(
-                    new UpdateIngredientRequest(selected.Id, EditorName, IngredientCategory.Parse(EditorCategory), Unit.Parse(EditorUnit), EditorDescription).Normalize(), tags, ct),
+                    new UpdateIngredientRequest(selected.Id, EditorName, IngredientCategory.Parse(EditorCategory), Unit.Parse(EditorUnit), EditorDescription, selected.Revision).Normalize(), tags, ct),
                 IngredientEditorMode.Retire when SelectedIngredient is { } selected => ct => operations.RetireAsync(
                     new RetireIngredientRequest(selected.Id, ParseRetirement()).Normalize(), ct),
                 _ => throw AppError.FailedPrecondition("ingredient editor has no target"),

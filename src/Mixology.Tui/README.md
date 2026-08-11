@@ -51,6 +51,13 @@ finish but cannot replace newer state. Cancellation is linked to workspace and
 shell lifetime. Shutdown stops new work, cancels requests, observes/drains them,
 disposes cached workspaces, then disposes Terminal.Gui and the Generic Host.
 
+The shell also consumes coalesced SQLite change epochs. A committed CLI or
+Desktop write refreshes the active browse workspace without moving selection;
+inactive cached workspaces are marked stale and reload when revisited. An edit,
+form, or dialog keeps ownership of its input and is never overwritten. Its
+workspace refreshes after the workflow is cancelled or completed, while a save
+based on an old revision receives the normal typed conflict.
+
 The shell requires at least 80×24 cells and renders a clear minimum-size message
 below that. Tests exercise deterministic workspace rendering, input ownership,
 authorization-filtered routes, stale work, and cancellation without depending

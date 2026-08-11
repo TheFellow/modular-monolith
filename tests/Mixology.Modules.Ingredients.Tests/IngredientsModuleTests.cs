@@ -34,7 +34,7 @@ public sealed class IngredientsModuleTests
         Ingredient loaded = await fixture.Module.GetAsync(fixture.Session(Actor.Anonymous), created.Id);
         Ingredient updated = await fixture.Module.UpdateAsync(
             manager,
-            new UpdateIngredientRequest(created.Id, Description: "  London dry  "));
+            new UpdateIngredientRequest(created.Id, Description: "  London dry  ", Revision: created.Revision));
 
         Assert.StartsWith("ing-", created.Id.Value, StringComparison.Ordinal);
         Assert.Equal("Gin", loaded.Name);

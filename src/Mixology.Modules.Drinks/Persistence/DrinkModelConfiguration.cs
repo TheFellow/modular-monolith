@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mixology.Persistence;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Drinks.Persistence;
@@ -19,6 +20,7 @@ public sealed class DrinkModelConfiguration : IModuleModelConfiguration
             entity.Property(row => row.Description).HasColumnName("description").IsRequired();
             entity.Property(row => row.Status).HasColumnName("status").IsRequired();
             entity.Property(row => row.DeletedAtUtc).HasColumnName("deleted_at_utc");
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => row.Name).IsUnique();
             entity.HasIndex(row => row.Category);
             entity.HasIndex(row => row.Glass);

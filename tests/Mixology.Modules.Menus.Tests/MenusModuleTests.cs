@@ -35,7 +35,7 @@ public sealed class MenusModuleTests
         Menu created = await fixture.Menus.CreateAsync(manager, new CreateMenuRequest("  Dinner  ", " Evening "));
         Menu updated = await fixture.Menus.UpdateAsync(
             manager,
-            new UpdateMenuRequest(created.Id, "Dinner Service", "Nightly"));
+            new UpdateMenuRequest(created.Id, "Dinner Service", "Nightly", created.Revision));
         Menu composed = await fixture.Menus.AddDrinkAsync(
             manager,
             new AddMenuItemRequest(created.Id, drink));
@@ -171,7 +171,7 @@ public sealed class MenusModuleTests
             new CreateMenuRequest("Parity", "Keep this description"));
         Menu updated = await fixture.Menus.UpdateAsync(
             manager,
-            new UpdateMenuRequest(menu.Id, "Parity renamed", "   "));
+            new UpdateMenuRequest(menu.Id, "Parity renamed", "   ", menu.Revision));
         DrinkId first = fixture.Operations.AddDrink("First", Availability.Available);
         DrinkId second = fixture.Operations.AddDrink("Second", Availability.Available);
         DrinkId third = fixture.Operations.AddDrink("Third", Availability.Available);

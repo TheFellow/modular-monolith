@@ -48,7 +48,8 @@ public sealed class MenusModule(
                     timeProvider.GetUtcNow().ToUniversalTime(),
                     null,
                     null,
-                    TagCollection.Empty).Normalize();
+                    TagCollection.Empty,
+                    1).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.Create, created).ConfigureAwait(false);
                 context.Session!.Context.Add(ToRow(created));
                 Record(context, created, new MenuCreated(created));
@@ -97,8 +98,10 @@ public sealed class MenusModule(
                     Description = normalized.Description.Length == 0
                         ? current.Description
                         : normalized.Description,
+                    Revision = checked(normalized.Revision + 1),
                 }).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.Update, updated).ConfigureAwait(false);
+                context.Session!.Context.ExpectRevision(row, normalized.Revision);
                 CopyToRow(updated, row);
                 Record(context, updated);
                 return updated;
@@ -126,6 +129,7 @@ public sealed class MenusModule(
                 {
                     Status = MenuStatus.Archived,
                     DeletedAt = deletedAt,
+                    Revision = checked(current.Revision + 1),
                 }).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.Delete, deleted).ConfigureAwait(false);
                 CopyToRow(deleted, row);
@@ -177,7 +181,11 @@ public sealed class MenusModule(
                     false,
                     availability,
                     sortOrder);
-                Menu updated = (current with { Items = [.. current.Items, item] }).Normalize();
+                Menu updated = (current with
+                {
+                    Items = [.. current.Items, item],
+                    Revision = checked(current.Revision + 1),
+                }).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.AddDrink, updated).ConfigureAwait(false);
                 CopyToRow(updated, row);
                 Record(context, updated, new DrinkAddedToMenu(updated, item));
@@ -211,7 +219,11 @@ public sealed class MenusModule(
                 MenuItem[] remaining = current.Items
                     .Where(item => item.DrinkId != normalized.DrinkId)
                     .ToArray();
-                Menu updated = (current with { Items = remaining }).Normalize();
+                Menu updated = (current with
+                {
+                    Items = remaining,
+                    Revision = checked(current.Revision + 1),
+                }).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.RemoveDrink, updated).ConfigureAwait(false);
                 CopyToRow(updated, row);
                 Record(context, updated, new DrinkRemovedFromMenu(updated, removed));
@@ -257,6 +269,7 @@ public sealed class MenusModule(
                     Items = items,
                     Status = MenuStatus.Published,
                     PublishedAt = timeProvider.GetUtcNow().ToUniversalTime(),
+                    Revision = checked(current.Revision + 1),
                 }).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.Publish, published).ConfigureAwait(false);
                 CopyToRow(published, row);
@@ -285,6 +298,7 @@ public sealed class MenusModule(
                 {
                     Status = MenuStatus.Draft,
                     PublishedAt = null,
+                    Revision = checked(current.Revision + 1),
                 }).Normalize();
                 await AuthorizeAsync(context, MenuAuthorization.Draft, drafted).ConfigureAwait(false);
                 CopyToRow(drafted, row);
@@ -596,7 +610,8 @@ public sealed class MenusModule(
                 Utc(row.CreatedAtUtc),
                 row.PublishedAtUtc is { } published ? Utc(published) : null,
                 row.DeletedAtUtc is { } deleted ? Utc(deleted) : null,
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {
@@ -615,6 +630,7 @@ public sealed class MenusModule(
             CreatedAtUtc = menu.CreatedAt.UtcDateTime,
             PublishedAtUtc = menu.PublishedAt?.UtcDateTime,
             DeletedAtUtc = menu.DeletedAt?.UtcDateTime,
+            Revision = menu.Revision,
         };
         AddItems(menu, row);
         return row;

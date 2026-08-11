@@ -344,7 +344,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
             await RunMutationAsync(async token => Mode switch
             {
                 MenuDesktopMode.Create => await operations.CreateAsync(new(Name, Description), parsedTags, token).ConfigureAwait(false),
-                MenuDesktopMode.Edit when Detail is not null => await operations.UpdateAsync(new(Detail.Id, Name, Description), parsedTags, token).ConfigureAwait(false),
+                MenuDesktopMode.Edit when Detail is not null => await operations.UpdateAsync(new(Detail.Id, Name, Description, Detail.Revision), parsedTags, token).ConfigureAwait(false),
                 _ => throw AppError.Invalid("menu form is not active"),
             }, "save menu").ConfigureAwait(false);
         }

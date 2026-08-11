@@ -1,4 +1,5 @@
 using Mixology.Kernel.Errors;
+using Mixology.Persistence;
 using Mixology.Presentation.Navigation;
 using Mixology.Toolkits.Tui;
 using Mixology.Tui.Workspaces;
@@ -11,16 +12,21 @@ public sealed class TuiShell : IAsyncDisposable
     public const int MinimumHeight = 24;
 
     private readonly IReadOnlyDictionary<WorkspaceId, Func<ITuiWorkspace>> factories;
+    private readonly object sync = new();
     private readonly HashSet<WorkspaceId> visible;
     private readonly Dictionary<WorkspaceId, ITuiWorkspace> cache = [];
     private readonly Stack<WorkspaceId> history = [];
     private readonly CancellationTokenSource lifetime = new();
+    private readonly HashSet<WorkspaceId> stale = [];
+    private readonly Task? changes;
     private ITuiWorkspace? current;
+    private int refreshingStale;
     private bool disposed;
 
     public TuiShell(
         NavigationProjection navigation,
-        IReadOnlyDictionary<WorkspaceId, Func<ITuiWorkspace>> factories)
+        IReadOnlyDictionary<WorkspaceId, Func<ITuiWorkspace>> factories,
+        IStoreChangeSource? monitor = null)
     {
         ArgumentNullException.ThrowIfNull(navigation);
         ArgumentNullException.ThrowIfNull(factories);
@@ -30,6 +36,7 @@ public sealed class TuiShell : IAsyncDisposable
             .Where(route => visible.Contains(route.Id) && factories.ContainsKey(route.Id))
             .ToArray();
         Status = navigation.Errors.Count == 0 ? null : TuiErrorAdapter.Adapt(navigation.Errors[0]);
+        changes = monitor is null ? null : ObserveChangesAsync(monitor, lifetime.Token);
     }
 
     public IReadOnlyList<TuiRoute> Routes { get; }
@@ -178,6 +185,17 @@ public sealed class TuiShell : IAsyncDisposable
 
         disposed = true;
         lifetime.Cancel();
+        if (changes is not null)
+        {
+            try
+            {
+                await changes.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
         foreach (ITuiWorkspace workspace in cache.Values)
         {
             workspace.Changed -= OnWorkspaceChanged;
@@ -205,13 +223,28 @@ public sealed class TuiShell : IAsyncDisposable
             history.Push(current.Id);
         }
 
-        if (target == TuiRoutes.Dashboard.Id && cache.Remove(target, out ITuiWorkspace? prior))
+        ITuiWorkspace? prior = null;
+        if (target == TuiRoutes.Dashboard.Id)
+        {
+            lock (sync)
+            {
+                _ = cache.Remove(target, out prior);
+            }
+        }
+
+        if (prior is not null)
         {
             prior.Changed -= OnWorkspaceChanged;
             await prior.DisposeAsync().ConfigureAwait(false);
         }
 
-        if (!cache.TryGetValue(target, out ITuiWorkspace? workspace))
+        ITuiWorkspace? workspace;
+        lock (sync)
+        {
+            _ = cache.TryGetValue(target, out workspace);
+        }
+
+        if (workspace is null)
         {
             workspace = factories[target]();
             if (workspace.Id != target)
@@ -220,7 +253,10 @@ public sealed class TuiShell : IAsyncDisposable
                 throw AppError.Internal($"TUI workspace factory returned {workspace.Id} for {target}");
             }
 
-            cache.Add(target, workspace);
+            lock (sync)
+            {
+                cache.Add(target, workspace);
+            }
             workspace.Changed += OnWorkspaceChanged;
             current = workspace;
             ShowHelp = false;
@@ -233,12 +269,93 @@ public sealed class TuiShell : IAsyncDisposable
         current = workspace;
         ShowHelp = false;
         Changed?.Invoke();
+        if (TakeStale(target))
+        {
+            using CancellationTokenSource linked = Link(cancellationToken);
+            await workspace.ActivateAsync(linked.Token).ConfigureAwait(false);
+        }
     }
 
     private CancellationTokenSource Link(CancellationToken cancellationToken) =>
         CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token, cancellationToken);
 
-    private void OnWorkspaceChanged() => Changed?.Invoke();
+    private void OnWorkspaceChanged()
+    {
+        Changed?.Invoke();
+        if (current is { InputOwnership: var ownership } workspace &&
+            !ownership.CapturesText &&
+            !ownership.HandlesBack &&
+            IsStale(workspace.Id))
+        {
+            _ = RefreshStaleAsync(workspace, lifetime.Token);
+        }
+    }
+
+    private async Task ObserveChangesAsync(IStoreChangeSource monitor, CancellationToken cancellationToken)
+    {
+        await foreach (long epoch in monitor.Changes.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+        {
+            _ = epoch;
+            lock (sync)
+            {
+                foreach (WorkspaceId id in cache.Keys)
+                {
+                    _ = stale.Add(id);
+                }
+            }
+
+            if (current is { InputOwnership: var ownership } workspace &&
+                !ownership.CapturesText &&
+                !ownership.HandlesBack)
+            {
+                await RefreshStaleAsync(workspace, cancellationToken).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private async Task RefreshStaleAsync(ITuiWorkspace workspace, CancellationToken cancellationToken)
+    {
+        if (Interlocked.Exchange(ref refreshingStale, 1) != 0)
+        {
+            return;
+        }
+
+        try
+        {
+            while (current == workspace && TakeStale(workspace.Id))
+            {
+                await workspace.RefreshAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }
+        catch (Exception exception) when (AppError.IsCancellation(exception))
+        {
+        }
+        catch (Exception exception)
+        {
+            Status = TuiErrorAdapter.Adapt(exception);
+            Changed?.Invoke();
+        }
+        finally
+        {
+            _ = Interlocked.Exchange(ref refreshingStale, 0);
+        }
+    }
+
+    private bool IsStale(WorkspaceId id)
+    {
+        lock (sync)
+        {
+            return stale.Contains(id);
+        }
+    }
+
+    private bool TakeStale(WorkspaceId id)
+    {
+        lock (sync)
+        {
+            return stale.Remove(id);
+        }
+    }
 
     private static string Fit(string value, Viewport viewport)
     {

@@ -12,7 +12,8 @@ public sealed record Ingredient(
     Unit Unit,
     string Description,
     DateTimeOffset? DeletedAt,
-    TagCollection Tags)
+    TagCollection Tags,
+    long Revision = 1)
 {
     public EntityUid EntityUid => Id.EntityUid;
 
@@ -31,6 +32,10 @@ public sealed record Ingredient(
         Unit.Validate();
         ArgumentNullException.ThrowIfNull(Tags);
         Tags.Validate();
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
 
         DateTimeOffset? deletedAt = DeletedAt?.ToUniversalTime();
         return this with

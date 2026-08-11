@@ -7,11 +7,15 @@ using Mixology.Modules.Inventory.Models;
 
 namespace Mixology.Modules.Inventory.Requests;
 
-public sealed record SetInventoryRequest(IngredientId IngredientId, Amount OnHand, Price UnitCost)
+public sealed record SetInventoryRequest(IngredientId IngredientId, Amount OnHand, Price UnitCost, long Revision = 0)
 {
     public SetInventoryRequest Normalize()
     {
         RequireIngredientId(IngredientId);
+        if (Revision < 0)
+        {
+            throw AppError.Invalid("revision must be greater than or equal to zero");
+        }
         ArgumentNullException.ThrowIfNull(OnHand);
         OnHand.Unit.Validate();
         RequireFinite(OnHand.Value, "on-hand quantity");

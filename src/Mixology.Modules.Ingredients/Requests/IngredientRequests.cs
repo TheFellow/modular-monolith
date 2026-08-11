@@ -33,11 +33,16 @@ public sealed record UpdateIngredientRequest(
     string? Name = null,
     IngredientCategory? Category = null,
     Unit? Unit = null,
-    string? Description = null)
+    string? Description = null,
+    long Revision = 0)
 {
     public UpdateIngredientRequest Normalize()
     {
         RequireId(Id);
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
         string? name = Name?.Trim();
         name = string.IsNullOrEmpty(name) ? null : name;
 
