@@ -32,10 +32,12 @@ public sealed class SeedRunner(
     public async Task<SeedResult> RunAsync(
         SeedDataset dataset,
         TextWriter output,
+        string databasePath,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(dataset);
         ArgumentNullException.ThrowIfNull(output);
+        ArgumentException.ThrowIfNullOrEmpty(databasePath);
         MixologySession session = sessions.Create(Actor.Owner);
 
         Dictionary<string, IngredientId> ingredientIds = new(StringComparer.Ordinal);
@@ -202,7 +204,7 @@ public sealed class SeedRunner(
         }
 
         await output.WriteLineAsync($"  Menu published with {drinkIds.Count} drinks").ConfigureAwait(false);
-        await WriteSummaryAsync(output, dataset, menu).ConfigureAwait(false);
+        await WriteSummaryAsync(output, dataset, menu, databasePath).ConfigureAwait(false);
         return new SeedResult(dataset.Ingredients.Count, drinkIds.Count, menu);
     }
 
@@ -232,8 +234,13 @@ public sealed class SeedRunner(
         }
     }
 
-    private static async Task WriteSummaryAsync(TextWriter output, SeedDataset dataset, Menu menu)
+    private static async Task WriteSummaryAsync(
+        TextWriter output,
+        SeedDataset dataset,
+        Menu menu,
+        string databasePath)
     {
+        string databaseOption = $"--db \"{databasePath.Replace("\"", "\\\"", StringComparison.Ordinal)}\"";
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("=== Seed Complete ===").ConfigureAwait(false);
         await output.WriteLineAsync().ConfigureAwait(false);
@@ -244,13 +251,13 @@ public sealed class SeedRunner(
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("View the menu with cost analysis:").ConfigureAwait(false);
         await output.WriteLineAsync(
-            $"  mixology menus show --id {menu.Id} --costs --target-margin 0.7").ConfigureAwait(false);
+            $"  mixology {databaseOption} menus show --id {menu.Id} --costs --target-margin 0.7").ConfigureAwait(false);
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("List all drinks:").ConfigureAwait(false);
-        await output.WriteLineAsync("  mixology drinks list").ConfigureAwait(false);
+        await output.WriteLineAsync($"  mixology {databaseOption} drinks list").ConfigureAwait(false);
         await output.WriteLineAsync().ConfigureAwait(false);
         await output.WriteLineAsync("Check inventory:").ConfigureAwait(false);
-        await output.WriteLineAsync("  mixology inventory list").ConfigureAwait(false);
+        await output.WriteLineAsync($"  mixology {databaseOption} inventory list").ConfigureAwait(false);
     }
 
     private static Exception Contextualize(string context, Exception exception)

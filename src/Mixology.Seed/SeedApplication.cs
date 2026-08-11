@@ -49,7 +49,7 @@ public static class SeedApplication
             SeedDataset dataset = SeedDataset.LoadEmbedded();
             host = await OpenHostAsync(databasePath, cancellationToken).ConfigureAwait(false);
             _ = await host.Services.GetRequiredService<SeedRunner>()
-                .RunAsync(dataset, output, cancellationToken)
+                .RunAsync(dataset, output, Path.GetFullPath(databasePath), cancellationToken)
                 .ConfigureAwait(false);
             return 0;
         }
@@ -77,8 +77,10 @@ public static class SeedApplication
         CancellationToken cancellationToken)
     {
         HostApplicationBuilder builder = MixologyHost.CreateBuilder([]);
+        builder.Logging.ClearProviders();
         builder.Logging.AddConsole(options =>
             options.LogToStandardErrorThreshold = LogLevel.Trace);
+        builder.Logging.SetMinimumLevel(LogLevel.Error);
         builder.Services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
         builder.AddMixology(databasePath, typeof(MigrationAssemblyMarker).Assembly);
         builder.Services.AddAuditModule();
