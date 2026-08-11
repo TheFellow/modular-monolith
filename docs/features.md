@@ -126,4 +126,4 @@ mechanism.
 
 Surface-specific lifecycle and keyboard behavior is documented in the
 [CLI](../src/Mixology.Cli/README.md), [TUI](../src/Mixology.Tui/README.md), and
-[Desktop](../src/Mixology.Desktop/README.md) guides.
+[Desktop](../src/Mixology.Gui/README.md) guides.

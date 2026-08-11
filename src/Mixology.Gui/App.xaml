@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:desktop="clr-namespace:Mixology.Gui"
+             x:Class="Mixology.Gui.DesktopApplication">
+  <Application.Resources>
+    <ResourceDictionary>
+      <Color x:Key="AppBackgroundColor">#3E3E3E</Color>
+      <Color x:Key="NavigationBackgroundColor">#353535</Color>
+      <Color x:Key="SurfaceColor">#565656</Color>
+      <Color x:Key="SurfaceRaisedColor">#626262</Color>
+      <Color x:Key="HeaderBackgroundColor">#2D2D2D</Color>
+      <Color x:Key="PrimaryTextColor">#FAFAFA</Color>
+      <Color x:Key="SecondaryTextColor">#D0D0D0</Color>
+      <Color x:Key="AccentColor">#FFBE7A</Color>
+      <Color x:Key="DangerColor">#FF625C</Color>
+      <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+      <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackgroundColor}" />
+      <SolidColorBrush x:Key="NavigationBackgroundBrush" Color="{StaticResource NavigationBackgroundColor}" />
+      <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+      <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="{StaticResource HeaderBackgroundColor}" />
+      <Color x:Key="BorderColor">#737373</Color>
+      <desktop:InverseBooleanConverter x:Key="InverseBoolConverter" />
+      <Style TargetType="Label">
+        <Setter Property="VerticalTextAlignment" Value="Center" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceRaisedColor}" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontSize" Value="14" />
+      </Style>
+      <Style TargetType="Entry">
+        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource SecondaryTextColor}" />
+      </Style>
+      <Style TargetType="Picker">
+        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+      </Style>
+      <Style TargetType="Editor">
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceColor}" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource SecondaryTextColor}" />
+      </Style>
+      <Style TargetType="HorizontalStackLayout">
+        <Setter Property="Spacing" Value="8" />
+      </Style>
+      <Style x:Key="MetricBorderStyle" TargetType="Border">
+        <Setter Property="MinimumHeightRequest" Value="112" />
+        <Setter Property="Padding" Value="18,14" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+      </Style>
+      <Style x:Key="PanelBorderStyle" TargetType="Border">
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+      </Style>
+      <Style x:Key="RecipeRowBorderStyle" TargetType="Border">
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+      </Style>
+      <Style x:Key="NavigationButtonStyle" TargetType="Button">
+        <Setter Property="HeightRequest" Value="42" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+      </Style>
+      <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource AccentColor}" />
+        <Setter Property="TextColor" Value="#202020" />
+      </Style>
+      <Style x:Key="DangerButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource DangerColor}" />
+        <Setter Property="TextColor" Value="#202020" />
+      </Style>
+      <Style x:Key="SecondaryTextStyle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource SecondaryTextColor}" />
+      </Style>
+      <Style x:Key="WorkspaceTitleStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="25" />
+        <Setter Property="FontAttributes" Value="Bold" />
+      </Style>
+      <Style x:Key="TableHeaderLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource SecondaryTextColor}" />
+      </Style>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

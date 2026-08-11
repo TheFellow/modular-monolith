@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:desktop="clr-namespace:Mixology.Gui"
+             xmlns:navigation="clr-namespace:Mixology.Gui.Navigation"
+             x:Class="Mixology.Gui.MainPage"
+             x:DataType="desktop:ShellViewModel"
+             Title="Mixology">
+  <Grid ColumnDefinitions="200,*" Background="{StaticResource AppBackgroundBrush}">
+    <Border Grid.Column="0" Padding="8,16,8,10"
+            Background="{StaticResource NavigationBackgroundBrush}"
+            Stroke="{StaticResource BorderColor}" StrokeThickness="1">
+      <Grid RowDefinitions="Auto,*,Auto">
+        <VerticalStackLayout Margin="8,0,8,18" Spacing="1">
+          <Label Text="Mixology" FontSize="20" FontAttributes="Bold" />
+          <Label Text="{Binding Identity}" FontSize="12" Style="{StaticResource SecondaryTextStyle}" />
+        </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="1" Spacing="4">
+        <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Navigation}">
+          <BindableLayout.ItemTemplate>
+            <DataTemplate x:DataType="navigation:DesktopNavigationItemViewModel">
+              <Button Text="{Binding DisplayLabel}"
+                      Command="{Binding OpenCommand}"
+                      Style="{StaticResource NavigationButtonStyle}"
+                      SemanticProperties.Description="{Binding Label}">
+                <Button.Triggers>
+                  <DataTrigger TargetType="Button" Binding="{Binding IsActive}" Value="True">
+                    <Setter Property="BackgroundColor" Value="{StaticResource AccentColor}" />
+                    <Setter Property="TextColor" Value="#202020" />
+                  </DataTrigger>
+                </Button.Triggers>
+              </Button>
+            </DataTemplate>
+          </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+        </VerticalStackLayout>
+        <Label Grid.Row="2" Text="Local database" Margin="8,0" FontSize="11"
+               Style="{StaticResource SecondaryTextStyle}" />
+      </Grid>
+    </Border>
+    <Grid Grid.Column="1" RowDefinitions="*,Auto">
+      <desktop:WorkspaceViewHost Workspace="{Binding ActiveWorkspace}" />
+      <Border Grid.Row="1" Padding="14,8" IsVisible="True"
+              Background="{StaticResource HeaderBackgroundBrush}"
+              Stroke="{StaticResource BorderColor}" StrokeThickness="1">
+        <Border.Triggers>
+          <DataTrigger TargetType="Border" Binding="{Binding StatusMessage}" Value="">
+            <Setter Property="IsVisible" Value="False" />
+          </DataTrigger>
+        </Border.Triggers>
+        <Label Text="{Binding StatusMessage}" TextColor="{StaticResource DangerColor}" />
+      </Border>
+    </Grid>
+  </Grid>
+</ContentPage>

@@ -1,0 +1,54 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:desktop="clr-namespace:Mixology.Gui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:menus="clr-namespace:Mixology.Gui.Workspaces.Menus"
+             xmlns:models="clr-namespace:Mixology.Modules.Menus.Models"
+             x:Name="MenuRoot"
+             x:Class="Mixology.Gui.Workspaces.Menus.MenusView"
+             x:DataType="menus:MenusViewModel">
+  <Grid Margin="24,20,24,18" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="12">
+    <Grid ColumnDefinitions="*,Auto,Auto">
+      <VerticalStackLayout><Label Text="Menus" Style="{StaticResource WorkspaceTitleStyle}"/><Label Text="Design, verify, and publish the active drinks catalog" Style="{StaticResource SecondaryTextStyle}"/></VerticalStackLayout>
+      <Button Grid.Column="1" Text="New menu" Command="{Binding StartCreateCommand}" Style="{StaticResource PrimaryButtonStyle}" IsVisible="{Binding CanCreate}" SemanticProperties.Description="Create menu"/>
+      <Button Grid.Column="2" Margin="8,0,0,0" Text="Refresh" Command="{Binding RefreshCommand}" SemanticProperties.Description="Refresh menus"/>
+    </Grid>
+    <Grid Grid.Row="1" ColumnDefinitions="150,*,90,Auto" ColumnSpacing="8">
+      <Picker ItemsSource="{Binding Statuses}" SelectedItem="{Binding FilterStatus}" SemanticProperties.Description="Menu status filter"/>
+      <Entry Grid.Column="1" Text="{Binding FilterExpression}" Placeholder="Filter menus" SemanticProperties.Description="Menu filter expression"/>
+      <Entry Grid.Column="2" Text="{Binding PageSize}" Placeholder="Limit" SemanticProperties.Description="Menu page size"/>
+      <Button Grid.Column="3" Text="Apply filter" Command="{Binding ApplyFilterCommand}" SemanticProperties.Description="Apply menu filter"/>
+    </Grid>
+    <Grid Grid.Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="16">
+      <Grid RowDefinitions="Auto,*" Background="{StaticResource SurfaceBrush}"><Grid ColumnDefinitions="2*,*,Auto" Padding="10,8" Background="{StaticResource HeaderBackgroundBrush}"><Label Text="MENU" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="1" Text="STATUS" Style="{StaticResource TableHeaderLabelStyle}"/><Label Grid.Column="2" Text="ITEMS" Style="{StaticResource TableHeaderLabelStyle}"/></Grid><CollectionView Grid.Row="1" ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected}" SemanticProperties.Description="Menus">
+        <CollectionView.ItemTemplate><DataTemplate x:DataType="menus:MenuRowViewModel"><Grid ColumnDefinitions="2*,*,Auto" Padding="10,7"><Label Text="{Binding Name}" FontAttributes="Bold"/><Label Grid.Column="1" Text="{Binding Status}"/><Label Grid.Column="2" Text="{Binding Items}"/></Grid></DataTemplate></CollectionView.ItemTemplate>
+      </CollectionView></Grid>
+      <Border Grid.Column="1" Style="{StaticResource PanelBorderStyle}"><ScrollView VerticalScrollBarVisibility="Default" SemanticProperties.Description="Menu detail and form">
+        <VerticalStackLayout Spacing="12">
+          <VerticalStackLayout IsVisible="{Binding IsDetail}" Spacing="8">
+            <Label Text="{Binding Detail.Name}" FontSize="24" FontAttributes="Bold"/><Label Text="{Binding Detail.Description}" LineBreakMode="WordWrap"/>
+            <Label Text="{Binding Detail.Status}"/><Label Text="{Binding Detail.Tags}" LineBreakMode="WordWrap"/>
+            <HorizontalStackLayout>
+              <Button Text="Edit" Command="{Binding StartEditCommand}" IsVisible="{Binding CanEdit}" SemanticProperties.Description="Edit menu"/>
+              <Button Text="Delete" Command="{Binding BeginDeleteCommand}" IsVisible="{Binding CanDelete}" SemanticProperties.Description="Delete menu"/>
+              <Button Text="Publish" Command="{Binding PublishCommand}" IsVisible="{Binding CanPublish}" SemanticProperties.Description="Publish menu"/>
+              <Button Text="Return to draft" Command="{Binding DraftCommand}" IsVisible="{Binding CanDraft}" SemanticProperties.Description="Return menu to draft"/>
+            </HorizontalStackLayout>
+            <Border IsVisible="{Binding IsDeleteConfirmation}" Padding="12" StrokeThickness="1"><VerticalStackLayout><Label Text="Delete this draft menu? This cannot be undone." LineBreakMode="WordWrap"/><HorizontalStackLayout><Button Text="Confirm delete" Command="{Binding DeleteCommand}" SemanticProperties.Description="Confirm delete menu"/><Button Text="Keep menu" Command="{Binding CancelDeleteCommand}"/></HorizontalStackLayout></VerticalStackLayout></Border>
+            <Label Text="Drinks" FontSize="20" FontAttributes="Bold"/>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="{Binding CanAddDrink}"><Picker ItemsSource="{Binding DrinkOptions}" SelectedItem="{Binding SelectedDrink}" ItemDisplayBinding="{Binding Display}" SemanticProperties.Description="Menu drink picker"/><Button Grid.Column="1" Text="Add drink" Command="{Binding AddDrinkCommand}" SemanticProperties.Description="Add drink to menu"/></Grid>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" SemanticProperties.Description="Menu drinks"><BindableLayout.ItemTemplate><DataTemplate x:DataType="menus:MenuItemViewModel"><Grid ColumnDefinitions="*,Auto" Margin="0,4"><Label Text="{Binding Display}" LineBreakMode="WordWrap"/><Button Grid.Column="1" Text="Remove" Command="{Binding Source={x:Reference MenuRoot}, Path=BindingContext.RemoveDrinkCommand}" CommandParameter="{Binding}" IsVisible="{Binding Source={x:Reference MenuRoot}, Path=BindingContext.CanRemoveDrink}" SemanticProperties.Description="Remove drink from menu"/></Grid></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout>
+            <Label Text="Readiness" FontSize="20" FontAttributes="Bold"/>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Findings}" SemanticProperties.Description="Menu readiness findings"><BindableLayout.ItemTemplate><DataTemplate x:DataType="models:ReadinessFinding"><Label Text="{Binding Message}" LineBreakMode="WordWrap" Margin="0,3"/></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout>
+            <Grid ColumnDefinitions="160,Auto" ColumnSpacing="8" IsVisible="{Binding CanAnalyze}"><Entry Text="{Binding TargetMargin}" Placeholder="Target margin" SemanticProperties.Description="Menu target margin"/><Button Grid.Column="1" Text="Analyze" Command="{Binding AnalyzeCommand}" SemanticProperties.Description="Analyze menu"/></Grid>
+            <Label Text="{Binding AnalysisSummary}" LineBreakMode="WordWrap"/><VerticalStackLayout BindableLayout.ItemsSource="{Binding AnalysisItems}" SemanticProperties.Description="Menu analysis"><BindableLayout.ItemTemplate><DataTemplate x:DataType="models:MenuItemAnalysis"><Grid ColumnDefinitions="2*,*,*" Margin="0,3"><Label Text="{Binding Name}"/><Label Grid.Column="1" Text="{Binding Availability}"/><Label Grid.Column="2" Text="{Binding SuggestedPrice}"/></Grid></DataTemplate></BindableLayout.ItemTemplate></VerticalStackLayout>
+          </VerticalStackLayout>
+          <VerticalStackLayout IsVisible="{Binding IsForm}" Spacing="8">
+            <Label Text="Menu form" FontSize="24" FontAttributes="Bold"/><Label Text="Name"/><Entry Text="{Binding Name}" SemanticProperties.Description="Menu name"/><Label Text="Description"/><Editor Text="{Binding Description}" MinimumHeightRequest="90" SemanticProperties.Description="Menu description"/><Label Text="Tags (case-sensitive CSV)"/><Entry Text="{Binding Tags}" IsEnabled="{Binding CanEditTags}" SemanticProperties.Description="Menu tags"/>
+            <HorizontalStackLayout HorizontalOptions="End"><Button Text="Save" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButtonStyle}" SemanticProperties.Description="Save menu"/><Button Text="Cancel" Command="{Binding CancelFormCommand}" SemanticProperties.Description="Cancel menu form"/></HorizontalStackLayout>
+          </VerticalStackLayout>
+        </VerticalStackLayout>
+      </ScrollView></Border>
+    </Grid>
+    <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8"><Button Text="Previous" Command="{Binding PreviousPageCommand}" SemanticProperties.Description="Previous menu page"/><Button Grid.Column="1" Text="Next" Command="{Binding NextPageCommand}" SemanticProperties.Description="Next menu page"/><VerticalStackLayout Grid.Column="2"><ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"/><Label Text="{Binding StatusMessage}" LineBreakMode="WordWrap"/></VerticalStackLayout></Grid>
+  </Grid>
+</ContentView>

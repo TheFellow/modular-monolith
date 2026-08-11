@@ -14,7 +14,7 @@ covers the source topic inside the .NET ownership boundary that implements it.
 | `app/domains/readme.md` | [`src/README.md`](../src/README.md) | bounded contexts and surface boundaries |
 | `main/cli/README.md` | [`Mixology.Cli/README.md`](../src/Mixology.Cli/README.md) | System.CommandLine entrypoint |
 | `main/tui/README.md` | [`Mixology.Tui/README.md`](../src/Mixology.Tui/README.md) | Terminal.Gui composition and workspaces |
-| `main/gui/README.md` | [`Mixology.Desktop/README.md`](../src/Mixology.Desktop/README.md) | .NET MAUI MVVM composition and lifecycle |
+| `main/gui/README.md` | [`Mixology.Gui/README.md`](../src/Mixology.Gui/README.md) | .NET MAUI MVVM composition and lifecycle |
 
 ## Foundation and application mechanics
 
@@ -37,7 +37,7 @@ covers the source topic inside the .NET ownership boundary that implements it.
 | `pkg/toolkits/readme.md` | [`src/README.md`](../src/README.md#presentation-surfaces) | toolkit ownership and dependency direction |
 | `pkg/toolkits/cli/readme.md` | [`Mixology.Cli/README.md`](../src/Mixology.Cli/README.md#cli-entrypoint-and-toolkit) | consolidated: System.CommandLine and serializers are used directly |
 | `pkg/toolkits/cli/table/readme.md` | [`Mixology.Cli/README.md`](../src/Mixology.Cli/README.md#run-and-discover) | consolidated: stable command-local text tables replace reflection rendering |
-| `pkg/toolkits/gui/readme.md` | [`Mixology.Toolkits.Desktop/README.md`](../src/Mixology.Toolkits.Desktop/README.md) and [`Mixology.Desktop/README.md`](../src/Mixology.Desktop/README.md) | reusable concurrency separated from .NET MAUI-owned shell/dialogs |
+| `pkg/toolkits/gui/readme.md` | [`Mixology.Toolkits.Desktop/README.md`](../src/Mixology.Toolkits.Desktop/README.md) and [`Mixology.Gui/README.md`](../src/Mixology.Gui/README.md) | reusable concurrency separated from .NET MAUI-owned shell/dialogs |
 | `pkg/toolkits/tui/readme.md` | [`Mixology.Toolkits.Tui/README.md`](../src/Mixology.Toolkits.Tui/README.md) | one cohesive Terminal.Gui mechanics project |
 | `pkg/toolkits/tui/components/readme.md` | [`TUI toolkit: Host and component lifecycle`](../src/Mixology.Toolkits.Tui/README.md#host-and-component-lifecycle) | consolidated |
 | `pkg/toolkits/tui/dialog/readme.md` | [`TUI toolkit: Forms and dialogs`](../src/Mixology.Toolkits.Tui/README.md#forms-and-dialogs) | consolidated |
