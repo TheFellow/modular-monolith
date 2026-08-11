@@ -9,7 +9,8 @@
     "**/bin/**",
     "**/obj/**",
     "external/**",
-    "node_modules/**"
+    "node_modules/**",
+    "src/Mixology.Gui/Resources/Images/*.svg"
   ],
   "ignoreRegExpList": [
     "/\\b[A-Za-z0-9]{20,}\\b/g"
