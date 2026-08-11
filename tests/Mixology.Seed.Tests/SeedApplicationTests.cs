@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +35,47 @@ namespace Mixology.Seed.Tests;
 public sealed partial class SeedApplicationTests
 {
     [Fact]
+    public async Task SuccessfulProcessKeepsDiagnosticsOffStandardError()
+    {
+        string root = Path.Combine(
+            Path.GetTempPath(),
+            "mixology-seed-process-tests",
+            Guid.NewGuid().ToString("N"));
+        string database = Path.Combine(root, "mixology.db");
+        Directory.CreateDirectory(root);
+
+        try
+        {
+            ProcessStartInfo start = new("dotnet")
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+            };
+            start.ArgumentList.Add(typeof(SeedApplication).Assembly.Location);
+            start.Environment[SeedApplication.DatabasePathEnvironmentVariable] = database;
+            using Process process = Process.Start(start)
+                ?? throw new InvalidOperationException("failed to start seed process");
+            Task<string> standardOutput = process.StandardOutput.ReadToEndAsync();
+            Task<string> standardError = process.StandardError.ReadToEndAsync();
+
+            await process.WaitForExitAsync();
+
+            Assert.Equal(0, process.ExitCode);
+            Assert.Equal(string.Empty, await standardError);
+            Assert.Contains(
+                $"mixology --db \"{database}\" drinks list",
+                await standardOutput,
+                StringComparison.Ordinal);
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
     public async Task EmbeddedDatasetSeedsCanonicalStoreAndRestartFailsWithoutDuplicates()
     {
         await using SeedFixture fixture = await SeedFixture.CreateAsync();
@@ -55,7 +97,7 @@ public sealed partial class SeedApplicationTests
 
         Assert.Equal(0, exitCode);
         Assert.Equal(string.Empty, error.ToString());
-        Assert.Equal(ExpectedOutput(), NormalizeIds(output.ToString()));
+        Assert.Equal(ExpectedOutput(fixture.DatabasePath), NormalizeIds(output.ToString()));
 
         await fixture.OpenAsync();
         MixologySession owner = fixture.Session(Actor.Owner);
@@ -142,7 +184,10 @@ public sealed partial class SeedApplicationTests
         SeedDataset dataset = new([first, duplicate], []);
 
         Exception failure = await Assert.ThrowsAnyAsync<Exception>(async () =>
-            await fixture.Get<SeedRunner>().RunAsync(dataset, new StringWriter()));
+            await fixture.Get<SeedRunner>().RunAsync(
+                dataset,
+                new StringWriter(),
+                fixture.DatabasePath));
 
         Assert.True(AppError.IsConflict(failure));
         MixologySession owner = fixture.Session(Actor.Owner);
@@ -215,7 +260,7 @@ public sealed partial class SeedApplicationTests
 
     private static string NormalizeIds(string value) => EntityIdPattern().Replace(value, "<id>");
 
-    private static string ExpectedOutput()
+    private static string ExpectedOutput(string databasePath)
     {
         string[] names =
         [
@@ -265,13 +310,13 @@ public sealed partial class SeedApplicationTests
             "  - 1 published menu",
             string.Empty,
             "View the menu with cost analysis:",
-            "  mixology menus show --id <id> --costs --target-margin 0.7",
+            $"  mixology --db \"{databasePath}\" menus show --id <id> --costs --target-margin 0.7",
             string.Empty,
             "List all drinks:",
-            "  mixology drinks list",
+            $"  mixology --db \"{databasePath}\" drinks list",
             string.Empty,
             "Check inventory:",
-            "  mixology inventory list",
+            $"  mixology --db \"{databasePath}\" inventory list",
         ];
         return string.Join(Environment.NewLine, lines) + Environment.NewLine;
     }
