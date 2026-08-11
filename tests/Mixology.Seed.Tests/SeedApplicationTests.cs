@@ -76,7 +76,7 @@ public sealed partial class SeedApplicationTests
     }
 
     [Fact]
-    public async Task EmbeddedDatasetSeedsCanonicalStoreAndRestartFailsWithoutDuplicates()
+    public async Task EmbeddedDatasetSeedsCanonicalStoreAndRestartIsIdempotent()
     {
         await using SeedFixture fixture = await SeedFixture.CreateAsync();
         StringWriter output = new();
@@ -156,22 +156,18 @@ public sealed partial class SeedApplicationTests
             restartOutput,
             restartError);
 
-        Assert.Equal(1, restartExit);
-        Assert.Equal(
-            $"=== Mixology Seed ==={Environment.NewLine}{Environment.NewLine}" +
-            $"Creating ingredients...{Environment.NewLine}",
-            restartOutput.ToString());
-        Assert.StartsWith(
-            "error: create ingredient \"Tequila Blanco\": ",
-            restartError.ToString(),
-            StringComparison.Ordinal);
+        Assert.Equal(0, restartExit);
+        Assert.Equal(string.Empty, restartError.ToString());
+        Assert.Equal(ExpectedOutput(fixture.DatabasePath), NormalizeIds(restartOutput.ToString()));
 
         await fixture.OpenAsync();
         owner = fixture.Session(Actor.Owner);
         Assert.Equal(18, await fixture.Get<IngredientsModule>()
             .CountAsync(owner, new ListIngredientsRequest()));
-        Assert.Equal(68, await fixture.Get<AuditModule>()
-            .CountAsync(owner, new ListAuditEntriesRequest()));
+        Assert.Equal(6, await fixture.Get<DrinksModule>()
+            .CountAsync(owner, new ListDrinksRequest()));
+        Assert.Equal(1, await fixture.Get<MenusModule>()
+            .CountAsync(owner, new ListMenusRequest(MenuStatus.Published)));
     }
 
     [Fact]
