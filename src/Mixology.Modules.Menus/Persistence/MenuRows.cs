@@ -1,6 +1,8 @@
+using Mixology.Persistence;
+
 namespace Mixology.Modules.Menus.Persistence;
 
-internal sealed class MenuRow
+internal sealed class MenuRow : IRevisionedRow
 {
     public required string Id { get; init; }
     public required string Name { get; set; }
@@ -9,6 +11,7 @@ internal sealed class MenuRow
     public required DateTime CreatedAtUtc { get; set; }
     public DateTime? PublishedAtUtc { get; set; }
     public DateTime? DeletedAtUtc { get; set; }
+    public long Revision { get; set; }
     public List<MenuItemRow> Items { get; } = [];
 }
 

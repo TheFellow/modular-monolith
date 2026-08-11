@@ -170,6 +170,7 @@ public sealed class DrinksCliTests
         await File.WriteAllTextAsync(path, $$"""
             {
               "id": "{{id.Value}}",
+              "revision": 1,
               "name": "Updated Sour",
               "category": "sour",
               "glass": "rocks",

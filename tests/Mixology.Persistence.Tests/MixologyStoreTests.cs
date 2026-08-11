@@ -127,6 +127,49 @@ public sealed class MixologyStoreTests
     }
 
     [Fact]
+    public async Task ChangeMonitorCoalescesExternalCommittedWrites()
+    {
+        await using StoreFixture fixture = new();
+        await fixture.Store.InitializeAsync();
+        await using SqliteChangeMonitor monitor = fixture.Store.MonitorChanges(TimeSpan.FromMilliseconds(10));
+        await monitor.Ready.WaitAsync(TimeSpan.FromSeconds(2));
+
+        await using (SqliteConnection writer = new(new StoreSettings(fixture.DatabasePath).ConnectionString))
+        {
+            await writer.OpenAsync();
+            await using SqliteCommand command = writer.CreateCommand();
+            command.CommandText = "UPDATE store_metadata SET CreatedAtUtc = datetime(CreatedAtUtc, '+1 second') WHERE Id = 1;";
+            _ = await command.ExecuteNonQueryAsync();
+        }
+
+        long epoch = await monitor.Changes.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(2));
+        Assert.Equal(epoch, monitor.Epoch);
+    }
+
+    [Fact]
+    public async Task ChangeMonitorIgnoresRolledBackWrites()
+    {
+        await using StoreFixture fixture = new();
+        await fixture.Store.InitializeAsync();
+        await using SqliteChangeMonitor monitor = fixture.Store.MonitorChanges(TimeSpan.FromMilliseconds(10));
+        await monitor.Ready.WaitAsync(TimeSpan.FromSeconds(2));
+
+        await using (SqliteConnection writer = new(new StoreSettings(fixture.DatabasePath).ConnectionString))
+        {
+            await writer.OpenAsync();
+            await using SqliteTransaction transaction = (SqliteTransaction)await writer.BeginTransactionAsync();
+            await using SqliteCommand command = writer.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = "UPDATE store_metadata SET CreatedAtUtc = datetime(CreatedAtUtc, '+1 second') WHERE Id = 1;";
+            _ = await command.ExecuteNonQueryAsync();
+            await transaction.RollbackAsync();
+        }
+
+        await Assert.ThrowsAsync<TimeoutException>(async () =>
+            await monitor.Changes.ReadAsync().AsTask().WaitAsync(TimeSpan.FromMilliseconds(150)));
+    }
+
+    [Fact]
     public async Task ModelCacheSeparatesDifferentModuleCompositions()
     {
         string root = Path.Combine(Path.GetTempPath(), "mixology-model-cache-tests", Guid.NewGuid().ToString("N"));

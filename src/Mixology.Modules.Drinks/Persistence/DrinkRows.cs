@@ -1,6 +1,8 @@
+using Mixology.Persistence;
+
 namespace Mixology.Modules.Drinks.Persistence;
 
-internal sealed class DrinkRow
+internal sealed class DrinkRow : IRevisionedRow
 {
     public required string Id { get; init; }
     public required string Name { get; set; }
@@ -10,6 +12,7 @@ internal sealed class DrinkRow
     public required string Description { get; set; }
     public required string Status { get; set; }
     public DateTime? DeletedAtUtc { get; set; }
+    public long Revision { get; set; }
     public List<DrinkRecipeIngredientRow> RecipeIngredients { get; } = [];
     public List<DrinkRecipeStepRow> RecipeSteps { get; } = [];
 }

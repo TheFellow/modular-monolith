@@ -143,7 +143,8 @@ public sealed class InventoryQueries(ITagReader tags)
                 reserved,
                 Price(row),
                 new DateTimeOffset(DateTime.SpecifyKind(row.LastUpdatedUtc, DateTimeKind.Utc)),
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {

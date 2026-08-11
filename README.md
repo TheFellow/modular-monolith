@@ -111,9 +111,10 @@ reference process. Cedar filters navigation and workspace actions for the
 selected actor; the shell advertises only routes that are both authorized and
 backed by a registered workspace factory. Every workspace has deterministic
 browse/detail rendering, forms, contextual filter help, cursor paging, stable
-selection, stale-response rejection, and cancellation-aware shutdown. The CLI
-and TUI share the same SQLite file, so writes are visible after either process
-reopens the store.
+selection, stale-response rejection, and cancellation-aware shutdown. CLI,
+TUI, and Desktop share the same SQLite file; committed cross-process writes
+automatically refresh clean thick-client views, while revision tokens reject
+stale saves.
 
 ## Desktop client
 

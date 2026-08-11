@@ -123,7 +123,8 @@ public sealed class IngredientQueries(ITagReader tags)
                 row.DeletedAtUtc is { } deletedAt
                     ? new DateTimeOffset(DateTime.SpecifyKind(deletedAt, DateTimeKind.Utc))
                     : null,
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {

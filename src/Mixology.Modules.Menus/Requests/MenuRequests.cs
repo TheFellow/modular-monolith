@@ -19,11 +19,15 @@ public sealed record CreateMenuRequest(string Name, string Description = "")
     }
 }
 
-public sealed record UpdateMenuRequest(MenuId Id, string Name, string Description = "")
+public sealed record UpdateMenuRequest(MenuId Id, string Name, string Description = "", long Revision = 0)
 {
     public UpdateMenuRequest Normalize()
     {
         RequireMenuId(Id);
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
         CreateMenuRequest normalized = new CreateMenuRequest(Name, Description).Normalize();
         return this with { Name = normalized.Name, Description = normalized.Description };
     }

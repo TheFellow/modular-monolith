@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mixology.Persistence;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Tagging.Persistence;
@@ -27,6 +28,7 @@ public sealed class TaggingModelConfiguration : IModuleModelConfiguration
                 .HasColumnName("value")
                 .UseCollation("BINARY")
                 .IsRequired();
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => new { row.EntityType, row.EntityId });
             entity.HasIndex(row => new { row.Key, row.Value });
         });

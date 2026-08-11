@@ -49,7 +49,8 @@ public sealed record Menu(
     DateTimeOffset CreatedAt,
     DateTimeOffset? PublishedAt,
     DateTimeOffset? DeletedAt,
-    TagCollection Tags)
+    TagCollection Tags,
+    long Revision = 1)
 {
     public EntityUid EntityUid => Id.EntityUid;
     public bool IsDeleted => DeletedAt.HasValue;
@@ -81,6 +82,10 @@ public sealed record Menu(
         Status.Validate();
         ArgumentNullException.ThrowIfNull(Tags);
         Tags.Validate();
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
         return this with
         {
             Name = name,

@@ -234,45 +234,33 @@ public static class InventoryCommands
         command.SetAction((result, cancellationToken) => ExecuteAsync(context, result, async session =>
         {
             IngredientId id = IngredientId.Parse(result.GetRequiredValue(ingredientId));
-            Price unitCost = await ResolveSetCostAsync(
-                session,
-                id,
-                result.GetValue(cost),
-                cancellationToken).ConfigureAwait(false);
+            InventoryStock? current;
+            try
+            {
+                current = await session.GetAsync(id, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (
+                AppError.IsNotFound(exception) && !AppError.IsCancellation(exception))
+            {
+                current = null;
+            }
+
+            string? rawCost = result.GetValue(cost);
+            Price unitCost = !string.IsNullOrWhiteSpace(rawCost)
+                ? Price.Parse(rawCost)
+                : current?.UnitCost ?? new Price(0m, Currency.Usd);
             InventoryStock stock = await session.SetAsync(
                 new SetInventoryRequest(
                     id,
                     Amount.Create(
                         ParseDouble(result.GetRequiredValue(quantity), "quantity"),
                         Unit.Parse(result.GetRequiredValue(unit))),
-                    unitCost),
+                    unitCost,
+                    current?.Revision ?? 0),
                 cancellationToken).ConfigureAwait(false);
             await WriteMutationAsync(context.Output, stock, result.GetValue(json)).ConfigureAwait(false);
         }, cancellationToken));
         return command;
-    }
-
-    private static async Task<Price> ResolveSetCostAsync(
-        IInventoryCommandSession session,
-        IngredientId ingredientId,
-        string? raw,
-        CancellationToken cancellationToken)
-    {
-        if (!string.IsNullOrWhiteSpace(raw))
-        {
-            return Price.Parse(raw);
-        }
-
-        try
-        {
-            InventoryStock current = await session.GetAsync(ingredientId, cancellationToken).ConfigureAwait(false);
-            return current.UnitCost ?? new Price(0m, Currency.Usd);
-        }
-        catch (Exception exception) when (
-            AppError.IsNotFound(exception) && !AppError.IsCancellation(exception))
-        {
-            return new Price(0m, Currency.Usd);
-        }
     }
 
     private static async Task<int> ExecuteAsync(
@@ -383,6 +371,7 @@ public static class InventoryCommands
 
     private static InventoryView ToView(InventoryStock stock) => new(
         stock.Id.Value,
+        stock.Revision,
         stock.IngredientId.Value,
         stock.OnHand.Value,
         stock.Reserved.Value,
@@ -429,6 +418,7 @@ public static class InventoryCommands
 
     private sealed record InventoryView(
         string Id,
+        long Revision,
         string IngredientId,
         double Quantity,
         double Reserved,

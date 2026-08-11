@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mixology.Persistence;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Ingredients.Persistence;
@@ -17,6 +18,7 @@ public sealed class IngredientModelConfiguration : IModuleModelConfiguration
             entity.Property(row => row.Unit).HasColumnName("unit").IsRequired();
             entity.Property(row => row.Description).HasColumnName("description").IsRequired();
             entity.Property(row => row.DeletedAtUtc).HasColumnName("deleted_at_utc");
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => row.Name).IsUnique();
             entity.HasIndex(row => row.Category);
         });

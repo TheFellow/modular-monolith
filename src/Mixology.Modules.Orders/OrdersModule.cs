@@ -58,7 +58,8 @@ public sealed class OrdersModule(
                     null,
                     normalized.Notes,
                     null,
-                    TagCollection.Empty);
+                    TagCollection.Empty,
+                    1);
 
                 // The Go middleware authorizes the proposed pending order before dependency reads.
                 await AuthorizeAsync(context, OrderAuthorization.Place, order).ConfigureAwait(false);
@@ -233,6 +234,7 @@ public sealed class OrdersModule(
                 {
                     Status = OrderStatus.Completed,
                     CompletedAt = timeProvider.GetUtcNow().ToUniversalTime(),
+                    Revision = checked(current.Revision + 1),
                 }).Normalize();
                 CopyLifecycleToRow(completed, row);
                 Record(context, completed, new OrderCompleted(completed));
@@ -269,6 +271,7 @@ public sealed class OrdersModule(
                 {
                     Status = OrderStatus.Cancelled,
                     CompletedAt = null,
+                    Revision = checked(current.Revision + 1),
                 }).Normalize();
                 CopyLifecycleToRow(cancelled, row);
                 Record(context, cancelled, new OrderCancelled(cancelled));
@@ -421,7 +424,8 @@ public sealed class OrdersModule(
                 row.CompletedAtUtc is { } completed ? Utc(completed) : null,
                 row.Notes,
                 row.DeletedAtUtc is { } deleted ? Utc(deleted) : null,
-                TagCollection.Empty).Normalize();
+                TagCollection.Empty,
+                row.Revision).Normalize();
         }
         catch (InvalidError exception)
         {
@@ -449,6 +453,7 @@ public sealed class OrdersModule(
             CompletedAtUtc = order.CompletedAt?.UtcDateTime,
             Notes = order.Notes,
             DeletedAtUtc = order.DeletedAt?.UtcDateTime,
+            Revision = order.Revision,
         };
         for (int position = 0; position < order.Items.Count; position++)
         {

@@ -45,7 +45,7 @@ public sealed class TaggedMutationCoordinatorTests
             fixture.Manager,
             (session, token) => fixture.Ingredients.UpdateAsync(
                 session,
-                new UpdateIngredientRequest(ingredient.Id, Name: "Key Lime"),
+                new UpdateIngredientRequest(ingredient.Id, Name: "Key Lime", Revision: ingredient.Revision),
                 token),
             desired,
             static value => value.EntityUid,
@@ -71,7 +71,7 @@ public sealed class TaggedMutationCoordinatorTests
             fixture.Manager,
             (session, token) => fixture.Ingredients.UpdateAsync(
                 session,
-                new UpdateIngredientRequest(ingredient.Id, Name: "Forbidden Lime"),
+                new UpdateIngredientRequest(ingredient.Id, Name: "Forbidden Lime", Revision: ingredient.Revision),
                 token),
             new TagCollection([new Tag("deny", "yes")]),
             static value => value.EntityUid,
@@ -130,7 +130,7 @@ public sealed class TaggedMutationCoordinatorTests
             fixture.Manager,
             (session, token) => fixture.Ingredients.UpdateAsync(
                 session,
-                new UpdateIngredientRequest(ingredient.Id, Description: "fresh"),
+                new UpdateIngredientRequest(ingredient.Id, Description: "fresh", Revision: ingredient.Revision),
                 token),
             desiredTags: null,
             value =>
@@ -143,7 +143,7 @@ public sealed class TaggedMutationCoordinatorTests
             fixture.Manager,
             (session, token) => fixture.Ingredients.UpdateAsync(
                 session,
-                new UpdateIngredientRequest(ingredient.Id, Description: "freshest"),
+                new UpdateIngredientRequest(ingredient.Id, Description: "freshest", Revision: preserved.Revision),
                 token),
             TagCollection.Empty,
             static value => value.EntityUid,
@@ -202,7 +202,7 @@ public sealed class TaggedMutationCoordinatorTests
             fixture.Manager,
             (session, token) => fixture.Ingredients.UpdateAsync(
                 session,
-                new UpdateIngredientRequest(ingredient.Id, Name: "Mapped Lime"),
+                new UpdateIngredientRequest(ingredient.Id, Name: "Mapped Lime", Revision: ingredient.Revision),
                 token),
             new TagCollection([new Tag("mapped", "yes")]),
             static value => value.EntityUid,

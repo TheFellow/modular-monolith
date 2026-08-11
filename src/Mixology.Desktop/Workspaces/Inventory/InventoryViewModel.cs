@@ -494,7 +494,11 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
         Price cost = string.IsNullOrWhiteSpace(EditorCost)
             ? SelectedInventory?.Stock.UnitCost ?? new Price(0m, Currency.Usd)
             : Price.Parse(EditorCost);
-        return new SetInventoryRequest(ingredientId, quantity, cost).Normalize();
+        return new SetInventoryRequest(
+            ingredientId,
+            quantity,
+            cost,
+            SelectedInventory?.Stock.Revision ?? 0).Normalize();
     }
 
     private static double ParseDouble(string raw, string name) =>

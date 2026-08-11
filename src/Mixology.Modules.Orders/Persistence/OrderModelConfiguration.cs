@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mixology.Persistence;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Orders.Persistence;
@@ -18,6 +19,7 @@ public sealed class OrderModelConfiguration : IModuleModelConfiguration
             entity.Property(row => row.CompletedAtUtc).HasColumnName("completed_at_utc");
             entity.Property(row => row.Notes).HasColumnName("notes");
             entity.Property(row => row.DeletedAtUtc).HasColumnName("deleted_at_utc");
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => row.MenuId);
             entity.HasIndex(row => row.Status);
             entity.HasIndex(row => row.CreatedAtUtc);

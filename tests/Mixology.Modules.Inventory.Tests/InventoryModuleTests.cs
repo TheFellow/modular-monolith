@@ -27,6 +27,33 @@ namespace Mixology.Modules.Inventory.Tests;
 public sealed class InventoryModuleTests
 {
     [Fact]
+    public async Task CreateRevisionCannotOverwriteStockCreatedByAnotherClient()
+    {
+        await using Fixture fixture = await Fixture.CreateAsync();
+        IngredientId ingredientId = IngredientId.New();
+        MixologySession manager = fixture.Session(Actor.Manager);
+        InventoryStock committed = await fixture.Module.SetAsync(
+            manager,
+            new SetInventoryRequest(
+                ingredientId,
+                Amount.Create(10d, Unit.Piece),
+                new Price(1m, Currency.Usd)));
+
+        ConflictError error = await Assert.ThrowsAsync<ConflictError>(() => fixture.Module.SetAsync(
+            manager,
+            new SetInventoryRequest(
+                ingredientId,
+                Amount.Create(99d, Unit.Piece),
+                new Price(2m, Currency.Usd),
+                Revision: 0)));
+
+        Assert.Contains("changed after it was read", error.Message, StringComparison.Ordinal);
+        InventoryStock loaded = await fixture.Module.GetAsync(manager, ingredientId);
+        Assert.Equal(committed.Revision, loaded.Revision);
+        Assert.Equal(10d, loaded.OnHand.Value);
+    }
+
+    [Fact]
     public async Task SetGetListCountAndAdjustUseTheRealSessionPipeline()
     {
         await using Fixture fixture = await Fixture.CreateAsync();

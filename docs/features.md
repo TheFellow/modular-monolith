@@ -116,6 +116,14 @@ appropriate. Corresponding `MIXOLOGY_*` environment values supply defaults,
 and explicit command-line values win. Prometheus export listens on
 `localhost:9090/metrics` only when enabled.
 
+TUI and Desktop keep a dedicated SQLite `data_version` monitor open. Committed
+writes from the CLI or another thick-client process produce a coalesced
+invalidation within roughly 250 ms; the receiving client re-runs its ordinary
+authorized query. Mutable JSON views include a `revision` token. Full updates
+must return that token, and stale saves fail with `Conflict`, so the lossy
+notification is a responsiveness optimization rather than a correctness
+mechanism.
+
 Surface-specific lifecycle and keyboard behavior is documented in the
 [CLI](../src/Mixology.Cli/README.md), [TUI](../src/Mixology.Tui/README.md), and
 [Desktop](../src/Mixology.Desktop/README.md) guides.

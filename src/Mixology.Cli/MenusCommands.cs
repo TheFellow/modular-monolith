@@ -271,7 +271,7 @@ public static class MenusCommands
             {
                 await WriteJsonAsync(
                     context.Output,
-                    new MenuInput(null, "Summer Cocktails", "Refreshing drinks for warm weather"))
+                    new MenuInput(null, 0, "Summer Cocktails", "Refreshing drinks for warm weather"))
                     .ConfigureAwait(false);
                 return 0;
             }
@@ -280,7 +280,7 @@ public static class MenusCommands
             {
                 MenuInput input = UsesStructuredInput(result, stdin, file)
                     ? await ReadInputAsync(context, result, stdin, file, cancellationToken).ConfigureAwait(false)
-                    : new MenuInput(null, result.GetValue(name) ?? string.Empty, string.Empty);
+                    : new MenuInput(null, 0, result.GetValue(name) ?? string.Empty, string.Empty);
                 Menu created = await session.CreateAsync(
                     new CreateMenuRequest(input.Name ?? string.Empty, input.Description ?? string.Empty),
                     cancellationToken).ConfigureAwait(false);
@@ -310,7 +310,7 @@ public static class MenusCommands
             {
                 await WriteJsonAsync(
                     context.Output,
-                    new MenuInput("mnu-...", "Summer Cocktails", "Refreshing drinks for warm weather"))
+                    new MenuInput("mnu-...", 1, "Summer Cocktails", "Refreshing drinks for warm weather"))
                     .ConfigureAwait(false);
                 return 0;
             }
@@ -333,6 +333,7 @@ public static class MenusCommands
                     Menu current = await session.GetAsync(MenuId.Parse(rawId), cancellationToken).ConfigureAwait(false);
                     input = new MenuInput(
                         current.Id.Value,
+                        current.Revision,
                         result.GetValue(name) ?? current.Name,
                         result.GetValue(description) ?? current.Description);
                 }
@@ -341,7 +342,8 @@ public static class MenusCommands
                     new UpdateMenuRequest(
                         MenuId.Parse(input.Id ?? string.Empty),
                         input.Name ?? string.Empty,
-                        input.Description ?? string.Empty),
+                        input.Description ?? string.Empty,
+                        input.Revision),
                     cancellationToken).ConfigureAwait(false);
                 await WriteMutationAsync(context.Output, updated, result.GetValue(json)).ConfigureAwait(false);
             }, cancellationToken).ConfigureAwait(false);
@@ -600,6 +602,7 @@ public static class MenusCommands
 
     private static MenuView ToView(Menu menu) => new(
         menu.Id.Value,
+        menu.Revision,
         menu.Name,
         menu.Description,
         menu.Status.Value,
@@ -674,10 +677,11 @@ public static class MenusCommands
         await output.WriteLineAsync("  --filter 'tags contains \"featured\"'").ConfigureAwait(false);
     }
 
-    private sealed record MenuInput(string? Id, string? Name, string? Description);
+    private sealed record MenuInput(string? Id, long Revision, string? Name, string? Description);
     private sealed record MenuDrinkInput(MenuId MenuId, DrinkId DrinkId);
     private sealed record MenuView(
         string Id,
+        long Revision,
         string Name,
         string Description,
         string Status,

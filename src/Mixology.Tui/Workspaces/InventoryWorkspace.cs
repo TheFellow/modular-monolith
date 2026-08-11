@@ -803,7 +803,7 @@ public sealed class InventoryWorkspace : ITuiWorkspace
         Price cost = rawCost.Length == 0
             ? target.Stock.UnitCost ?? new Price(0m, Currency.Usd)
             : Price.Parse(rawCost);
-        return new SetInventoryRequest(target.Stock.IngredientId, quantity, cost).Normalize();
+        return new SetInventoryRequest(target.Stock.IngredientId, quantity, cost, target.Stock.Revision).Normalize();
     }
 
     private static double ParseDouble(string value, string name) =>

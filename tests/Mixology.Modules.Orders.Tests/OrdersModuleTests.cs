@@ -18,6 +18,7 @@ using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
 using Mixology.Modules.Inventory;
+using Mixology.Modules.Inventory.Models;
 using Mixology.Modules.Inventory.Requests;
 using Mixology.Modules.Menus;
 using Mixology.Modules.Menus.Models;
@@ -50,7 +51,7 @@ public sealed class OrdersModuleTests
                 "  table seven  "));
         await fixture.Ingredients.UpdateAsync(
             fixture.Manager,
-            new UpdateIngredientRequest(ingredient.Id, Name: "London Dry Gin"));
+            new UpdateIngredientRequest(ingredient.Id, Name: "London Dry Gin", Revision: ingredient.Revision));
         Order loaded = await fixture.Orders.GetAsync(fixture.Session(Actor.Sommelier), placed.Id);
 
         IngredientUsage usage = Assert.Single(loaded.IngredientUsage);
@@ -132,7 +133,7 @@ public sealed class OrdersModuleTests
             fixture.Manager,
             new PlaceOrderRequest(draft.Id, [new PlaceOrderItem(drink.Id, 1)])));
 
-        await fixture.Inventory.SetAsync(
+        InventoryStock stocked = await fixture.Inventory.SetAsync(
             fixture.Manager,
             new SetInventoryRequest(
                 ingredient.Id,
@@ -148,7 +149,8 @@ public sealed class OrdersModuleTests
             new SetInventoryRequest(
                 ingredient.Id,
                 Amount.Create(1d, Unit.Milliliter),
-                new Price(1m, Currency.Usd)));
+                new Price(1m, Currency.Usd),
+                stocked.Revision));
 
         await Assert.ThrowsAsync<InvalidError>(() => fixture.Orders.PlaceAsync(
             fixture.Manager,
@@ -420,16 +422,29 @@ public sealed class OrdersModuleTests
             return await Menus.PublishAsync(Manager, menu.Id);
         }
 
-        public Task<Mixology.Modules.Inventory.Models.InventoryStock> SetStockAsync(
+        public async Task<InventoryStock> SetStockAsync(
             IngredientId ingredientId,
             double quantity,
-            Unit unit) =>
-            Inventory.SetAsync(
+            Unit unit)
+        {
+            long revision;
+            try
+            {
+                revision = (await Inventory.GetAsync(Manager, ingredientId)).Revision;
+            }
+            catch (Exception exception) when (AppError.IsNotFound(exception))
+            {
+                revision = 0;
+            }
+
+            return await Inventory.SetAsync(
                 Manager,
                 new SetInventoryRequest(
                     ingredientId,
                     Amount.Create(quantity, unit),
-                    new Price(1m, Currency.Usd)));
+                    new Price(1m, Currency.Usd),
+                    revision));
+        }
 
         public Task<Order> PlaceAsync(MenuId menuId, DrinkId drinkId) => Orders.PlaceAsync(
             Manager,

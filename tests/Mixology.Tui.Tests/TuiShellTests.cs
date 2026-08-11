@@ -1,4 +1,6 @@
+using System.Threading.Channels;
 using Mixology.Kernel.Errors;
+using Mixology.Persistence;
 using Mixology.Presentation.Navigation;
 using Mixology.Toolkits.Tui;
 using Mixology.Tui.Workspaces;
@@ -8,6 +10,31 @@ namespace Mixology.Tui.Tests;
 
 public sealed class TuiShellTests
 {
+    [Fact]
+    public async Task DatabaseInvalidationRefreshesBrowseAndDefersOwnedInput()
+    {
+        FakeChangeSource changes = new();
+        FakeWorkspace dashboard = new(TuiRoutes.Dashboard.Id);
+        await using TuiShell shell = new(
+            Navigation(TuiRoutes.Dashboard),
+            new Dictionary<WorkspaceId, Func<ITuiWorkspace>>
+            {
+                [dashboard.Id] = () => dashboard,
+            },
+            changes);
+        await shell.StartAsync();
+
+        changes.Publish();
+        await WaitUntilAsync(() => dashboard.RefreshCalls == 1);
+        dashboard.SetOwnership(InputOwnership.Edit);
+        changes.Publish();
+        await Task.Delay(50);
+        Assert.Equal(1, dashboard.RefreshCalls);
+
+        dashboard.SetOwnership(InputOwnership.Browse);
+        await WaitUntilAsync(() => dashboard.RefreshCalls == 2);
+    }
+
     [Fact]
     public void CanonicalRoutesKeepReferenceOrderAndOnlyOneThroughSevenShortcuts()
     {
@@ -157,9 +184,15 @@ public sealed class TuiShellTests
         public InputOwnership InputOwnership => Ownership;
         public TuiError? Status => null;
         public List<char> Handled { get; } = [];
+        public int RefreshCalls { get; private set; }
         public event Action? Changed;
         public Task ActivateAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
-        public Task RefreshAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task RefreshAsync(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            RefreshCalls++;
+            return Task.CompletedTask;
+        }
         public string Render(Viewport viewport) => $"content {viewport.Width}x{viewport.Height} instance {instance}";
 
         public bool Handle(char key)
@@ -171,5 +204,30 @@ public sealed class TuiShellTests
         }
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+        public void SetOwnership(InputOwnership ownership)
+        {
+            Ownership = ownership;
+            Changed?.Invoke();
+        }
+    }
+
+    private sealed class FakeChangeSource : IStoreChangeSource
+    {
+        private readonly Channel<long> changes = Channel.CreateUnbounded<long>();
+        private long epoch;
+
+        public ChannelReader<long> Changes => changes.Reader;
+
+        public void Publish() => _ = changes.Writer.TryWrite(Interlocked.Increment(ref epoch));
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(2));
+        while (!condition())
+        {
+            await Task.Delay(10, timeout.Token);
+        }
     }
 }

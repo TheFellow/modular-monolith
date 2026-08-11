@@ -192,7 +192,9 @@ public sealed class HostedTuiRuntime(ITuiRunner? runner = null) : ITuiRuntime
                 session,
                 options.Actor),
         };
-        await using TuiShell shell = new(navigation, workspaces);
+        await using SqliteChangeMonitor changes = host.Services.GetRequiredService<MixologyStore>().MonitorChanges();
+        await changes.Ready.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await using TuiShell shell = new(navigation, workspaces, changes);
         await shell.StartAsync(cancellationToken).ConfigureAwait(false);
         await runner.RunAsync(shell, cancellationToken).ConfigureAwait(false);
     }

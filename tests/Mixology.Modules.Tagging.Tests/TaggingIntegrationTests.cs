@@ -78,7 +78,8 @@ public sealed class TaggingIntegrationTests
                 drink.Category,
                 drink.Glass,
                 drink.Recipe,
-                drink.Description));
+                drink.Description,
+                drink.Revision));
 
         Assert.Equal(["audience=sommelier"], loaded.Tags.Strings());
         Assert.Equal(drink.Id, Assert.Single(filtered).Id);

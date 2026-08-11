@@ -629,7 +629,7 @@ public sealed class MenusWorkspace : ITuiWorkspace
                     new CreateMenuRequest(active["Name"], active["Description"]),
                     active.DesiredTags(TagsField), token),
                 MenusWorkspaceMode.Edit when detail is not null => token => operations.UpdateAsync(
-                    new UpdateMenuRequest(detail.Id, active["Name"], active["Description"]),
+                    new UpdateMenuRequest(detail.Id, active["Name"], active["Description"], detail.Revision),
                     active.DesiredTags(TagsField), token),
                 _ => throw AppError.FailedPrecondition("menu form has no target"),
             };

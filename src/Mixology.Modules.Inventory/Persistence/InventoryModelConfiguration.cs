@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mixology.Persistence;
 using Mixology.Persistence.Model;
 
 namespace Mixology.Modules.Inventory.Persistence;
@@ -18,6 +19,7 @@ public sealed class InventoryModelConfiguration : IModuleModelConfiguration
             entity.Property(row => row.UnitCostAmount).HasColumnName("unit_cost_amount");
             entity.Property(row => row.UnitCostCurrency).HasColumnName("unit_cost_currency");
             entity.Property(row => row.LastUpdatedUtc).HasColumnName("last_updated_utc");
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => row.IngredientId).IsUnique();
             entity.HasIndex(row => row.LastUpdatedUtc);
         });
@@ -31,6 +33,7 @@ public sealed class InventoryModelConfiguration : IModuleModelConfiguration
             entity.Property(row => row.IngredientId).HasColumnName("ingredient_id").IsRequired();
             entity.Property(row => row.Quantity).HasColumnName("quantity");
             entity.Property(row => row.Unit).HasColumnName("unit").IsRequired();
+            entity.UseOptimisticConcurrency();
             entity.HasIndex(row => row.OrderId);
             entity.HasIndex(row => row.IngredientId);
             entity.HasOne<InventoryRow>()

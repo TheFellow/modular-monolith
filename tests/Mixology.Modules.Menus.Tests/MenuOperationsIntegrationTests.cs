@@ -16,6 +16,7 @@ using Mixology.Modules.Ingredients;
 using Mixology.Modules.Ingredients.Models;
 using Mixology.Modules.Ingredients.Requests;
 using Mixology.Modules.Inventory;
+using Mixology.Modules.Inventory.Models;
 using Mixology.Modules.Inventory.Requests;
 using Mixology.Modules.Menus.Models;
 using Mixology.Modules.Menus.Requests;
@@ -33,7 +34,7 @@ public sealed class MenuOperationsIntegrationTests
     {
         await using Fixture fixture = await Fixture.CreateAsync();
         Ingredient ingredient = await fixture.CreateIngredientAsync("Vodka", IngredientCategory.Spirit);
-        await fixture.Inventory.SetAsync(
+        InventoryStock stocked = await fixture.Inventory.SetAsync(
             fixture.Manager,
             new SetInventoryRequest(
                 ingredient.Id,
@@ -63,7 +64,8 @@ public sealed class MenuOperationsIntegrationTests
             new SetInventoryRequest(
                 ingredient.Id,
                 Amount.Create(5d, Unit.Milliliter),
-                new Price(0.05m, Currency.Usd)));
+                new Price(0.05m, Currency.Usd),
+                stocked.Revision));
         ReadinessReport limited = await fixture.Menus.ReadinessAsync(fixture.Manager, menu.Id);
         ReadinessFinding finding = Assert.Single(limited.Findings);
         Assert.Equal(ReadinessSeverity.Warning, finding.Severity);

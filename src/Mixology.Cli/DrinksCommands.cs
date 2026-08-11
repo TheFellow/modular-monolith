@@ -341,7 +341,8 @@ public static class DrinksCommands
         DrinkCategory.Parse(document.Category),
         GlassType.Parse(document.Glass),
         ToRecipe(document.Recipe),
-        document.Description ?? string.Empty);
+        document.Description ?? string.Empty,
+        document.Revision);
 
     private static Recipe ToRecipe(RecipeDocument? document)
     {
@@ -443,6 +444,7 @@ public static class DrinksCommands
 
     private static DrinkView ToView(Drink drink) => new(
         drink.Id.Value,
+        drink.Revision,
         drink.Name,
         EmptyToNull(drink.Category.Value),
         EmptyToNull(drink.Glass.Value),
@@ -475,6 +477,7 @@ public static class DrinksCommands
     private static DrinkDocument UpdateTemplate() => new()
     {
         Id = "drk-3BxsD9vQRgeYqJ8v4bFVvytN1JU",
+        Revision = 1,
         Name = "Margarita",
         Category = DrinkCategory.Cocktail.Value,
         Glass = GlassType.Coupe.Value,
@@ -545,6 +548,7 @@ public static class DrinksCommands
     private sealed class DrinkDocument : CreateDrinkDocument
     {
         public string? Id { get; init; }
+        public long Revision { get; init; }
     }
 
     private sealed class RecipeDocument
@@ -579,6 +583,7 @@ public static class DrinksCommands
 
     private sealed record DrinkView(
         string Id,
+        long Revision,
         string Name,
         string? Category,
         string? Glass,

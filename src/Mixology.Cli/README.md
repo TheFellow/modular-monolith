@@ -41,6 +41,14 @@ of null fields. Machine output goes to stdout; diagnostics and safe errors go to
 stderr. `CliErrorAdapter` maps typed errors to their catalog exit code and
 `UserMessage`; unexpected errors use the generic process failure code.
 
+Replace-style JSON updates for drinks, ingredients, and menus must round-trip
+the positive `revision` returned by a read. Treat it as an opaque concurrency
+token rather than incrementing it in a script. Persistence returns the standard
+typed conflict when another client has committed a newer revision. Flag-based
+ingredient, inventory, and menu mutations load the current revision immediately
+before submission; explicit document input retains read/edit/write conflict
+detection for automation.
+
 ## Adding a command
 
 1. Add or reuse a public request/query in the owning module.

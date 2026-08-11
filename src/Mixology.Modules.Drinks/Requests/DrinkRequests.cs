@@ -38,7 +38,8 @@ public sealed record UpdateDrinkRequest(
     DrinkCategory Category,
     GlassType Glass,
     Recipe Recipe,
-    string Description = "")
+    string Description = "",
+    long Revision = 0)
 {
     public UpdateDrinkRequest Normalize()
     {
@@ -48,6 +49,10 @@ public sealed record UpdateDrinkRequest(
         }
 
         _ = DrinkId.Parse(Id.Value);
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
         CreateDrinkRequest normalized = new CreateDrinkRequest(Name, Category, Glass, Recipe, Description).Normalize();
         return this with
         {

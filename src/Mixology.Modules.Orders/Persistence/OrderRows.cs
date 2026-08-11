@@ -1,6 +1,8 @@
+using Mixology.Persistence;
+
 namespace Mixology.Modules.Orders.Persistence;
 
-internal sealed class OrderRow
+internal sealed class OrderRow : IRevisionedRow
 {
     public required string Id { get; init; }
     public required string MenuId { get; init; }
@@ -9,6 +11,7 @@ internal sealed class OrderRow
     public DateTime? CompletedAtUtc { get; set; }
     public required string Notes { get; init; }
     public DateTime? DeletedAtUtc { get; set; }
+    public long Revision { get; set; }
     public List<OrderItemRow> Items { get; } = [];
     public List<OrderIngredientUsageRow> IngredientUsage { get; } = [];
     public List<OrderBlockedIngredientRow> BlockedIngredients { get; } = [];

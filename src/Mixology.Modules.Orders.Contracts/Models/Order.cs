@@ -63,7 +63,8 @@ public sealed record Order(
     DateTimeOffset? CompletedAt,
     string Notes,
     DateTimeOffset? DeletedAt,
-    TagCollection Tags)
+    TagCollection Tags,
+    long Revision = 1)
 {
     public EntityUid EntityUid => Id.EntityUid;
 
@@ -112,6 +113,10 @@ public sealed record Order(
 
         ArgumentNullException.ThrowIfNull(Tags);
         Tags.Validate();
+        if (Revision <= 0)
+        {
+            throw AppError.Invalid("revision must be greater than zero");
+        }
         return this with
         {
             Items = items,
