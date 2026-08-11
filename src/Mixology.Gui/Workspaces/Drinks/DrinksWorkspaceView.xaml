@@ -7,16 +7,16 @@
              x:Class="Mixology.Gui.Workspaces.Drinks.DrinksWorkspaceView"
              x:DataType="drinks:DrinksWorkspaceViewModel">
   <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24,20,24,18" RowSpacing="12">
-    <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8" IsVisible="{Binding IsBrowse}">
       <VerticalStackLayout>
         <Label Text="Drinks" Style="{StaticResource WorkspaceTitleStyle}" />
         <Label Text="Catalog, recipes, and service details" Style="{StaticResource SecondaryTextStyle}" />
       </VerticalStackLayout>
       <Button Grid.Column="1" Text="Filters" Command="{Binding ToggleFiltersCommand}"
               SemanticProperties.Description="Toggle drink filters" />
-      <Button Grid.Column="2" Text="Refresh" Command="{Binding RefreshCommand}"
+      <Button Grid.Column="2" Text="Refresh" ImageSource="icon_refresh.svg" ContentLayout="Left,8" Command="{Binding RefreshCommand}"
               SemanticProperties.Description="Refresh drinks" />
-      <Button Grid.Column="3" Text="Create drink" Command="{Binding StartCreateCommand}"
+      <Button Grid.Column="3" Text="Create drink" ImageSource="icon_add.svg" ContentLayout="Left,8" Command="{Binding StartCreateCommand}"
               Style="{StaticResource PrimaryButtonStyle}"
               IsVisible="{Binding CreateAction.Visible}" IsEnabled="{Binding CreateAction.Enabled}"
               ToolTipProperties.Text="{Binding CreateAction.DisabledReason}"
@@ -51,8 +51,8 @@
       </VerticalStackLayout>
     </Border>
 
-    <Grid Grid.Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="16">
-      <Grid RowDefinitions="Auto,Auto,*,Auto" Background="{StaticResource SurfaceBrush}">
+    <Grid Grid.Row="2">
+      <Grid RowDefinitions="Auto,Auto,*,Auto" Background="{StaticResource SurfaceBrush}" IsVisible="{Binding IsBrowse}">
         <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
                      SemanticProperties.Description="Loading drinks" />
         <Grid Grid.Row="1" ColumnDefinitions="2*,*,*" Padding="10,8"
@@ -86,10 +86,18 @@
         </Grid>
       </Grid>
 
-      <Border Grid.Column="1" Style="{StaticResource PanelBorderStyle}">
+      <Border Style="{StaticResource PanelBorderStyle}"
+              IsVisible="{Binding IsBrowse, Converter={StaticResource InverseBoolConverter}}">
         <Grid>
           <ScrollView IsVisible="{Binding IsDetail}">
             <VerticalStackLayout Spacing="12">
+              <HorizontalStackLayout Spacing="8">
+                <Button Text="Back" ImageSource="icon_back.svg" ContentLayout="Left,8"
+                        Command="{Binding BackCommand}" SemanticProperties.Description="Back to drinks" />
+                <Button Text="Drinks" Command="{Binding BackCommand}" Style="{StaticResource BreadcrumbButtonStyle}" />
+                <Label Text="›" Style="{StaticResource SecondaryTextStyle}" />
+                <Label Text="{Binding Detail.Name}" Style="{StaticResource SecondaryTextStyle}" />
+              </HorizontalStackLayout>
               <Label Text="{Binding Detail.Name}" FontSize="24" FontAttributes="Bold" />
               <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12">
                 <Label Text="Category" FontAttributes="Bold" />
@@ -134,7 +142,7 @@
                         IsVisible="{Binding EditAction.Visible}" IsEnabled="{Binding EditAction.Enabled}"
                         ToolTipProperties.Text="{Binding EditAction.DisabledReason}" SemanticProperties.Description="Edit drink"
                         SemanticProperties.Hint="{Binding EditAction.AccessibilityDescription}" />
-                <Button Text="Delete" Command="{Binding BeginDeleteCommand}"
+                <Button Text="Delete" ImageSource="icon_delete.svg" ContentLayout="Left,8" Command="{Binding BeginDeleteCommand}"
                         Style="{StaticResource DangerButtonStyle}"
                         IsVisible="{Binding DeleteAction.Visible}" IsEnabled="{Binding DeleteAction.Enabled}"
                         ToolTipProperties.Text="{Binding DeleteAction.DisabledReason}" SemanticProperties.Description="Delete drink"
@@ -146,6 +154,13 @@
           <ScrollView IsVisible="{Binding IsForm}" VerticalScrollBarVisibility="Default"
                         SemanticProperties.Description="Drink editor">
             <VerticalStackLayout Spacing="14">
+              <HorizontalStackLayout Spacing="8">
+                <Button Text="Back" ImageSource="icon_back.svg" ContentLayout="Left,8"
+                        Command="{Binding CancelCommand}" SemanticProperties.Description="Back to drink detail" />
+                <Button Text="Drinks" Command="{Binding CancelCommand}" Style="{StaticResource BreadcrumbButtonStyle}" />
+                <Label Text="›" Style="{StaticResource SecondaryTextStyle}" />
+                <Label Text="{Binding FormTitle}" Style="{StaticResource SecondaryTextStyle}" />
+              </HorizontalStackLayout>
               <Label Text="{Binding FormTitle}" FontSize="24" FontAttributes="Bold" />
               <Label Text="Name" FontAttributes="Bold" />
               <Entry Text="{Binding Name}" SemanticProperties.Description="Drink name" />
@@ -250,7 +265,7 @@
                         SemanticProperties.Description="Replace drink tags"
                         SemanticProperties.Hint="{Binding TagsAction.AccessibilityDescription}" />
               <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
-                <Button Text="Save" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"
+                <Button Text="Save" ImageSource="icon_save.svg" ContentLayout="Left,8" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"
                         SemanticProperties.Description="Save drink" />
                 <Button Text="Cancel" Command="{Binding CancelCommand}" IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"
                         SemanticProperties.Description="Cancel drink edit" />

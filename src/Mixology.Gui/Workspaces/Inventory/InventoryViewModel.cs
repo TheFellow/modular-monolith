@@ -26,6 +26,7 @@ namespace Mixology.Gui.Workspaces.Inventory;
 public enum InventoryEditorMode
 {
     Browse,
+    Detail,
     Adjust,
     Set,
 }
@@ -73,16 +74,25 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
         BeginAdjustCommand = new RelayCommand(BeginAdjust);
         BeginSetCommand = new RelayCommand(BeginSet);
         CancelEditorCommand = new RelayCommand(CancelEditor);
+        BackCommand = new RelayCommand(BackToBrowse);
         SubmitCommand = Command(SubmitAsync);
         ToggleFilterHelpCommand = new RelayCommand(() => ShowFilterHelp = !ShowFilterHelp);
     }
 
     public WorkspaceId Id => NavigationProjector.InventoryWorkspace;
     public string Title => "Inventory";
-    public bool IsDirty => EditorMode != InventoryEditorMode.Browse && EditorDirty;
-    public bool IsEditorVisible => EditorMode != InventoryEditorMode.Browse;
+    public bool IsDirty => IsEditorVisible && EditorDirty;
+    public bool IsBrowse => EditorMode == InventoryEditorMode.Browse;
+    public bool IsDetail => EditorMode == InventoryEditorMode.Detail;
+    public bool IsEditorVisible => EditorMode is InventoryEditorMode.Adjust or InventoryEditorMode.Set;
     public bool IsAdjustEditor => EditorMode == InventoryEditorMode.Adjust;
     public bool IsSetEditor => EditorMode == InventoryEditorMode.Set;
+    public string PageTitle => EditorMode switch
+    {
+        InventoryEditorMode.Adjust => "Adjust inventory",
+        InventoryEditorMode.Set => "Set inventory",
+        _ => SelectedInventory?.Name ?? "Inventory item",
+    };
     public ObservableCollection<InventoryListItemViewModel> Items { get; } = [];
     public IReadOnlyList<string> Units { get; } = Unit.All.Select(static value => value.Value).ToArray();
     public IReadOnlyList<string> Reasons { get; } = AdjustmentReason.All.Select(static value => value.Value).ToArray();
@@ -93,6 +103,7 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
     public IRelayCommand BeginAdjustCommand { get; }
     public IRelayCommand BeginSetCommand { get; }
     public IRelayCommand CancelEditorCommand { get; }
+    public IRelayCommand BackCommand { get; }
     public IAsyncRelayCommand SubmitCommand { get; }
     public IRelayCommand ToggleFilterHelpCommand { get; }
 
@@ -230,9 +241,12 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
 
     partial void OnEditorModeChanged(InventoryEditorMode value)
     {
+        OnPropertyChanged(nameof(IsBrowse));
+        OnPropertyChanged(nameof(IsDetail));
         OnPropertyChanged(nameof(IsEditorVisible));
         OnPropertyChanged(nameof(IsAdjustEditor));
         OnPropertyChanged(nameof(IsSetEditor));
+        OnPropertyChanged(nameof(PageTitle));
         OnPropertyChanged(nameof(IsDirty));
     }
 
@@ -278,7 +292,7 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
         // Detail selection can complete synchronously in tests and fast local databases; its
         // resource projection must win over the collection-level capability projection.
         PublishActions(outcome.Actions);
-        SelectedItem = selected is { } id ? Items.FirstOrDefault(item => item.Id == id) : Items.FirstOrDefault();
+        SelectedItem = selected is { } id ? Items.FirstOrDefault(item => item.Id == id) : null;
         next = outcome.Page.Next;
         HasNextPage = !next.IsEmpty;
         HasPreviousPage = history.Count > 0;
@@ -315,6 +329,13 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
                 await dispatcher.InvokeAsync(() =>
                 {
                     SelectedInventory = outcome.Inventory;
+                    OnPropertyChanged(nameof(PageTitle));
+                    if (!IsEditorVisible)
+                    {
+                        EditorMode = outcome.Inventory is null
+                            ? InventoryEditorMode.Browse
+                            : InventoryEditorMode.Detail;
+                    }
                     PublishActions(outcome.Actions);
                     PublishError(outcome.Error);
                 }).ConfigureAwait(false);
@@ -400,14 +421,27 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
 
     private void CancelEditor()
     {
-        EditorMode = InventoryEditorMode.Browse;
+        EditorMode = SelectedInventory is null ? InventoryEditorMode.Browse : InventoryEditorMode.Detail;
         EditorDirty = false;
+        PublishError(null);
+    }
+
+    private void BackToBrowse()
+    {
+        if (IsSubmitting || IsDirty)
+        {
+            return;
+        }
+
+        SelectedInventory = null;
+        SelectedItem = null;
+        EditorMode = InventoryEditorMode.Browse;
         PublishError(null);
     }
 
     public async Task SubmitAsync(CancellationToken token = default)
     {
-        if (IsSubmitting || EditorMode == InventoryEditorMode.Browse || SelectedInventory is null)
+        if (IsSubmitting || !IsEditorVisible || SelectedInventory is null)
         {
             return;
         }
@@ -548,7 +582,7 @@ public sealed partial class InventoryViewModel : ObservableObject, IDesktopWorks
 
     private void MarkDirty()
     {
-        if (!suppressDirty && EditorMode != InventoryEditorMode.Browse)
+        if (!suppressDirty && IsEditorVisible)
         {
             EditorDirty = true;
         }

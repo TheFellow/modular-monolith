@@ -98,6 +98,7 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
         DismissConfirmationCommand = new RelayCommand(() => Mode = OrderDesktopMode.Detail);
         CompleteCommand = new AsyncRelayCommand(CompleteAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
         CancelOrderCommand = new AsyncRelayCommand(CancelOrderAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
+        BackCommand = new RelayCommand(BackToBrowse);
     }
 
     public static Func<IDesktopWorkspace> CreateFactory(
@@ -119,6 +120,7 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
     public bool IsPlace => Mode == OrderDesktopMode.Place;
     public bool IsCompleteConfirmation => Mode == OrderDesktopMode.CompleteConfirmation;
     public bool IsCancelConfirmation => Mode == OrderDesktopMode.CancelConfirmation;
+    public string PageTitle => Mode == OrderDesktopMode.Place ? "Place order" : Detail?.Id.Value ?? "Order";
     public bool CanPlace => Enabled(OrderActionProjector.PlaceAction);
     public bool CanComplete => Enabled(OrderActionProjector.CompleteAction);
     public bool CanCancel => Enabled(OrderActionProjector.CancelAction);
@@ -143,11 +145,12 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
     public IRelayCommand DismissConfirmationCommand { get; }
     public IAsyncRelayCommand CompleteCommand { get; }
     public IAsyncRelayCommand CancelOrderCommand { get; }
+    public IRelayCommand BackCommand { get; }
     public Exception? Error { get; private set; }
 
     public OrderDesktopMode Mode { get => mode; private set { if (SetProperty(ref mode, value)) { OnPropertyChanged(nameof(IsBrowse)); OnPropertyChanged(nameof(IsDetail)); OnPropertyChanged(nameof(IsPlace)); OnPropertyChanged(nameof(IsCompleteConfirmation)); OnPropertyChanged(nameof(IsCancelConfirmation)); } } }
     public OrderRowViewModel? Selected { get => selected; set { if (SetProperty(ref selected, value)) { active = SelectAsync(value); } } }
-    public Order? Detail { get => detail; private set => SetProperty(ref detail, value); }
+    public Order? Detail { get => detail; private set { if (SetProperty(ref detail, value)) { OnPropertyChanged(nameof(PageTitle)); } } }
 
     [ObservableProperty]
     public partial string FilterStatus { get; set; } = "all";
@@ -304,6 +307,17 @@ public sealed partial class OrdersViewModel : ObservableObject, IDesktopWorkspac
     }
 
     private void CancelPlace() { PlaceLines.Clear(); SetDirty(false); Mode = Detail is null ? OrderDesktopMode.Browse : OrderDesktopMode.Detail; }
+
+    private void BackToBrowse()
+    {
+        if (IsSubmitting || IsDirty)
+        {
+            return;
+        }
+
+        Selected = null;
+        Mode = OrderDesktopMode.Browse;
+    }
 
     private void RebuildDrinks(OrderMenuOption? selectedMenu)
     {

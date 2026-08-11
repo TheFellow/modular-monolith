@@ -81,6 +81,12 @@
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
       </Style>
+      <Style x:Key="BreadcrumbButtonStyle" TargetType="Button">
+        <Setter Property="MinimumHeightRequest" Value="32" />
+        <Setter Property="Padding" Value="6,2" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource AccentColor}" />
+      </Style>
       <Style x:Key="PrimaryButtonStyle" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource AccentColor}" />
         <Setter Property="TextColor" Value="#202020" />

@@ -23,6 +23,7 @@ namespace Mixology.Gui.Workspaces.Ingredients;
 public enum IngredientEditorMode
 {
     Browse,
+    Detail,
     Create,
     Edit,
     Retire,
@@ -71,13 +72,14 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
         BeginEditCommand = new RelayCommand(BeginEdit);
         BeginRetireCommand = new RelayCommand(BeginRetire);
         CancelEditorCommand = new RelayCommand(CancelEditor);
+        BackCommand = new RelayCommand(BackToBrowse);
         SubmitCommand = Command(SubmitAsync);
         ToggleFilterHelpCommand = new RelayCommand(() => ShowFilterHelp = !ShowFilterHelp);
     }
 
     public WorkspaceId Id => NavigationProjector.IngredientsWorkspace;
     public string Title => "Ingredients";
-    public bool IsDirty => EditorMode != IngredientEditorMode.Browse && EditorDirty;
+    public bool IsDirty => IsEditorVisible && EditorDirty;
     public ObservableCollection<IngredientListItemViewModel> Items { get; } = [];
     public IReadOnlyList<string> Categories { get; } = IngredientCategory.All.Select(static value => value.Value).ToArray();
     public IReadOnlyList<string> Units { get; } = Unit.All.Select(static value => value.Value).ToArray();
@@ -89,6 +91,7 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
     public IRelayCommand BeginEditCommand { get; }
     public IRelayCommand BeginRetireCommand { get; }
     public IRelayCommand CancelEditorCommand { get; }
+    public IRelayCommand BackCommand { get; }
     public IAsyncRelayCommand SubmitCommand { get; }
     public IRelayCommand ToggleFilterHelpCommand { get; }
 
@@ -169,9 +172,18 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
     public partial string TagsDisabledReason { get; set; } = string.Empty;
 
     public Exception? Error { get; private set; }
-    public bool IsEditorVisible => EditorMode != IngredientEditorMode.Browse;
+    public bool IsBrowse => EditorMode == IngredientEditorMode.Browse;
+    public bool IsDetail => EditorMode == IngredientEditorMode.Detail;
+    public bool IsEditorVisible => EditorMode is IngredientEditorMode.Create or IngredientEditorMode.Edit or IngredientEditorMode.Retire;
     public bool IsRetireEditor => EditorMode == IngredientEditorMode.Retire;
     public bool IsIngredientEditor => EditorMode is IngredientEditorMode.Create or IngredientEditorMode.Edit;
+    public string PageTitle => EditorMode switch
+    {
+        IngredientEditorMode.Create => "New ingredient",
+        IngredientEditorMode.Edit => "Edit ingredient",
+        IngredientEditorMode.Retire => "Retire ingredient",
+        _ => SelectedIngredient?.Name ?? "Ingredient",
+    };
 
     public static Func<IDesktopWorkspace> CreateFactory(
         IngredientsModule ingredients,
@@ -230,9 +242,12 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
 
     partial void OnEditorModeChanged(IngredientEditorMode value)
     {
+        OnPropertyChanged(nameof(IsBrowse));
+        OnPropertyChanged(nameof(IsDetail));
         OnPropertyChanged(nameof(IsEditorVisible));
         OnPropertyChanged(nameof(IsRetireEditor));
         OnPropertyChanged(nameof(IsIngredientEditor));
+        OnPropertyChanged(nameof(PageTitle));
         OnPropertyChanged(nameof(IsDirty));
     }
 
@@ -273,7 +288,7 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
         // Publish collection-level capabilities first. Selecting the row starts a detail
         // projection synchronously, and its resource-specific result must be the last writer.
         PublishActions(outcome.Actions);
-        SelectedItem = selected is { } id ? Items.FirstOrDefault(item => item.Id == id) : Items.FirstOrDefault();
+        SelectedItem = selected is { } id ? Items.FirstOrDefault(item => item.Id == id) : null;
         next = outcome.Page.Next;
         HasNextPage = !next.IsEmpty;
         HasPreviousPage = history.Count > 0;
@@ -302,6 +317,13 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
                 await dispatcher.InvokeAsync(() =>
                 {
                     SelectedIngredient = outcome.Ingredient;
+                    OnPropertyChanged(nameof(PageTitle));
+                    if (!IsEditorVisible)
+                    {
+                        EditorMode = outcome.Ingredient is null
+                            ? IngredientEditorMode.Browse
+                            : IngredientEditorMode.Detail;
+                    }
                     PublishActions(outcome.Actions);
                     PublishError(outcome.Error);
                 }).ConfigureAwait(false);
@@ -400,14 +422,27 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
 
     private void CancelEditor()
     {
-        EditorMode = IngredientEditorMode.Browse;
+        EditorMode = SelectedIngredient is null ? IngredientEditorMode.Browse : IngredientEditorMode.Detail;
         EditorDirty = false;
+        PublishError(null);
+    }
+
+    private void BackToBrowse()
+    {
+        if (IsSubmitting || IsDirty)
+        {
+            return;
+        }
+
+        SelectedIngredient = null;
+        SelectedItem = null;
+        EditorMode = IngredientEditorMode.Browse;
         PublishError(null);
     }
 
     public async Task SubmitAsync(CancellationToken token = default)
     {
-        if (IsSubmitting || EditorMode == IngredientEditorMode.Browse)
+        if (IsSubmitting || !IsEditorVisible)
         {
             return;
         }
@@ -522,7 +557,7 @@ public sealed partial class IngredientsViewModel : ObservableObject, IDesktopWor
 
     private void MarkDirty()
     {
-        if (!suppressDirty && EditorMode != IngredientEditorMode.Browse)
+        if (!suppressDirty && IsEditorVisible)
         {
             EditorDirty = true;
         }

@@ -97,6 +97,7 @@ public sealed class DrinksWorkspaceViewModel : ObservableObject, IDesktopWorkspa
         ConfirmDeleteCommand = new AsyncRelayCommand(ConfirmDeleteAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
         SaveCommand = new AsyncRelayCommand(SaveAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
         CancelCommand = new RelayCommand(Cancel);
+        BackCommand = new RelayCommand(BackToBrowse);
         ToggleFiltersCommand = new RelayCommand(() => ShowFilters = !ShowFilters);
         ToggleFilterHelpCommand = new RelayCommand(() => ShowFilterHelp = !ShowFilterHelp);
         RemoveIngredientCommand = new RelayCommand<RecipeIngredientViewModel>(RemoveIngredient);
@@ -168,6 +169,8 @@ public sealed class DrinksWorkspaceViewModel : ObservableObject, IDesktopWorkspa
 
     public IRelayCommand CancelCommand { get; }
 
+    public IRelayCommand BackCommand { get; }
+
     public IRelayCommand ToggleFiltersCommand { get; }
 
     public IRelayCommand ToggleFilterHelpCommand { get; }
@@ -197,6 +200,10 @@ public sealed class DrinksWorkspaceViewModel : ObservableObject, IDesktopWorkspa
             OnPropertyChanged(nameof(FormTitle));
             OnPropertyChanged(nameof(CanEditTags));
             OnPropertyChanged(nameof(CanReplaceTags));
+            if (value != DrinksDesktopMode.Browse)
+            {
+                ShowFilters = false;
+            }
         }
     }
 
@@ -558,6 +565,20 @@ public sealed class DrinksWorkspaceViewModel : ObservableObject, IDesktopWorkspa
         StatusMessage = string.Empty;
     }
 
+    private void BackToBrowse()
+    {
+        if (IsSubmitting || IsDirty)
+        {
+            return;
+        }
+
+        Detail = null;
+        SelectedItem = null;
+        Mode = DrinksDesktopMode.Browse;
+        Error = null;
+        StatusMessage = string.Empty;
+    }
+
     public async ValueTask DisposeAsync()
     {
         Task[] pending;
@@ -623,7 +644,7 @@ public sealed class DrinksWorkspaceViewModel : ObservableObject, IDesktopWorkspa
         next = outcome.Page.Next;
         PublishActions(outcome.Actions);
         SetError(null);
-        SelectedItem = Items.FirstOrDefault(value => value.Id == retained) ?? Items.FirstOrDefault();
+        SelectedItem = Items.FirstOrDefault(value => value.Id == retained);
         OnPagingChanged();
     }
 

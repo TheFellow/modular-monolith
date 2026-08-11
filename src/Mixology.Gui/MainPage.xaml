@@ -19,7 +19,9 @@
         <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Navigation}">
           <BindableLayout.ItemTemplate>
             <DataTemplate x:DataType="navigation:DesktopNavigationItemViewModel">
-              <Button Text="{Binding DisplayLabel}"
+              <Button Text="{Binding Label}"
+                      ImageSource="{Binding IconSource}"
+                      ContentLayout="Left,12"
                       Command="{Binding OpenCommand}"
                       Style="{StaticResource NavigationButtonStyle}"
                       SemanticProperties.Description="{Binding Label}">

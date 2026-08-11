@@ -14,7 +14,7 @@ public sealed partial class DesktopNavigationItemViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(open);
         Id = item.Id;
         Label = item.Label;
-        DisplayLabel = $"{Glyph(item.Id)}   {item.Label}";
+        IconSource = Icon(item.Id);
         OpenCommand = new AsyncRelayCommand(
             token => open(this, token),
             AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
@@ -24,24 +24,24 @@ public sealed partial class DesktopNavigationItemViewModel : ObservableObject
 
     public string Label { get; }
 
-    public string DisplayLabel { get; }
+    public string IconSource { get; }
 
     [ObservableProperty]
     public partial bool IsActive { get; set; }
 
     public IAsyncRelayCommand OpenCommand { get; }
 
-    private static string Glyph(WorkspaceId id) => id.Value switch
+    private static string Icon(WorkspaceId id) => id.Value switch
     {
-        "dashboard" => "▦",
-        "drinks" => "◈",
-        "ingredients" => "◆",
-        "inventory" => "▤",
-        "menus" => "▧",
-        "orders" => "▣",
-        "audit" => "▥",
-        "tags" => "◇",
-        _ => "•",
+        "dashboard" => "icon_dashboard.svg",
+        "drinks" => "icon_drinks.svg",
+        "ingredients" => "icon_ingredients.svg",
+        "inventory" => "icon_inventory.svg",
+        "menus" => "icon_menus.svg",
+        "orders" => "icon_orders.svg",
+        "audit" => "icon_audit.svg",
+        "tags" => "icon_tags.svg",
+        _ => "icon_dashboard.svg",
     };
 }
 

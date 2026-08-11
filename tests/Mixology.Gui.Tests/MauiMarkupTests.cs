@@ -42,6 +42,25 @@ public sealed class MauiMarkupTests
 
         Assert.NotEmpty(document.Descendants(Maui + "Button"));
         Assert.Single(document.Descendants(), element => element.Name.LocalName == "WorkspaceViewHost");
+        Assert.Contains(document.Descendants(Maui + "Button"), button =>
+            ((string?)button.Attribute("ImageSource"))?.Contains("IconSource", StringComparison.Ordinal) == true);
+    }
+
+    [Theory]
+    [InlineData("Audit/AuditView.xaml")]
+    [InlineData("Drinks/DrinksWorkspaceView.xaml")]
+    [InlineData("Ingredients/IngredientsView.xaml")]
+    [InlineData("Inventory/InventoryView.xaml")]
+    [InlineData("Menus/MenusView.xaml")]
+    [InlineData("Orders/OrdersView.xaml")]
+    public void CatalogWorkspacesUseCommittedBrowseAndBreadcrumbDetailPages(string relativePath)
+    {
+        XDocument document = XDocument.Load(ProjectPath("Workspaces", relativePath));
+
+        Assert.Contains(document.Descendants(Maui + "Button"), button =>
+            (string?)button.Attribute("Text") == "Back" && button.Attribute("Command") is not null);
+        Assert.DoesNotContain(document.Descendants(Maui + "Grid"), grid =>
+            (string?)grid.Attribute("ColumnDefinitions") is "2*,3*" or "3*,2*");
     }
 
     [Fact]

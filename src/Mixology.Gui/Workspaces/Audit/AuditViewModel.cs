@@ -67,6 +67,7 @@ public sealed partial class AuditViewModel : ObservableObject, IDesktopWorkspace
         ApplyFilterCommand = new AsyncRelayCommand(ApplyFilterAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
         NextPageCommand = new AsyncRelayCommand(NextPageAsync, CanMoveNext);
         PreviousPageCommand = new AsyncRelayCommand(PreviousPageAsync, CanMovePrevious);
+        BackCommand = new RelayCommand(() => Selected = null);
     }
 
     public WorkspaceId Id => NavigationProjector.AuditWorkspace;
@@ -81,6 +82,9 @@ public sealed partial class AuditViewModel : ObservableObject, IDesktopWorkspace
     public IAsyncRelayCommand ApplyFilterCommand { get; }
     public IAsyncRelayCommand NextPageCommand { get; }
     public IAsyncRelayCommand PreviousPageCommand { get; }
+    public IRelayCommand BackCommand { get; }
+    public bool IsBrowse => Selected is null;
+    public bool IsDetail => Selected is not null;
     public Exception? Error { get; private set; }
 
     [ObservableProperty]
@@ -122,6 +126,9 @@ public sealed partial class AuditViewModel : ObservableObject, IDesktopWorkspace
         {
             Selected = null;
         }
+
+        OnPropertyChanged(nameof(IsBrowse));
+        OnPropertyChanged(nameof(IsDetail));
     }
 
     public static Func<IDesktopWorkspace> CreateFactory(
@@ -270,8 +277,7 @@ public sealed partial class AuditViewModel : ObservableObject, IDesktopWorkspace
             Rows.Add(row);
         }
 
-        Selected = Rows.FirstOrDefault(row => row.CanView && row.Id == selectedId)
-            ?? Rows.FirstOrDefault(static row => row.CanView);
+        Selected = Rows.FirstOrDefault(row => row.CanView && row.Id == selectedId);
         next = outcome.Next;
         Error = null;
         IsLoading = false;

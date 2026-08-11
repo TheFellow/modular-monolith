@@ -79,6 +79,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
         BeginDeleteCommand = new RelayCommand(() => Mode = MenuDesktopMode.DeleteConfirmation);
         CancelDeleteCommand = new RelayCommand(() => Mode = MenuDesktopMode.Detail);
         CancelFormCommand = new RelayCommand(CancelForm);
+        BackCommand = new RelayCommand(BackToBrowse);
         SaveCommand = new AsyncRelayCommand(SaveAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
         DeleteCommand = new AsyncRelayCommand(DeleteAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
         AddDrinkCommand = new AsyncRelayCommand(AddDrinkAsync, AsyncRelayCommandOptions.FlowExceptionsToTaskScheduler);
@@ -105,6 +106,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     public bool IsDetail => Mode is MenuDesktopMode.Detail or MenuDesktopMode.DeleteConfirmation;
     public bool IsForm => Mode is MenuDesktopMode.Create or MenuDesktopMode.Edit;
     public bool IsDeleteConfirmation => Mode == MenuDesktopMode.DeleteConfirmation;
+    public string PageTitle => Mode == MenuDesktopMode.Create ? "New menu" : Detail?.Name ?? "Menu";
     public bool CanCreate => Enabled(MenuActionProjector.CreateAction);
     public bool CanEdit => Enabled(MenuActionProjector.EditAction);
     public bool CanDelete => Enabled(MenuActionProjector.DeleteAction);
@@ -131,6 +133,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     public IRelayCommand BeginDeleteCommand { get; }
     public IRelayCommand CancelDeleteCommand { get; }
     public IRelayCommand CancelFormCommand { get; }
+    public IRelayCommand BackCommand { get; }
     public IAsyncRelayCommand SaveCommand { get; }
     public IAsyncRelayCommand DeleteCommand { get; }
     public IAsyncRelayCommand AddDrinkCommand { get; }
@@ -142,7 +145,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
 
     public MenuDesktopMode Mode { get => mode; private set { if (SetProperty(ref mode, value)) { NotifyMode(); } } }
     public MenuRowViewModel? Selected { get => selected; set { if (SetProperty(ref selected, value)) { active = SelectAsync(value); } } }
-    public Menu? Detail { get => detail; private set => SetProperty(ref detail, value); }
+    public Menu? Detail { get => detail; private set { if (SetProperty(ref detail, value)) { OnPropertyChanged(nameof(PageTitle)); } } }
 
     [ObservableProperty]
     public partial string FilterStatus { get; set; } = "all";
@@ -334,6 +337,17 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
         SetDirty(false); Mode = Detail is null ? MenuDesktopMode.Browse : MenuDesktopMode.Detail;
     }
 
+    private void BackToBrowse()
+    {
+        if (IsSubmitting || IsDirty)
+        {
+            return;
+        }
+
+        Selected = null;
+        Mode = MenuDesktopMode.Browse;
+    }
+
     private async Task SaveAsync()
     {
         try
@@ -495,7 +509,7 @@ public sealed partial class MenusViewModel : ObservableObject, IDesktopWorkspace
     private static Exception Safe(Exception exception, string operation) => AppError.Find(exception) is not null || AppError.IsCancellation(exception) ? exception : AppError.Internal(operation, exception);
     private void PublishError(Exception exception) { Error = exception; IsLoading = IsSubmitting = false; StatusMessage = AppError.Find(exception)?.UserMessage ?? "internal error"; NotifyPaging(); }
     private void NotifyPaging() { NextPageCommand.NotifyCanExecuteChanged(); PreviousPageCommand.NotifyCanExecuteChanged(); }
-    private void NotifyMode() { OnPropertyChanged(nameof(IsBrowse)); OnPropertyChanged(nameof(IsDetail)); OnPropertyChanged(nameof(IsForm)); OnPropertyChanged(nameof(IsDeleteConfirmation)); OnPropertyChanged(nameof(CanEditTags)); }
+    private void NotifyMode() { OnPropertyChanged(nameof(IsBrowse)); OnPropertyChanged(nameof(IsDetail)); OnPropertyChanged(nameof(IsForm)); OnPropertyChanged(nameof(IsDeleteConfirmation)); OnPropertyChanged(nameof(CanEditTags)); OnPropertyChanged(nameof(PageTitle)); }
     private void NotifyActions() { OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanDelete)); OnPropertyChanged(nameof(CanTags)); OnPropertyChanged(nameof(CanEditTags)); OnPropertyChanged(nameof(CanAddDrink)); OnPropertyChanged(nameof(CanRemoveDrink)); OnPropertyChanged(nameof(CanPublish)); OnPropertyChanged(nameof(CanDraft)); OnPropertyChanged(nameof(CanAnalyze)); }
 
     private sealed record MenuLoadOutcome(Page<Menu>? Page, IReadOnlyList<Drink> Drinks, IReadOnlyList<ActionState> Actions, Exception? Error, MenuMutationOutcome? Detail = null);

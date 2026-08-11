@@ -46,10 +46,14 @@ public sealed class IngredientInventoryViewModelTests
         await newRefresh;
         stale.SetResult(new Page<Ingredient>([first], default));
         await oldRefresh;
+        Assert.True(viewModel.IsBrowse);
+        Assert.Null(viewModel.SelectedItem);
+        viewModel.SelectedItem = Assert.Single(viewModel.Items);
         await UntilAsync(() => viewModel.SelectedIngredient?.Id == current.Id);
 
         Assert.Equal(current.Id, Assert.Single(viewModel.Items).Id);
         Assert.Equal(current.Id, viewModel.SelectedItem?.Id);
+        Assert.True(viewModel.IsDetail);
     }
 
     [Fact]
@@ -60,6 +64,7 @@ public sealed class IngredientInventoryViewModelTests
         FakeIngredients operations = new([gin, vodka]);
         await using IngredientsViewModel viewModel = new(operations);
         await viewModel.ActivateAsync();
+        viewModel.SelectedItem = viewModel.Items[0];
         await UntilAsync(() => viewModel.SelectedIngredient is not null && viewModel.CanEdit && viewModel.CanRetire);
 
         viewModel.BeginEditCommand.Execute(null);
@@ -114,6 +119,7 @@ public sealed class IngredientInventoryViewModelTests
         FakeInventory operations = new([row]) { Adjust = (_, _, _) => completion.Task };
         await using InventoryViewModel viewModel = new(operations);
         await viewModel.ActivateAsync();
+        viewModel.SelectedItem = Assert.Single(viewModel.Items);
         await UntilAsync(() => viewModel.SelectedInventory is not null && viewModel.CanAdjust);
         viewModel.BeginAdjustCommand.Execute(null);
         viewModel.EditorDelta = string.Empty;
@@ -205,6 +211,7 @@ public sealed class IngredientInventoryViewModelTests
         };
         IngredientsViewModel viewModel = new(operations);
         await viewModel.ActivateAsync();
+        viewModel.SelectedItem = Assert.Single(viewModel.Items);
         await started.Task;
 
         await viewModel.DisposeAsync();
@@ -251,6 +258,7 @@ public sealed class IngredientInventoryViewModelTests
             Actor.Manager);
         await using InventoryViewModel inventoryViewModel = Assert.IsType<InventoryViewModel>(inventoryFactory());
         await inventoryViewModel.ActivateAsync();
+        inventoryViewModel.SelectedItem = Assert.Single(inventoryViewModel.Items);
         await UntilAsync(() => inventoryViewModel.SelectedInventory is not null && inventoryViewModel.CanAdjust);
         Assert.True(inventoryViewModel.CanAdjust, inventoryViewModel.AdjustDisabledReason);
         inventoryViewModel.BeginAdjustCommand.Execute(null);
