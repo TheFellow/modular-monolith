@@ -65,11 +65,11 @@ public sealed class MenuActionProjector(IEntityAuthorizer authorizer)
                             Require(principal, MenuAuthorization.Tag, resource)),
                         new ActionControl(
                             AddDrinkAction,
-                            Require(principal, MenuAuthorization.AddDrink, resource),
+                            Require(principal, MenuAuthorization.DrinkAdd, resource),
                             [draftOnly]),
                         new ActionControl(
                             RemoveDrinkAction,
-                            Require(principal, MenuAuthorization.RemoveDrink, resource),
+                            Require(principal, MenuAuthorization.DrinkRemove, resource),
                             [draftOnly, HasDrinkCondition(selected)]),
                         new ActionControl(
                             PublishAction,

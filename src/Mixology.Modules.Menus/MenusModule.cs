@@ -147,13 +147,13 @@ public sealed class MenusModule(
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(request);
         return session.ExecuteAsync(
-            Command(MenuAuthorization.AddDrink),
+            Command(MenuAuthorization.DrinkAdd),
             async context =>
             {
                 AddMenuItemRequest normalized = request.Normalize();
                 await AuthorizePatchAsync(
                     context,
-                    MenuAuthorization.AddDrink,
+                    MenuAuthorization.DrinkAdd,
                     normalized.MenuId).ConfigureAwait(false);
                 _ = await operations.GetDrinkAsync(
                     context.Session!,
@@ -186,7 +186,7 @@ public sealed class MenusModule(
                     Items = [.. current.Items, item],
                     Revision = checked(current.Revision + 1),
                 }).Normalize();
-                await AuthorizeAsync(context, MenuAuthorization.AddDrink, updated).ConfigureAwait(false);
+                await AuthorizeAsync(context, MenuAuthorization.DrinkAdd, updated).ConfigureAwait(false);
                 CopyToRow(updated, row);
                 Record(context, updated, new DrinkAddedToMenu(updated, item));
                 context.Touch(normalized.DrinkId.EntityUid);
@@ -203,13 +203,13 @@ public sealed class MenusModule(
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(request);
         return session.ExecuteAsync(
-            Command(MenuAuthorization.RemoveDrink),
+            Command(MenuAuthorization.DrinkRemove),
             async context =>
             {
                 RemoveMenuItemRequest normalized = request.Normalize();
                 await AuthorizePatchAsync(
                     context,
-                    MenuAuthorization.RemoveDrink,
+                    MenuAuthorization.DrinkRemove,
                     normalized.MenuId).ConfigureAwait(false);
                 MenuRow row = await RequireActiveRowAsync(context, normalized.MenuId).ConfigureAwait(false);
                 Menu current = await WithTagsAsync(context, FromRow(row)).ConfigureAwait(false);
@@ -224,7 +224,7 @@ public sealed class MenusModule(
                     Items = remaining,
                     Revision = checked(current.Revision + 1),
                 }).Normalize();
-                await AuthorizeAsync(context, MenuAuthorization.RemoveDrink, updated).ConfigureAwait(false);
+                await AuthorizeAsync(context, MenuAuthorization.DrinkRemove, updated).ConfigureAwait(false);
                 CopyToRow(updated, row);
                 Record(context, updated, new DrinkRemovedFromMenu(updated, removed));
                 context.Touch(normalized.DrinkId.EntityUid);

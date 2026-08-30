@@ -25,6 +25,8 @@ public sealed class MenuAuthorizationTests
         { Actor.Owner, MenuAuthorization.Publish, true },
         { Actor.Manager, MenuAuthorization.Readiness, true },
         { Actor.Manager, MenuAuthorization.Publish, true },
+        { Actor.Manager, MenuAuthorization.DrinkAdd, true },
+        { Actor.Manager, MenuAuthorization.DrinkRemove, true },
         { Actor.Bartender, MenuAuthorization.List, true },
         { Actor.Bartender, MenuAuthorization.Get, true },
         { Actor.Bartender, MenuAuthorization.Publish, false },
@@ -56,6 +58,13 @@ public sealed class MenuAuthorizationTests
 
         await Assert.ThrowsAsync<PermissionError>(async () =>
             await authorizer.AuthorizeAsync(actor, action, Resource.ToCedarEntity()));
+    }
+
+    [Fact]
+    public void CompoundActionsUseResourceFirstNames()
+    {
+        Assert.Equal("drink:add", MenuAuthorization.DrinkAdd.Id);
+        Assert.Equal("drink:remove", MenuAuthorization.DrinkRemove.Id);
     }
 
     [Fact]
