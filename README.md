@@ -29,7 +29,7 @@ dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations
 ```
 
 GitHub Actions repeats this gate for every pull request and every push to
-`master`, then publishes the native Desktop client on Windows x64 and macOS x64
+`main`, then publishes the native Desktop client on Windows x64 and macOS x64
 runners. The Linux solution job still runs the SharpDetect dynamic race gate
 over the desktop concurrency primitives. The workflow pins
 official actions by immutable release commit. See
