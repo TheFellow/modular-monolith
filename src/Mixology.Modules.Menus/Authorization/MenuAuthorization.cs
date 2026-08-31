@@ -16,8 +16,8 @@ public static class MenuAuthorization
     public static KernelEntityUid Create { get; } = new(ActionType, "create");
     public static KernelEntityUid Update { get; } = new(ActionType, "update");
     public static KernelEntityUid Delete { get; } = new(ActionType, "delete");
-    public static KernelEntityUid AddDrink { get; } = new(ActionType, "add_drink");
-    public static KernelEntityUid RemoveDrink { get; } = new(ActionType, "remove_drink");
+    public static KernelEntityUid DrinkAdd { get; } = new(ActionType, "drink:add");
+    public static KernelEntityUid DrinkRemove { get; } = new(ActionType, "drink:remove");
     public static KernelEntityUid Publish { get; } = new(ActionType, "publish");
     public static KernelEntityUid Draft { get; } = new(ActionType, "draft");
     public static KernelEntityUid Tag { get; } = new(ActionType, "tag");

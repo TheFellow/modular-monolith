@@ -23,8 +23,8 @@ public sealed class MenuCedarAuthorizationModule : ICedarAuthorizationModule
         }
 
         namespace Mixology::Menu {
-            action list, get, readiness, create, update, delete, add_drink,
-                   remove_drink, publish, draft, tag, untag appliesTo {
+            action list, get, readiness, create, update, delete, "drink:add",
+                   "drink:remove", publish, draft, tag, untag appliesTo {
                 principal: Mixology::Actor,
                 resource: Mixology::Menu,
                 context: {}
@@ -52,8 +52,8 @@ public sealed class MenuCedarAuthorizationModule : ICedarAuthorizationModule
                 Mixology::Menu::Action::"create",
                 Mixology::Menu::Action::"update",
                 Mixology::Menu::Action::"delete",
-                Mixology::Menu::Action::"add_drink",
-                Mixology::Menu::Action::"remove_drink",
+                Mixology::Menu::Action::"drink:add",
+                Mixology::Menu::Action::"drink:remove",
                 Mixology::Menu::Action::"publish",
                 Mixology::Menu::Action::"draft",
                 Mixology::Menu::Action::"tag",
