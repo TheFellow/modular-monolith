@@ -1,0 +1,5 @@
+[tasks.clean]
+description = "Remove all generated .NET bin and obj directories"
+run = '''
+find . -type d \( -name bin -o -name obj \) -prune -exec rm -rf -- {} +
+'''

@@ -28,6 +28,12 @@ dotnet run --project tools/Mixology.DispatchGenerator --no-build -- \
 dotnet ef migrations has-pending-model-changes --project src/Mixology.Migrations --no-build
 ```
 
+To reclaim build space across every project, configuration, and runtime target:
+
+```sh
+mise run clean
+```
+
 GitHub Actions repeats this gate for every pull request and every push to
 `main`, then publishes the native Desktop client on Windows x64 and macOS x64
 runners. The Linux solution job still runs the SharpDetect dynamic race gate
